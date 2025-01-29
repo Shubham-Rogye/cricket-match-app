@@ -1,0 +1,40 @@
+{
+    "schedule":[
+        {
+            "id":1,
+            "date":"23-May-2021",
+            "day":"Sunday",
+            "match": "India V/S Sri Lanka (1 st ODI)",
+            "venue": "Ahmedabad",
+            "time": "3:30PM"
+
+        },
+        {
+            "id":2,
+            "date":"25-May-2021",
+            "day":"Tuesday",
+            "match": "India V/S Sri Lanka (2 nd ODI)",
+            "venue": "Mumbai",
+            "time": "3:30PM"
+
+        },
+        {
+            "id":3,
+            "date":"27-May-2021",
+            "day":"Thursday",
+            "match": "India V/S Sri Lanka (3 rd ODI)",
+            "venue": "Bangalore",
+            "time": "3:30PM"
+
+        },
+        {
+            "id":4,
+            "date":"28-May-2021",
+            "day":"Friday",
+            "match": "New zealand V/S England (1 st T20)",
+            "venue": "Queenstown",
+            "time": "3:30PM"
+
+        }
+    ]
+}

@@ -1,0 +1,119 @@
+.navbar_comp {
+    background-color: #ffffff !important;
+}
+
+.navbar_comp .navbar-nav {
+    margin: 0 auto;
+    gap: 15px;
+}
+
+.navbar_comp .nav-link{
+    color: #06083b;
+}
+
+.banner_img_div{
+    position: relative;
+}
+
+.banner_img_div img{
+    width: 100%;
+    height: 100%;
+}
+
+.banner_img_div > div{
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: url(./vk18-removebg-preview.png) right bottom no-repeat, url(./rs-removebg-preview.png) left bottom no-repeat;
+}
+
+.last_name_result_boxes{
+    display: flex;
+}
+
+.last_name_result{
+    background-color: #F5F5F5;
+}
+
+.last_name_result_box{
+    background-color: #fff;
+}
+
+.last_name_result_box_scores{
+    gap: 10px;
+}
+
+.last_name_result_box_scores_team_left h2, .last_name_result_box_scores_team_right h2{
+    margin: 0;
+    color: #929292;
+}
+
+.last_name_result_box_scores_team_left.won h2, .last_name_result_box_scores_team_right.won h2{
+    color: #000;
+}
+
+.time_table_section{
+    background: url(./time_table_background.jpg) no-repeat;
+}
+
+.nav_upper{
+    background-color: #06083b;
+    color: #fff;
+}
+
+
+/* width */
+::-webkit-scrollbar {
+    width: 5px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #06083b;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+
+  .login_form_page label{
+    color: #06083b;
+  }
+
+  .login_form_page div{
+    margin-bottom: 10px;
+  }
+
+  .login_form_page .errorMessage{
+    color: red;
+  }
+
+  .login_form_page .error{
+    border-color: red;
+    box-shadow: 0 0 0 .25rem rgb(253 13 13 / 25%);
+  }
+  
+  
+
+.password_box {
+  position: relative;
+}
+.password_box i {
+  position: absolute;
+  top: 38px;
+  right: 15px;
+  cursor: pointer;
+}
+
+header.d-flex.justify-content-end.user_account_nav.py-3.pe-4 {
+  background: #000000;
+  color: #fff;
+}

@@ -1,0 +1,46 @@
+{
+  "users": [
+    {
+      "id": "bfdc",
+      "userFullName": "Shubham Rogye",
+      "userDOB": "1998-04-28",
+      "userEmail": "shu@ex.com",
+      "userPassword": "shubham"
+    },
+    {
+      "id": "481b",
+      "userFullName": "Sushanth Poojary",
+      "userDOB": "2001-04-16",
+      "userEmail": "sush@example.com",
+      "userPassword": "sush"
+    },
+    {
+      "id": "08e2",
+      "userFullName": "Shubham R",
+      "userDOB": "1998-04-28",
+      "userEmail": "shubhamr.10@gmail.com",
+      "userPassword": "Shubham1998"
+    },
+    {
+      "id": "1fac",
+      "userFullName": "Pranjal Yadav",
+      "userDOB": "1995-02-13",
+      "userEmail": "pranjal@test.com",
+      "userPassword": "Pranjal@1234"
+    },
+    {
+      "id": "6506",
+      "userFullName": "Prathamesh",
+      "userDOB": "1996-05-01",
+      "userEmail": "prathu@test.com",
+      "userPassword": "Test@123"
+    },
+    {
+      "id": "e0bd",
+      "userFullName": "Sushanth",
+      "userDOB": "1998-04-28",
+      "userEmail": "sush@test.com",
+      "userPassword": "Sush@123456"
+    }
+  ]
+}
