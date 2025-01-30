@@ -11,9 +11,10 @@ export const ContextAuth = createContext();
 
 function App() {
   const [loginPage, setLoginPage] = useState(false)
+  const [loggedOut, setLoggedOut] = useState(false)
   return (
     <>
-      <ContextAuth.Provider value={[loginPage, setLoginPage]}>
+      <ContextAuth.Provider value={{loginPage, setLoginPage,loggedOut, setLoggedOut}}>
         <BrowserRouter>
           <Routes>
             <Route path='/' index element={<LandingPage />} />

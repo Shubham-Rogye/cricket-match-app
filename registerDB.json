@@ -41,6 +41,13 @@
       "userDOB": "1998-04-28",
       "userEmail": "sush@test.com",
       "userPassword": "Sush@123456"
+    },
+    {
+      "id": "2636",
+      "userFullName": "admin",
+      "userDOB": "1991-01-01",
+      "userEmail": "admin@admin.com",
+      "userPassword": "Admin@123"
     }
   ]
 }

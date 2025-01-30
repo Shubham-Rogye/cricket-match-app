@@ -30,7 +30,7 @@ const Login = () => {
     userPassword: ""
 
   })
-  const [loginPage, setLoginPage] = useContext(ContextAuth);
+  const {loginPage, setLoginPage,loggedOut, setLoggedOut} = useContext(ContextAuth);
   const [accountRegistered, setAccountRegistered] = useState(true)
   const [passwordMatchCheck, setPasswordMatchCheck] = useState(null);
   const [showPass, setShowPass] = useState(false);
@@ -98,6 +98,10 @@ const Login = () => {
           if(userFilteredData.length > 0){
             if(userFilteredData[0].userPassword == data.userPassword){
               navigate(`/welcome/${userFilteredData[0].userFullName}`)
+              setLoginPage(false);
+              if(loggedOut){
+                setLoggedOut(false)
+              }
             }
           } else{
             alert("Email is not registered")
@@ -140,9 +144,9 @@ const Login = () => {
               {errors.userEmail && <span className='errorMessage'>This field is required</span>}
             </div>
             <div className='password_box'>
-            <i className={showPass ? 'bi bi-eye-slash-fill':'bi bi-eye-fill'} onClick={()=>setShowPass(!showPass)}></i>
+            {accountRegistered && <i className={showPass ? 'bi bi-eye-slash-fill':'bi bi-eye-fill'} onClick={()=>setShowPass(!showPass)}></i>}
               <label className='form-label'>Enter your password</label>
-              <input type={showPass ? 'text':'password'} className={errors.userPassword ? 'form-control error' : 'form-control'} 
+              <input type={accountRegistered ? (showPass ? 'text':'password'): "password"} className={errors.userPassword ? 'form-control error' : 'form-control'} 
               {...register("userPassword", { 
                 required: true, 
                 minLength: { 
@@ -157,9 +161,10 @@ const Login = () => {
             </div>
             {!accountRegistered ? (
               <>
-                <div>
+                <div className='password_box'>
+                <i className={showPass ? 'bi bi-eye-slash-fill':'bi bi-eye-fill'} onClick={()=>setShowPass(!showPass)}></i>
                   <label className='form-label'>Confirm password</label>
-                  <input type='password' className={errors.userConfirmPassword ? 'form-control error' : 'form-control'} {...register("userConfirmPassword", { required: true, onChange: checkPassword })} />
+                  <input type={showPass ? 'text':'password'} className={errors.userConfirmPassword ? 'form-control error' : 'form-control'} {...register("userConfirmPassword", { required: true, onChange: checkPassword })} />
                   {errors?.userConfirmPassword?.type === "password mismatch" && <span className='errorMessage'>{errors.userConfirmPassword.message}</span>}
                   {errors?.userConfirmPassword?.type === "required" && <span className='errorMessage'>This field is required</span>}
                 </div>

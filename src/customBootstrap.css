@@ -113,7 +113,36 @@
   cursor: pointer;
 }
 
-header.d-flex.justify-content-end.user_account_nav.py-3.pe-4 {
+.user_account_nav {
   background: #000000;
   color: #fff;
+}
+
+.left_box {
+  width: 15%;
+  background: #ffffff;
+  box-shadow: 4px 14px 14px #cecece;
+  height: calc(100vh - 56px);
+  position: sticky;
+}
+
+.left_box > ul{
+  list-style: none;
+  padding: 0;
+}
+
+.left_box ul li {
+  padding: 5px 15px;
+  margin: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.left_box ul li.active {
+  background: #09d409;
+  color: #fff;
+}
+
+.right_box .welcome_box{
+  height: fit-content;
 }

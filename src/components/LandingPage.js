@@ -5,7 +5,7 @@ import LastMatchResult from '../components/LastMatchResult'
 import MatchTiming from './MatchTiming'
 import { ContextAuth } from '../App'
 const LandingPage = () => {
-  const [loginPage, setLoginPage] = useContext(ContextAuth)
+  const {loginPage, setLoginPage,loggedOut, setLoggedOut} = useContext(ContextAuth)
   setLoginPage(false)
   return (
     <>
