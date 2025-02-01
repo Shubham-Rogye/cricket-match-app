@@ -1,0 +1,100 @@
+{
+    "playersCategory":[
+        {
+            "id": 1,
+            "category":"gold",
+            "specification1": "all rounder",
+            "specification2":"Right hander",
+            "baseValue":"200",
+            "playerName":"Shubham Rogye"
+        },
+        {
+            "id": 2,
+            "category":"gold",
+            "specification1": "batsman",
+            "specification2":"Right hander",
+            "baseValue":"200",
+            "playerName":"Aditya Samant"
+        },
+        {
+            "id": 3,
+            "category":"silver",
+            "specification1": "Bowler",
+            "specification2":"Right hander",
+            "baseValue":"200",
+            "playerName":"Sanket Chawan"
+        },
+        {
+            "id": 4,
+            "category":"silver",
+            "specification1": "batsman",
+            "specification2":"Right hander",
+            "baseValue":"200",
+            "playerName":"Akash Shukla"
+        },
+        {
+            "id": 5,
+            "category":"platnium",
+            "specification1": "all rounder",
+            "specification2":"Right hander",
+            "baseValue":"200",
+            "playerName":"Sushanth Poojary"
+        },
+        {
+            "id": 6,
+            "category":"platnium",
+            "specification1": "all rounder",
+            "specification2":"Left hander",
+            "baseValue":"200",
+            "playerName":"Prathamesh Desai"
+        },
+        {
+            "id": 7,
+            "category":"platnium",
+            "specification1": "all rounder",
+            "specification2":"right hander",
+            "baseValue":"200",
+            "playerName":"Tejas Moolya"
+        },
+        {
+            "id": 8,
+            "category":"platnium",
+            "specification1": "all rounder",
+            "specification2":"Left hander",
+            "baseValue":"200",
+            "playerName":"Prathamesh Desai"
+        },
+        {
+            "id": 9,
+            "category":"platnium",
+            "specification1": "all rounder",
+            "specification2":"Right hander",
+            "baseValue":"200",
+            "playerName":"Rohan Solkar"
+        },
+        {
+            "id": 10,
+            "category":"platnium",
+            "specification1": "all rounder",
+            "specification2":"Right hander",
+            "baseValue":"200",
+            "playerName":"Chandan Saw"
+        },
+        {
+            "id": 11,
+            "category":"platnium",
+            "specification1": "all rounder",
+            "specification2":"Left hander",
+            "baseValue":"200",
+            "playerName":"Dhurv"
+        },
+        {
+            "id": 12,
+            "category":"platnium",
+            "specification1": "Bowler",
+            "specification2":"Right hander",
+            "baseValue":"200",
+            "playerName":"Harshal Indulkar"
+        }
+    ]
+}

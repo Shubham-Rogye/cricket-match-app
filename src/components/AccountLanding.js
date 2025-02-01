@@ -81,6 +81,7 @@ const AccountLanding = () => {
                                                         <p className='m-0'>IDFC Auction Demo</p>
                                                         <a href='#' className='link-underline link-underline-opacity-0 text-primary'>View</a>
                                                         <a href='#' className='link-underline link-underline-opacity-0 ms-2 text-warning'>Edit</a>
+                                                        <a href='/liveAuction' className='link-underline link-underline-opacity-0 ms-2 text-info'>Live</a>
                                                     </div>
                                                 </div>
                                             </div>

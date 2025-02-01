@@ -146,3 +146,63 @@
 .right_box .welcome_box{
   height: fit-content;
 }
+
+.auction{
+  min-height: calc(100vh - 41px);
+  background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%);
+}
+
+.auction_status{
+  height: calc(100vh - 41px);
+}
+
+.auction_live_tab {
+  background: #000;
+}
+
+.auction_live_tab .nav-fill .nav-item .nav-link, .nav-justified .nav-item .nav-link{
+  color: #fff;
+}
+
+.auction_live_tab .nav-fill .nav-item .nav-link, .nav-justified .nav-item .nav-link.active{
+  color: #000;
+}
+
+
+.auction_live_tab ~ .tab-content{
+  background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%);
+}
+
+.yet_to_auction_player_details {
+  position: relative;
+}
+
+.yet_to_auction_player_details_typeImg{
+  position: absolute;
+  right: 13px;
+  bottom: 0px;
+}
+
+.auction_box{
+  gap:100px
+}
+
+.auction_box_owner1_section img{
+  transform: scalex(-1);
+}
+
+.auction_box_player_section_details_typ > label{
+  display: block;
+  margin-bottom: 5px;
+}
+
+.auction_box_player_section{
+  position: relative;
+}
+
+.auction_box_player_section > img{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50%;
+}

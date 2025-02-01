@@ -4,6 +4,7 @@ import { ContextAuth } from '../App'
 import { useForm } from "react-hook-form"
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { Zoom, Slide, Bounce, ToastContainer, toast } from 'react-toastify';
 
 
 const Login = () => {
@@ -102,14 +103,18 @@ const Login = () => {
               if(loggedOut){
                 setLoggedOut(false)
               }
+            } else{
+            toast.error('Invalid password');
+            reset();
             }
           } else{
-            alert("Email is not registered")
+            toast.error('Email is not registered, Please Sign up')
+            // alert("Email is not registered")
           }
           console.log(userFilteredData);                   
         } else{
           axios.post(URL,registerUser)
-          .then((res)=>{console.log('data has been successfully registered'); reset();})
+          .then((res)=>{toast.success('data has been successfully registered'); reset();setAccountRegistered(!accountRegistered);})
         }
   };
 
@@ -150,14 +155,13 @@ const Login = () => {
               {...register("userPassword", { 
                 required: true, 
                 minLength: { 
-                  value: 8, 
-                  message: "Password must be at least 8 characters" 
+                  value: !accountRegistered ? 8 : 0, 
+                  message: !accountRegistered && "Password must be at least 8 characters" 
                 },
-                pattern: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,15}$/,
+                pattern: !accountRegistered && /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,15}$/,
                 onChange: () => { setPasswordMatchCheck(watch("userPassword")); setRegisterUser({...registerUser, userPassword:watch("userPassword")})} })} />
-              {errors?.userPassword?.type === "minLength" && <span className='errorMessage'>{errors.userPassword.message}</span>}
               {errors?.userPassword?.type === "required" && <span className='errorMessage'>This field is required</span>}
-              {errors?.userPassword?.type === "pattern" && <span className='errorMessage'>Password must contain aleast 1 capital letter & 1 number</span>}
+              {!accountRegistered && <>{errors?.userPassword?.type === "minLength" && <span className='errorMessage'>{errors.userPassword.message}</span>}{errors?.userPassword?.type === "pattern" && <span className='errorMessage'>Password must contain aleast 1 capital letter & 1 number</span>}</>}
             </div>
             {!accountRegistered ? (
               <>
@@ -178,6 +182,19 @@ const Login = () => {
           </form>
         </div>
       </section>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+        transition={Zoom}
+      />
     </>
   )
 }

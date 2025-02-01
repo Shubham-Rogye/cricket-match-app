@@ -48,6 +48,41 @@
       "userDOB": "1991-01-01",
       "userEmail": "admin@admin.com",
       "userPassword": "Admin@123"
+    },
+    {
+      "id": "1247",
+      "userFullName": "Aakash Shukla",
+      "userDOB": "1992-12-22",
+      "userEmail": "aakash@test.com",
+      "userPassword": "Akash@123"
+    },
+    {
+      "id": "9001",
+      "userFullName": "Aditya Samant",
+      "userDOB": "1990-10-10",
+      "userEmail": "adi@test.com",
+      "userPassword": "Adi@1998"
+    },
+    {
+      "id": "f57f",
+      "userFullName": "Chandan Saw",
+      "userDOB": "1995-12-15",
+      "userEmail": "chandan@test.com",
+      "userPassword": "Chandu@123"
+    },
+    {
+      "id": "8667",
+      "userFullName": "Chacha Chawan",
+      "userDOB": "1992-04-30",
+      "userEmail": "chach@test.com",
+      "userPassword": "Chacha@123"
+    },
+    {
+      "id": "b35b",
+      "userFullName": "Pranjal Yadav",
+      "userDOB": "1995-02-13",
+      "userEmail": "pranjal@test.com",
+      "userPassword": "Pranjal@123"
     }
   ]
 }
