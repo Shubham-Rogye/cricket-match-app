@@ -1,5 +1,5 @@
 import Button from 'react-bootstrap/Button';
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import Players from './Players';
@@ -22,6 +22,7 @@ const AuctionLive = () => {
     const [radioValue, setRadioValue] = useState('1');
     const [playerToShow, setPlayerToShow] = useState();
     const [tabChange, setTabChange] = useState(false);
+    const randomPlayer = useRef([])
 
     const radios = [
         { name: 'All', value: '1' },
@@ -31,7 +32,13 @@ const AuctionLive = () => {
     ];
 
     const auctionCheck = () => {
-        setAuctionLive(true)
+        setAuctionLive(true);
+        const randomPlayerGen = Math.floor(Math.random()*((players.length)-1+1)+1);
+
+        const randomPlayerGenenrated = players.filter((elm) => elm.id == randomPlayerGen)
+        randomPlayer.current = randomPlayerGenenrated
+        setBid(parseInt(randomPlayer.current[0].baseValue))
+        console.log(randomPlayer)
     }
 
     useEffect(() => {
@@ -70,10 +77,10 @@ const AuctionLive = () => {
                                     <div className='auction_status d-flex justify-content-center align-items-center'>
                                         <div className='auction_box d-flex justify-content-space'>
                                             <div className='auction_box_owner1_section text-center' style={{opacity: turn != 1 && "0.2"}}>
-                                                <img src={owner1} />
+                                                <img src={owner1} />    
                                                 {turn == 1 && <h2 className='bg-danger text-light'>Your turn</h2>}                                                
                                             </div>
-                                            <BidPlayerBox/>
+                                            <BidPlayerBox playerName = {randomPlayer.current[0].playerName} playerCat = {randomPlayer.current[0].category} playerBidVal = {randomPlayer.current[0].baseValue} playerSpec={randomPlayer.current[0].specification1}/>
                                             <div className='auction_box_owner2_section text-center' style={{opacity: turn != 2 && "0.2"}}>
                                                 <img src={owner2} />
                                                 {turn == 2 && <h2 className='bg-danger text-light'>Your turn</h2>}

@@ -173,6 +173,18 @@
   background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%);
 }
 
+.yet_to_auction_player{
+  cursor: pointer;
+  transition:all ease-in-out;
+}
+
+.yet_to_auction_player:hover{
+  transform: scale(1.05);
+}
+.yet_to_auction_player:hover ~ .yet_to_auction_player_details_typeImg img{
+  transform: rotate(350deg);
+}
+
 .yet_to_auction_player_details {
   position: relative;
 }

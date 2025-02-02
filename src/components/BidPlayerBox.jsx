@@ -1,11 +1,14 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import userPp from '../userPP.svg'
 import Button from 'react-bootstrap/Button'
 import sold from '../sold-removebg-preview.png'
 import { ContextAuth } from '../App'
+import axios from 'axios'
 
-const BidPlayerBox = () => {
+const BidPlayerBox = ({playerName, playerCat, playerBidVal, playerSpec}) => {
+    let url = 'http://localhost:5000/playersCategory'
     const{loginPage, setLoginPage,loggedOut, setLoggedOut,bid, setBid,turn, setTurn, newPlayerBtn, setNewPlayerBtn} = useContext(ContextAuth)
+    const randomPlayerChange = useRef([playerName, playerCat, playerBidVal, playerSpec])
     
 
     const bidBtnClick = () => {
@@ -14,7 +17,7 @@ const BidPlayerBox = () => {
             setTurn(turn + 1);
         }else{
             setTurn(turn - 1);
-        }
+        }       
     }
 
     const soldBtnClick = () => {
@@ -22,31 +25,36 @@ const BidPlayerBox = () => {
     }
 
     const newPlayerBtnClicked = () => {
+        setNewPlayerCalled(true);
         setNewPlayerBtn(false);
-        setBid(200)
+        axios.get(url)
+        .then((res)=> {
+            let randomNum = Math.floor(Math.random()*(res.data.length-1+1)+1)
+            randomPlayerChange.current = res.data.filter((fl)=>fl.id == randomNum)
+        })
     }
-    
+
     return (
         <div className='auction_box_player_section'>
             <div className='auction_box_player_section_details bg-light border p-3 rounded shadow'>
-                <h2 className='text-center bg-dark text-light p-2 rounded'>Shubham Rogye</h2>
+                <h2 className='text-center bg-dark text-light p-2 rounded'>{randomPlayerChange.current[0]}</h2>
                 <div className='auction_box_player_section_details_img text-center mb-2'>
                     <img src={userPp} alt='Player Image' width={200} />
                 </div>
                 <div className='auction_box_player_section_details_typ'>
                     <div className='row'>
                         <div className='col-6'>
-                            <label><strong>Category:</strong> Gold</label>
+                            <label><strong>Category:</strong> {randomPlayerChange.current[1]}</label>
                         </div>
-                        <div className='col-6'><label><strong>Bid price</strong> 200</label></div>
+                        <div className='col-6'><label><strong>Bid price</strong> {randomPlayerChange.current[2]}</label></div>
                         <div className='col-12 mt-2'>
-                            <label><strong>Specification:</strong> All Rounder</label>
+                            <label><strong>Specification:</strong> {randomPlayerChange.current[3]}</label>
                         </div>
                     </div>
                 </div>
                 <hr />
                 <div className='auction_box_player_section_bid_input_box d-flex justify-content-between'>
-                    <input className='form-control' type='number' value={bid} disabled/>\
+                    <input className='form-control' type='number' value={bid} disabled/>
                     <Button variant="primary" size='sm' onClick={bidBtnClick} disabled={newPlayerBtn}>Increase Bid</Button>
                 </div>
                 <div className='mt-3 d-flex justify-content-center'>
