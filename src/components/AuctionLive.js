@@ -15,7 +15,8 @@ import { ContextAuth } from '../App';
 const AuctionLive = () => {
 
     let URL = "http://localhost:5000/playersCategory"
-    const{loginPage, setLoginPage,loggedOut, setLoggedOut,bid, setBid,turn, setTurn, newPlayerBtn, setNewPlayerBtn} = useContext(ContextAuth)
+    let soldPlayersURL = "http://localhost:6500/soldPlayers"
+    const{loginPage, setLoginPage,loggedOut, setLoggedOut,bid, setBid,turn, setTurn, newPlayerBtn, setNewPlayerBtn, soldPlayers, setSoldPlayers, auctionEnded, setAuctionEnd} = useContext(ContextAuth)
 
     const [auctiveLive, setAuctionLive] = useState(false);
     const [players, setPlayers] = useState([]);
@@ -32,13 +33,16 @@ const AuctionLive = () => {
     ];
 
     const auctionCheck = () => {
-        setAuctionLive(true);
         const randomPlayerGen = Math.floor(Math.random()*((players.length)-1+1)+1);
-
         const randomPlayerGenenrated = players.filter((elm) => elm.id == randomPlayerGen)
         randomPlayer.current = randomPlayerGenenrated
-        setBid(parseInt(randomPlayer.current[0].baseValue))
-        console.log(randomPlayer)
+        if(randomPlayerGenenrated.length == 0){
+            setAuctionEnd(true)
+            setAuctionLive(false)
+        } else{
+            setAuctionLive(true);
+            setBid(parseInt(randomPlayer.current[0].baseValue))
+        }
     }
 
     useEffect(() => {
@@ -53,13 +57,16 @@ const AuctionLive = () => {
         } else {
             setPlayerToShow(players)
         }
+
+        
         console.log(radioValue, playerToShow, tabChange)
     }, [radioValue])
 
-    // const filterType = (e, name) => {
-    //     setRadioValue(e.target.value);
-    //     console.log(e.target.value, radioValue)
-    // }
+    useEffect(()=>{
+        axios.get(soldPlayersURL)
+        .then((res)=>setSoldPlayers(res.data))
+        .catch((err) => console.log(err))
+    })
 
     return (
         <>
@@ -80,7 +87,7 @@ const AuctionLive = () => {
                                                 <img src={owner1} />    
                                                 {turn == 1 && <h2 className='bg-danger text-light'>Your turn</h2>}                                                
                                             </div>
-                                            <BidPlayerBox playerName = {randomPlayer.current[0].playerName} playerCat = {randomPlayer.current[0].category} playerBidVal = {randomPlayer.current[0].baseValue} playerSpec={randomPlayer.current[0].specification1}/>
+                                            <BidPlayerBox playerName = {randomPlayer.current[0].playerName} playerCat = {randomPlayer.current[0].category} playerBidVal = {randomPlayer.current[0].baseValue} playerSpec={randomPlayer.current[0].specification1} playerSpec1={randomPlayer.current[0].specification2} playerId = {randomPlayer.current[0].id}/>
                                             <div className='auction_box_owner2_section text-center' style={{opacity: turn != 2 && "0.2"}}>
                                                 <img src={owner2} />
                                                 {turn == 2 && <h2 className='bg-danger text-light'>Your turn</h2>}
@@ -88,9 +95,11 @@ const AuctionLive = () => {
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className='auction_status d-flex justify-content-center align-items-center'>
+                                    auctionEnded ? (<div className='auction_status d-flex justify-content-center align-items-center'>
+                                        <h2>Auction ended</h2>
+                                    </div>): (<div className='auction_status d-flex justify-content-center align-items-center'>
                                         <Button variant="warning" onClick={auctionCheck}>Start Auction</Button>
-                                    </div>
+                                    </div>)
                                 )
                         }
                     </div>
@@ -103,7 +112,19 @@ const AuctionLive = () => {
                     </div>
                 </Tab>
                 <Tab eventKey="Sold_players" title="Sold_players" className='auction_tab'>
-                    Sold players
+                <div className='auction'>
+                        <div className='container'>
+                            <div className='row'>
+                            {
+                                soldPlayers.length > 0 ? soldPlayers.map ((data) => (
+                                    <div className='col-4 my-3' style={{ position: "relative" }} key={data.id}>
+                                        <Players name={data.playerName} specification={data.specification1} category={data.category} soldPlayer = {true} bidPrice = {data.baseValue}/>
+                                    </div>
+                                )): ""
+                            }
+                            </div>
+                        </div>
+                    </div>
                 </Tab>
                 <Tab eventKey="Unsold_players" title="Unsold_players" className='auction_tab'>
                     Unsold players
@@ -137,11 +158,11 @@ const AuctionLive = () => {
                                 {
                                     !tabChange ? players.map((data) => (
                                         <div className='col-4 mb-3' style={{ position: "relative" }} key={data.id}>
-                                            <Players name={data.playerName} specification={data.specification1} category={data.category} />
+                                            <Players name={data.playerName} specification={data.specification1} category={data.category} bidPrice = {data.baseValue} soldPlayers = {false}/>
                                         </div>
                                     )) : playerToShow.map((data) => (
                                         <div className='col-4 mb-3' style={{ position: "relative" }} key={data.id}>
-                                            <Players name={data.playerName} specification={data.specification1} category={data.category} />
+                                            <Players name={data.playerName} specification={data.specification1} category={data.category} bidPrice = {data.baseValue} soldPlayers = {false}/>
                                         </div>
                                     ))
                                 }

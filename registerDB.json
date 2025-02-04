@@ -83,6 +83,13 @@
       "userDOB": "1995-02-13",
       "userEmail": "pranjal@test.com",
       "userPassword": "Pranjal@123"
+    },
+    {
+      "id": "d31c",
+      "userFullName": "Abhishek Naik",
+      "userDOB": "1995-03-03",
+      "userEmail": "abhi@test.com",
+      "userPassword": "Abhi@123"
     }
   ]
 }

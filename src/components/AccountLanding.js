@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ContextAuth } from '../App';
 
 const AccountLanding = () => {
@@ -79,9 +79,9 @@ const AccountLanding = () => {
                                                     <strong>My Auctions</strong>
                                                     <div className='shadow-sm mt-3 py-2 px-3'>
                                                         <p className='m-0'>IDFC Auction Demo</p>
-                                                        <a href='#' className='link-underline link-underline-opacity-0 text-primary'>View</a>
-                                                        <a href='#' className='link-underline link-underline-opacity-0 ms-2 text-warning'>Edit</a>
-                                                        <a href='/liveAuction' className='link-underline link-underline-opacity-0 ms-2 text-info'>Live</a>
+                                                        <Link to='/formPage' className='link-underline link-underline-opacity-0 text-primary'>View</Link>
+                                                        <Link to='#' className='link-underline link-underline-opacity-0 ms-2 text-warning'>Edit</Link>
+                                                        <Link to='/liveAuction' className='link-underline link-underline-opacity-0 ms-2 text-info'>Live</Link>
                                                     </div>
                                                 </div>
                                             </div>

@@ -126,6 +126,11 @@
   position: sticky;
 }
 
+.left_box ul li:hover{
+  background: #09d409;
+  color: #fff;
+}
+
 .left_box > ul{
   list-style: none;
   padding: 0;
@@ -136,6 +141,7 @@
   margin: 10px;
   border-radius: 10px;
   cursor: pointer;
+  transition: all ease-in-out 0.3s;
 }
 
 .left_box ul li.active {
@@ -217,4 +223,27 @@
   top: 50%;
   left: 50%;
   translate: -50%;
+}
+
+
+@keyframes sold {
+  from {transform: scale(0)}
+  to {transform: scale(4)}
+}
+.auction_box_player_section img.active{
+  animation-name: sold;
+  animation-duration: 4s;
+}
+
+.form_row > div{
+  margin-bottom: 10px;
+}
+
+.profile_img_box{
+  border: 2px dotted #929292;
+
+}
+
+.form_page .error{
+  color: red;
 }
