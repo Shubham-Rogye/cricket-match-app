@@ -90,6 +90,13 @@
       "userDOB": "1995-03-03",
       "userEmail": "abhi@test.com",
       "userPassword": "Abhi@123"
+    },
+    {
+      "id": "e7f8",
+      "userFullName": "Rohan Solkar",
+      "userDOB": "1997-12-07",
+      "userEmail": "rohan@test.com",
+      "userPassword": "Rohan@123"
     }
   ]
 }

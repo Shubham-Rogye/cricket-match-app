@@ -19,7 +19,7 @@ const Players = ({ name, specification, category,bidPrice, soldPlayer }) => {
                 </div>
             </div>
             <div className='yet_to_auction_player_details_typeImg' style={{ position: "absolute" }}>
-                <img src={specification == 'Bowler' ? baller : (specification == 'batsman' ? batsmen : all_rounder)} width={50} />
+                <img src={specification == 'Bowler' ? baller : (specification == 'Batsman' ? batsmen : all_rounder)} width={50} />
             </div>
         </>
     )

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Button } from 'react-bootstrap'
 import { useForm } from "react-hook-form"
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
@@ -8,8 +8,18 @@ import axios from 'axios';
 
 
 const FormPagePlayer = () => {
-    const [file, setFile] = useState();
+    const [file, setFile] = useState("");
+    // const playerUniqueID = useRef(1)
     let url = "http://localhost:5000/playersCategory"
+
+    // useEffect(()=>{
+    //     axios.get(url)
+    //     .then((res)=>{
+    //         if(res.data.length > 0){
+    //             playerUniqueID.current = res.data[res.data.length - 1].id + 1
+    //         }
+    //     })
+    // },[file])
 
     const {
         register,
@@ -20,17 +30,43 @@ const FormPagePlayer = () => {
     } = useForm()
 
     const onSubmit = (data) => {
-        console.log(data)
-        // axios.post(url,data)
-        // .then((res)=>alert('Record added'))
 
-        reset();
+        var sentData = {
+            "fullName": data.fullName,
+            "category": data.category,
+            "specification1": data.specification1,
+            "specification2": data.specification2,
+            "bidValue": data.bidValue,
+            "mobileNo": data.mobileNo,
+            "photo": [
+                {
+                    name: data.photo[0].name,
+                    size: data.photo[0].size,
+                    type: data.photo[0].type
+                }
+            ]
+        }
+
+        axios.post(url, sentData)
+            .then((res) => console.log('Record added'))
+
+            setFile("")
+
+        reset({
+            photo:"",
+            fullName: "",
+            category: "",
+            specification1: "",
+            specification2: "",
+            bidValue: "",
+            mobileNo: ""
+        });
     }
 
     const uploadImg = (e) => {
         setFile(URL.createObjectURL(e.target.files[0]));
     }
-    
+
 
     return (
         <div className='form_page px-5'>
@@ -43,9 +79,9 @@ const FormPagePlayer = () => {
                     <div className='row form_row'>
                         <div className='col-12'>
                             <div className='profile_img_box d-flex justify-content-center p-3'>
-                            <Form.Group controlId="formFile" className="text-center w-25">
-                                    <Form.Label><img src={file ? file : uploadPhoto} width={120}/></Form.Label>
-                                    <Form.Control type="file" accept='image/*'  {...register("photo", {required:true})} onChange={uploadImg}/>
+                                <Form.Group controlId="formFile" className="text-center w-25">
+                                    <Form.Label><img src={file ? file : uploadPhoto} width={120} /></Form.Label>
+                                    <Form.Control type="file" accept='image/*'  {...register("photo", { required: true })} onChange={uploadImg} />
                                 </Form.Group>
                                 {errors.photo && <span className='error'>This field is required</span>}
                             </div>
@@ -64,14 +100,14 @@ const FormPagePlayer = () => {
                                 controlId="floatingInput"
                                 label="Category"
                             >
-                                <Form.Select aria-label="Floating label select example" {...register("category", { required:true })}>
+                                <Form.Select aria-label="Floating label select example" {...register("category", { required: true })}>
                                     <option ></option>
                                     <option value="Gold">Gold</option>
                                     <option value="Silver">Silver</option>
                                     <option value="Platnium">Platnium</option>
                                 </Form.Select>
                             </FloatingLabel>
-                            {errors.category && <span className='error'>Please select anyone</span> }
+                            {errors.category && <span className='error'>Please select anyone</span>}
 
                         </div>
                         <div className='col-6'>
@@ -86,7 +122,7 @@ const FormPagePlayer = () => {
                                     <option value="All Rounder">All Rounder</option>
                                 </Form.Select>
                             </FloatingLabel>
-                            {errors.specification1 && <span className='error'>Please select anyone</span> }
+                            {errors.specification1 && <span className='error'>Please select anyone</span>}
                         </div>
                         <div className='col-6'>
                             <FloatingLabel
@@ -126,7 +162,7 @@ const FormPagePlayer = () => {
 
                                 </Form.Select>
                             </FloatingLabel>
-                            {errors.specification2 && <span className='error'>Please select anyone</span> }
+                            {errors.specification2 && <span className='error'>Please select anyone</span>}
                         </div>
                         <div className='col-6'>
                             <FloatingLabel
@@ -142,10 +178,10 @@ const FormPagePlayer = () => {
                                 controlId="floatingInput"
                                 label="Player Mobile number"
                             >
-                                <Form.Control type="number" placeholder="name@example.com" {...register("mobileNo", { required: true,minLength:{value:10,message:"Please enter valid 10 digits mobile number"}, maxLength:{value:10,message:"Please enter valid 10 digits mobile number"} })} />
+                                <Form.Control type="number" placeholder="name@example.com" {...register("mobileNo", { required: true, minLength: { value: 10, message: "Please enter valid 10 digits mobile number" }, maxLength: { value: 10, message: "Please enter valid 10 digits mobile number" } })} />
                             </FloatingLabel>
                             {errors?.mobileNo?.type === "required" && <span className='error'>This field is required</span>}
-                            {(errors?.mobileNo?.type === "minLength"||errors?.mobileNo?.type === "maxLength") && <span className='error'>{errors?.mobileNo?.message}</span>}
+                            {(errors?.mobileNo?.type === "minLength" || errors?.mobileNo?.type === "maxLength") && <span className='error'>{errors?.mobileNo?.message}</span>}
                         </div>
                     </div>
                 </div>

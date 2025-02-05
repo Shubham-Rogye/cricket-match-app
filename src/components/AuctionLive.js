@@ -10,13 +10,14 @@ import owner1 from '../vk18-removebg-preview.png'
 import owner2 from '../rs-removebg-preview.png'
 import BidPlayerBox from './BidPlayerBox';
 import { ContextAuth } from '../App';
+import { useNavigate } from 'react-router-dom';
 
 
 const AuctionLive = () => {
 
     let URL = "http://localhost:5000/playersCategory"
     let soldPlayersURL = "http://localhost:6500/soldPlayers"
-    const{loginPage, setLoginPage,loggedOut, setLoggedOut,bid, setBid,turn, setTurn, newPlayerBtn, setNewPlayerBtn, soldPlayers, setSoldPlayers, auctionEnded, setAuctionEnd} = useContext(ContextAuth)
+    const { loginPage, setLoginPage, loggedOut, setLoggedOut, bid, setBid, turn, setTurn, newPlayerBtn, setNewPlayerBtn, soldPlayers, setSoldPlayers, auctionEnded, setAuctionEnd } = useContext(ContextAuth)
 
     const [auctiveLive, setAuctionLive] = useState(false);
     const [players, setPlayers] = useState([]);
@@ -32,16 +33,24 @@ const AuctionLive = () => {
         { name: 'Platnium', value: '4' },
     ];
 
+    const navigate = useNavigate();
+
     const auctionCheck = () => {
-        const randomPlayerGen = Math.floor(Math.random()*((players.length)-1+1)+1);
-        const randomPlayerGenenrated = players.filter((elm) => elm.id == randomPlayerGen)
+        const randomStringValues = [];
+        players.filter((el) => randomStringValues.push(el.id))
+
+        const randomPlayerGen = Math.floor(Math.random() * randomStringValues.length);
+        let randomStringSingleVal = randomStringValues[randomPlayerGen]
+
+        console.log(randomStringValues)
+        const randomPlayerGenenrated = players.filter((elm) => elm.id == randomStringSingleVal)
         randomPlayer.current = randomPlayerGenenrated
-        if(randomPlayerGenenrated.length == 0){
+        if (randomPlayerGenenrated.length == 0) {
             setAuctionEnd(true)
             setAuctionLive(false)
-        } else{
+        } else {
             setAuctionLive(true);
-            setBid(parseInt(randomPlayer.current[0].baseValue))
+            setBid(parseInt(randomPlayer.current[0].bidValue))
         }
     }
 
@@ -52,21 +61,19 @@ const AuctionLive = () => {
             })
         let filPlayers = []
         if (radioValue != 1) {
-            filPlayers = players.filter((filPlayer) => filPlayer.category == radios[radioValue - 1].name.toLowerCase());
+            filPlayers = players.filter((filPlayer) => filPlayer.category == radios[radioValue - 1].name);
             setPlayerToShow(filPlayers)
         } else {
             setPlayerToShow(players)
         }
-
-        
-        console.log(radioValue, playerToShow, tabChange)
     }, [radioValue])
 
-    useEffect(()=>{
+    useEffect(() => {
         axios.get(soldPlayersURL)
-        .then((res)=>setSoldPlayers(res.data))
-        .catch((err) => console.log(err))
+            .then((res) => setSoldPlayers(res.data))
+            .catch((err) => console.log(err))
     })
+
 
     return (
         <>
@@ -83,12 +90,12 @@ const AuctionLive = () => {
                                 (
                                     <div className='auction_status d-flex justify-content-center align-items-center'>
                                         <div className='auction_box d-flex justify-content-space'>
-                                            <div className='auction_box_owner1_section text-center' style={{opacity: turn != 1 && "0.2"}}>
-                                                <img src={owner1} />    
-                                                {turn == 1 && <h2 className='bg-danger text-light'>Your turn</h2>}                                                
+                                            <div className='auction_box_owner1_section text-center' style={{ opacity: turn != 1 && "0.2" }}>
+                                                <img src={owner1} />
+                                                {turn == 1 && <h2 className='bg-danger text-light'>Your turn</h2>}
                                             </div>
-                                            <BidPlayerBox playerName = {randomPlayer.current[0].playerName} playerCat = {randomPlayer.current[0].category} playerBidVal = {randomPlayer.current[0].baseValue} playerSpec={randomPlayer.current[0].specification1} playerSpec1={randomPlayer.current[0].specification2} playerId = {randomPlayer.current[0].id}/>
-                                            <div className='auction_box_owner2_section text-center' style={{opacity: turn != 2 && "0.2"}}>
+                                            <BidPlayerBox playerName={randomPlayer.current[0].fullName} playerCat={randomPlayer.current[0].category} playerBidVal={randomPlayer.current[0].bidValue} playerSpec={randomPlayer.current[0].specification1} playerSpec1={randomPlayer.current[0].specification2} playerId={randomPlayer.current[0].id} />
+                                            <div className='auction_box_owner2_section text-center' style={{ opacity: turn != 2 && "0.2" }}>
                                                 <img src={owner2} />
                                                 {turn == 2 && <h2 className='bg-danger text-light'>Your turn</h2>}
                                             </div>
@@ -97,7 +104,10 @@ const AuctionLive = () => {
                                 ) : (
                                     auctionEnded ? (<div className='auction_status d-flex justify-content-center align-items-center'>
                                         <h2>Auction ended</h2>
-                                    </div>): (<div className='auction_status d-flex justify-content-center align-items-center'>
+                                        <Button onClick={() => navigate("/login")} style={{ position: "fixed", bottom: "0" }} className='w-100 bg-danger'>
+                                            Back To Dashboard
+                                        </Button>
+                                    </div>) : (<div className='auction_status d-flex justify-content-center align-items-center'>
                                         <Button variant="warning" onClick={auctionCheck}>Start Auction</Button>
                                     </div>)
                                 )
@@ -112,16 +122,16 @@ const AuctionLive = () => {
                     </div>
                 </Tab>
                 <Tab eventKey="Sold_players" title="Sold_players" className='auction_tab'>
-                <div className='auction'>
+                    <div className='auction'>
                         <div className='container'>
                             <div className='row'>
-                            {
-                                soldPlayers.length > 0 ? soldPlayers.map ((data) => (
-                                    <div className='col-4 my-3' style={{ position: "relative" }} key={data.id}>
-                                        <Players name={data.playerName} specification={data.specification1} category={data.category} soldPlayer = {true} bidPrice = {data.baseValue}/>
-                                    </div>
-                                )): ""
-                            }
+                                {
+                                    soldPlayers.length > 0 ? soldPlayers.map((data) => (
+                                        <div className='col-4 my-3' style={{ position: "relative" }} key={data.id}>
+                                            <Players name={data.fullName} specification={data.specification1} category={data.category} soldPlayer={true} bidPrice={data.bidValue} />
+                                        </div>
+                                    )) : ""
+                                }
                             </div>
                         </div>
                     </div>
@@ -158,11 +168,11 @@ const AuctionLive = () => {
                                 {
                                     !tabChange ? players.map((data) => (
                                         <div className='col-4 mb-3' style={{ position: "relative" }} key={data.id}>
-                                            <Players name={data.playerName} specification={data.specification1} category={data.category} bidPrice = {data.baseValue} soldPlayers = {false}/>
+                                            <Players name={data.fullName} specification={data.specification1} category={data.category} bidPrice={data.bidValue} soldPlayers={false} />
                                         </div>
                                     )) : playerToShow.map((data) => (
                                         <div className='col-4 mb-3' style={{ position: "relative" }} key={data.id}>
-                                            <Players name={data.playerName} specification={data.specification1} category={data.category} bidPrice = {data.baseValue} soldPlayers = {false}/>
+                                            <Players name={data.fullName} specification={data.specification1} category={data.category} bidPrice={data.bidValue} soldPlayers={false} />
                                         </div>
                                     ))
                                 }

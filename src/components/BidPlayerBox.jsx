@@ -8,13 +8,14 @@ import axios from 'axios'
 const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerSpec1, playerId }) => {
     let soldPlayersURL = "http://localhost:6500/soldPlayers"
     let url = 'http://localhost:5000/playersCategory'
-    const { loginPage, setLoginPage, loggedOut, setLoggedOut, bid, setBid, turn, setTurn, newPlayerBtn, setNewPlayerBtn,auctionEnded, setAuctionEnd } = useContext(ContextAuth)
+    const { loginPage, setLoginPage, loggedOut, setLoggedOut, bid, setBid, turn, setTurn, newPlayerBtn, setNewPlayerBtn, auctionEnded, setAuctionEnd } = useContext(ContextAuth)
     const randomPlayerChange = useRef(
         [
-            {   id:playerId,
-                baseValue: bid,
+            {
+                id: playerId,
+                bidValue: bid,
                 category: playerCat,
-                playerName: playerName,
+                fullName: playerName,
                 specification1: playerSpec,
                 specification2: playerSpec1
             }
@@ -35,11 +36,11 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
     const soldBtnClick = (id) => {
         setSoldActive(true)
         setNewPlayerBtn(true)
-        randomPlayerChange.current[0].baseValue = bid;
+        randomPlayerChange.current[0].bidValue = bid;
 
-        axios.delete(url+"/"+id)
-        .then((res)=>console.log('record deleted'))
-        .catch((err)=>console.log(err))
+        axios.delete(url + "/" + id)
+            .then((res) => console.log('record deleted'))
+            .catch((err) => console.log(err))
 
         axios.post(soldPlayersURL, randomPlayerChange.current[0])
             .then((res) => console.log('playerSold'))
@@ -51,12 +52,17 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
         setNewPlayerBtn(false);
         axios.get(url)
             .then((res) => {
-                let randomNum = Math.floor(Math.random() * (res.data.length - 1 + 1) + 1)
+                const randomStringValues = [];
+                res.data.filter((el) => randomStringValues.push(el.id))
+
+
+                let randomNum = Math.floor(Math.random() * randomStringValues.length)
+                randomNum = randomStringValues[randomNum]
                 randomPlayerChange.current = res.data.filter((fl) => fl.id == randomNum)
-                if(randomPlayerChange.current.length == 0){
+                if (randomPlayerChange.current.length == 0) {
                     setAuctionEnd(true)
-                } else{
-                    setBid(parseInt(randomPlayerChange.current[0].baseValue))
+                } else {
+                    setBid(parseInt(randomPlayerChange.current[0].bidValue))
                 }
             })
     }
@@ -65,7 +71,7 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
         !auctionEnded ? randomPlayerChange.current.map((playerElm) => (
             <div className='auction_box_player_section' key={playerElm.id}>
                 <div className='auction_box_player_section_details bg-light border p-3 rounded shadow'>
-                    <h2 className='text-center bg-dark text-light p-2 rounded'>{playerElm.playerName}</h2>
+                    <h2 className='text-center bg-dark text-light p-2 rounded'>{playerElm.fullName}</h2>
                     <div className='auction_box_player_section_details_img text-center mb-2'>
                         <img src={userPp} alt='Player Image' width={200} />
                     </div>
@@ -74,7 +80,7 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
                             <div className='col-6'>
                                 <label><strong>Category:</strong> {playerElm.category}</label>
                             </div>
-                            <div className='col-6'><label><strong>Bid price</strong> {playerElm.baseValue}</label></div>
+                            <div className='col-6'><label><strong>Bid price</strong> {playerElm.bidValue}</label></div>
                             <div className='col-12 mt-2'>
                                 <label><strong>Specification:</strong> {playerElm.specification1}</label>
                             </div>
@@ -93,7 +99,7 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
                 </div>
                 <img src={sold} className={soldActive ? "active" : "d-none"} width={150} />
             </div>
-        )): (<><h2>Auction ended</h2></>)
+        )) : (<><h2>Auction ended</h2></>)
     )
 }
 
