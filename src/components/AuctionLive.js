@@ -17,7 +17,7 @@ const AuctionLive = () => {
 
     let URL = "http://localhost:5000/playersCategory"
     let soldPlayersURL = "http://localhost:6500/soldPlayers"
-    const { loginPage, setLoginPage, loggedOut, setLoggedOut, bid, setBid, turn, setTurn, newPlayerBtn, setNewPlayerBtn, soldPlayers, setSoldPlayers, auctionEnded, setAuctionEnd } = useContext(ContextAuth)
+    const { loginPage, setLoginPage, loggedOut, setLoggedOut, bid, setBid, turn, setTurn, newPlayerBtn, setNewPlayerBtn, soldPlayers, setSoldPlayers, auctionEnded, setAuctionEnd, formPage, setFormPage,auctionPage, setAuctionPage, userParamName, setUserParamName } = useContext(ContextAuth)
 
     const [auctiveLive, setAuctionLive] = useState(false);
     const [players, setPlayers] = useState([]);
@@ -72,6 +72,8 @@ const AuctionLive = () => {
         axios.get(soldPlayersURL)
             .then((res) => setSoldPlayers(res.data))
             .catch((err) => console.log(err))
+        //     setAuctionPage(false)
+        // setFormPage(false)
     })
 
 
@@ -104,7 +106,7 @@ const AuctionLive = () => {
                                 ) : (
                                     auctionEnded ? (<div className='auction_status d-flex justify-content-center align-items-center'>
                                         <h2>Auction ended</h2>
-                                        <Button onClick={() => navigate("/login")} style={{ position: "fixed", bottom: "0" }} className='w-100 bg-danger'>
+                                        <Button onClick={() => navigate(`/welcome/${userParamName}`)} style={{ position: "fixed", bottom: "0" }} className='w-100 bg-danger'>
                                             Back To Dashboard
                                         </Button>
                                     </div>) : (<div className='auction_status d-flex justify-content-center align-items-center'>

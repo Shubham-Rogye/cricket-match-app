@@ -31,7 +31,7 @@ const Login = () => {
     userPassword: ""
 
   })
-  const {loginPage, setLoginPage,loggedOut, setLoggedOut} = useContext(ContextAuth);
+  const {loginPage, setLoginPage,loggedOut, setLoggedOut,loggedIn, setLoggedIn} = useContext(ContextAuth);
   const [accountRegistered, setAccountRegistered] = useState(true)
   const [passwordMatchCheck, setPasswordMatchCheck] = useState(null);
   const [showPass, setShowPass] = useState(false);
@@ -83,6 +83,7 @@ const Login = () => {
   }, [watch("userDOB")]);
 
   useEffect(() => {
+    setLoggedIn(false)
     axios.get(URL)
       .then((res) => {
         setGetData(res.data);
@@ -100,6 +101,8 @@ const Login = () => {
             if(userFilteredData[0].userPassword == data.userPassword){
               navigate(`/welcome/${userFilteredData[0].userFullName}`)
               setLoginPage(false);
+              setLoggedIn(true);
+              
               if(loggedOut){
                 setLoggedOut(false)
               }

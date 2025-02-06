@@ -1,25 +1,19 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, {useContext, useEffect, useState } from 'react'
 import { Button } from 'react-bootstrap'
 import { useForm } from "react-hook-form"
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
 import uploadPhoto from '../uploadPP.jpg'
 import axios from 'axios';
+import { ContextAuth } from '../App';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 const FormPagePlayer = () => {
+    const{formPage, setFormPage,auctionPage, setAuctionPage} = useContext(ContextAuth)
     const [file, setFile] = useState("");
-    // const playerUniqueID = useRef(1)
     let url = "http://localhost:5000/playersCategory"
-
-    // useEffect(()=>{
-    //     axios.get(url)
-    //     .then((res)=>{
-    //         if(res.data.length > 0){
-    //             playerUniqueID.current = res.data[res.data.length - 1].id + 1
-    //         }
-    //     })
-    // },[file])
+    const navigate = useNavigate();
 
     const {
         register,
@@ -67,6 +61,10 @@ const FormPagePlayer = () => {
         setFile(URL.createObjectURL(e.target.files[0]));
     }
 
+    useEffect(()=>{
+        // setAuctionPage(false)
+        // setFormPage(false)
+    })
 
     return (
         <div className='form_page px-5'>
@@ -187,6 +185,7 @@ const FormPagePlayer = () => {
                 </div>
                 <div className='text-center my-3'>
                     <Button variant="dark" type="submit">Submit</Button>
+                    <Link style={{textDecoration:"none"}} className='text-dark ms-3' onClick={()=>navigate(-1)}>Back</Link>
                 </div>
             </form>
         </div>
