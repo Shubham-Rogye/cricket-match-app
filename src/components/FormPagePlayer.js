@@ -7,11 +7,14 @@ import uploadPhoto from '../uploadPP.jpg'
 import axios from 'axios';
 import { ContextAuth } from '../App';
 import { Link, useNavigate } from 'react-router-dom';
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
 
 
 const FormPagePlayer = () => {
     const{formPage, setFormPage,auctionPage, setAuctionPage} = useContext(ContextAuth)
     const [file, setFile] = useState("");
+    const [formFilledData, setFormFilledData] = useState()
     let url = "http://localhost:5000/playersCategory"
     const navigate = useNavigate();
 
@@ -24,6 +27,7 @@ const FormPagePlayer = () => {
     } = useForm()
 
     const onSubmit = (data) => {
+        console.log(data)
 
         var sentData = {
             "fullName": data.fullName,
@@ -42,8 +46,14 @@ const FormPagePlayer = () => {
         }
 
         axios.post(url, sentData)
-            .then((res) => console.log('Record added'))
-
+            .then((res) => {
+                console.log('Record added');
+                axios.get(url)
+                .then((res) => {
+                    setFormFilledData(res.data);                    
+                })
+            })
+            console.log(formFilledData);
             setFile("")
 
         reset({
@@ -52,7 +62,6 @@ const FormPagePlayer = () => {
             category: "",
             specification1: "",
             specification2: "",
-            bidValue: "",
             mobileNo: ""
         });
     }
@@ -62,12 +71,15 @@ const FormPagePlayer = () => {
     }
 
     useEffect(()=>{
-        // setAuctionPage(false)
-        // setFormPage(false)
-    })
+        axios.get(url)
+                .then((res) => {
+                    setFormFilledData(res.data);                    
+                })
+    },[])
 
     return (
-        <div className='form_page px-5'>
+        <>
+            <div className='form_page px-5'>
             <form onSubmit={handleSubmit(onSubmit)} className='p-3 mt-3 shadow-lg'>
                 <div className='page_title text-center'>
                     <h2 className='my-2'>Player Details</h2>
@@ -167,7 +179,7 @@ const FormPagePlayer = () => {
                                 controlId="floatingInput"
                                 label="Min Bid Value"
                             >
-                                <Form.Control type="text" placeholder="name@example.com" {...register("bidValue", { required: true })} />
+                                <Form.Control type="number" value={watch("category") == "Gold" ? 1500 : watch("category") == "Platnium" ? 2000 : 500} disabled  {...register("bidValue", { required: true })} />
                             </FloatingLabel>
                             {errors.bidValue && <span className='error'>This field is required</span>}
                         </div>
@@ -189,6 +201,139 @@ const FormPagePlayer = () => {
                 </div>
             </form>
         </div>
+            <Tabs
+                defaultActiveKey="teams"
+                transition={false}
+                id="noanim-tab-example"
+                className="my-3 justify-content-center"
+            >
+                <Tab eventKey="teams" title="Teams">
+                    <div className='container'>
+                        <table class="table table-light">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Logo</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Owner</th>
+                                    <th scope="col">Total Points</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td >1</td>
+                                    <td>Mark</td>
+                                    <td>Chacha Phaltan</td>
+                                    <td>Sanket Chacha</td>
+                                    <td>6000</td>
+                                    <td>
+                                        <span>edit</span>
+                                        <span>delete</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td >2</td>
+                                    <td>Mark</td>
+                                    <td>Pratz Warriors</td>
+                                    <td>Prathmesh Desai</td>
+                                    <td>6000</td>
+                                    <td>
+                                        <span>edit</span>
+                                        <span>delete</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </Tab>
+                <Tab eventKey="category" title="Category">
+                <div className='container'>
+                        <table class="table table-light">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Player Base Price</th>
+                                    <th scope="col">Min player per team</th>
+                                    <th scope="col">Max player per team</th>
+                                    <th scope="col">Min bid increment</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td >1</td>
+                                    <td>Platinum</td>
+                                    <td>1500</td>
+                                    <td>0</td>
+                                    <td>4</td>
+                                    <td>500</td>
+                                    <td>
+                                        <span>edit</span>
+                                        <span>delete</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td >2</td>
+                                    <td>Gold</td>
+                                    <td>1000</td>
+                                    <td>0</td>
+                                    <td>1</td>
+                                    <td>500</td>
+                                    <td>
+                                        <span>edit</span>
+                                        <span>delete</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td >3</td>
+                                    <td>Silver</td>
+                                    <td>500</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>100</td>
+                                    <td>
+                                        <span>edit</span>
+                                        <span>delete</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </Tab>
+                <Tab eventKey="players" title="Players">
+                    <div className='container'>
+                        <table class="table table-light">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Player</th>
+                                    <th scope="col">Category</th>
+                                    <th scope="col">Is verified</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    formFilledData ? formFilledData.map((elm) => (
+                                        <tr key={elm.id}>
+                                            <td><strong>{elm.fullName}</strong><br /><small>{elm.specification1}</small></td>
+                                            <td><strong>{elm.category}</strong><br /><small>{elm.bidValue}</small></td>
+                                            <td>True</td>
+                                            <td>
+                                                <span>edit</span>
+                                                <span>delete</span>
+                                            </td>
+                                        </tr>
+                                    )) : null
+                                }
+                            </tbody>
+                        </table>
+
+                    </div>
+                </Tab>
+            </Tabs>
+        </>
     )
 }
 

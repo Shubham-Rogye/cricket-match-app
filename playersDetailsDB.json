@@ -1,3 +1,68 @@
 {
-  "playersCategory": []
+  "playersCategory": [
+    {
+      "id": "1610",
+      "fullName": "Virat Kohli",
+      "category": "Platnium",
+      "specification1": "Batsman",
+      "specification2": "Right-Hand-Batsman",
+      "bidValue": "500",
+      "mobileNo": "8855885588",
+      "photo": [
+        {
+          "name": "vk18-removebg-preview.png",
+          "size": 312337,
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "id": "74ad",
+      "fullName": "Shubham Rogye",
+      "category": "Silver",
+      "specification1": "All Rounder",
+      "specification2": "Right-Hand-Batsman",
+      "bidValue": "500",
+      "mobileNo": "8855885588",
+      "photo": [
+        {
+          "name": "vk18-removebg-preview.png",
+          "size": 312337,
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "id": "0547",
+      "fullName": "Rohit Sharma",
+      "category": "Platnium",
+      "specification1": "All Rounder",
+      "specification2": "Right-Hand-Batsman",
+      "bidValue": "500",
+      "mobileNo": "8855885588",
+      "photo": [
+        {
+          "name": "rs-removebg-preview.png",
+          "size": 271858,
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "id": "a1b5",
+      "fullName": "Prathamesh Desai",
+      "category": "Platnium",
+      "specification1": "Batsman",
+      "specification2": "Right-Hand-Batsman",
+      "bidValue": "500",
+      "mobileNo": "8855885588",
+      "photo": [
+        {
+          "name": "uploadPP.jpg",
+          "size": 87837,
+          "type": "image/jpeg"
+        }
+      ]
+    }
+  ]
 }

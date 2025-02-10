@@ -10,21 +10,28 @@ import owner1 from '../vk18-removebg-preview.png'
 import owner2 from '../rs-removebg-preview.png'
 import BidPlayerBox from './BidPlayerBox';
 import { ContextAuth } from '../App';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+
+import teamowner1 from '../team1.png'
+import teamowner2 from '../team3.png'
 
 
 const AuctionLive = () => {
+    const param = useParams();
 
     let URL = "http://localhost:5000/playersCategory"
     let soldPlayersURL = "http://localhost:6500/soldPlayers"
-    const { loginPage, setLoginPage, loggedOut, setLoggedOut, bid, setBid, turn, setTurn, newPlayerBtn, setNewPlayerBtn, soldPlayers, setSoldPlayers, auctionEnded, setAuctionEnd, formPage, setFormPage,auctionPage, setAuctionPage, userParamName, setUserParamName } = useContext(ContextAuth)
+    let unsoldPlayersURL = "http://localhost:6500/unsoldPlayers"
+    const { setBid, turn, soldPlayers, setSoldPlayers, auctionEnded, setAuctionEnd, userParamName, unsoldPlayers,setUnSoldPlayers, owner1Team, setOwner1Team, owner2Team, setOwner2Team } = useContext(ContextAuth)
 
     const [auctiveLive, setAuctionLive] = useState(false);
     const [players, setPlayers] = useState([]);
     const [radioValue, setRadioValue] = useState('1');
     const [playerToShow, setPlayerToShow] = useState();
     const [tabChange, setTabChange] = useState(false);
-    const randomPlayer = useRef([])
+    const [newTab, setNewTab] = useState(false);
+    const randomPlayer = useRef([]);
+    
 
     const radios = [
         { name: 'All', value: '1' },
@@ -41,8 +48,6 @@ const AuctionLive = () => {
 
         const randomPlayerGen = Math.floor(Math.random() * randomStringValues.length);
         let randomStringSingleVal = randomStringValues[randomPlayerGen]
-
-        console.log(randomStringValues)
         const randomPlayerGenenrated = players.filter((elm) => elm.id == randomStringSingleVal)
         randomPlayer.current = randomPlayerGenenrated
         if (randomPlayerGenenrated.length == 0) {
@@ -66,15 +71,26 @@ const AuctionLive = () => {
         } else {
             setPlayerToShow(players)
         }
-    }, [radioValue])
+    }, [radioValue, soldPlayers])
 
     useEffect(() => {
+        console.log('updated')
         axios.get(soldPlayersURL)
-            .then((res) => setSoldPlayers(res.data))
-            .catch((err) => console.log(err))
-        //     setAuctionPage(false)
-        // setFormPage(false)
-    })
+        .then((res) => {
+            setSoldPlayers(res.data);
+            setOwner1Team(res.data.filter((owner) => owner.owner == 1));
+            setOwner2Team(res.data.filter((owner) => owner.owner == 2)); 
+        }).catch((err) => console.log(err));
+
+        axios.get(unsoldPlayersURL)
+        .then((res) => setUnSoldPlayers(res.data))
+        .catch((err) => console.log(err))
+        return
+    },[newTab])
+    
+    useEffect(()=>{
+        setAuctionEnd(false);
+    },[])
 
 
     return (
@@ -84,6 +100,7 @@ const AuctionLive = () => {
                 id="justify-tab-example"
                 className="auction_live_tab"
                 justify
+                onSelect={()=>setNewTab(!newTab)}
             >
                 <Tab eventKey="Live_Bidding" title="Live_Bidding" className='auction_tab'>
                     <div className='auction'>
@@ -92,20 +109,22 @@ const AuctionLive = () => {
                                 (
                                     <div className='auction_status d-flex justify-content-center align-items-center'>
                                         <div className='auction_box d-flex justify-content-space'>
-                                            <div className='auction_box_owner1_section text-center' style={{ opacity: turn != 1 && "0.2" }}>
+                                            {!auctionEnded ? <div className='auction_box_owner1_section text-center' style={{ opacity: turn != 1 && "0.2" }}>
                                                 <img src={owner1} />
                                                 {turn == 1 && <h2 className='bg-danger text-light'>Your turn</h2>}
-                                            </div>
+                                            </div> : null}
                                             <BidPlayerBox playerName={randomPlayer.current[0].fullName} playerCat={randomPlayer.current[0].category} playerBidVal={randomPlayer.current[0].bidValue} playerSpec={randomPlayer.current[0].specification1} playerSpec1={randomPlayer.current[0].specification2} playerId={randomPlayer.current[0].id} />
-                                            <div className='auction_box_owner2_section text-center' style={{ opacity: turn != 2 && "0.2" }}>
+                                            {
+                                                !auctionEnded ? <div className='auction_box_owner2_section text-center' style={{ opacity: turn != 2 && "0.2" }}>
                                                 <img src={owner2} />
                                                 {turn == 2 && <h2 className='bg-danger text-light'>Your turn</h2>}
-                                            </div>
+                                            </div>: null
+                                            }
                                         </div>
                                     </div>
                                 ) : (
                                     auctionEnded ? (<div className='auction_status d-flex justify-content-center align-items-center'>
-                                        <h2>Auction ended</h2>
+                                        <h2>Please Register players for the auction</h2>
                                         <Button onClick={() => navigate(`/welcome/${userParamName}`)} style={{ position: "fixed", bottom: "0" }} className='w-100 bg-danger'>
                                             Back To Dashboard
                                         </Button>
@@ -117,9 +136,63 @@ const AuctionLive = () => {
                     </div>
                 </Tab>
                 <Tab eventKey="Teams" title="Teams" className='auction_tab'>
-                    <div className='auction'>
+                    <div className='auction pt-5'>
                         <div className='container'>
-                            teams
+                            <div className='row  justify-content-between'>
+                                <div className='col-5 bg-light' style={{height:"fit-content"}}>
+                                    <div className='Team1_col text-center'>
+                                        <div className='Team1_col_heading mt-2 py-3 bg-info text-light'>
+                                            <h2>Team 1 players</h2>
+                                        </div>
+                                        <hr />
+                                        <div className='Team1_col_players_list'>
+                                            {
+                                                owner1Team.length > 0 ? owner1Team.map((data) => (
+                                                    <div className='d-flex justify-content-between' key={data.id}>
+                                                            <div className='team_img'>
+                                                                <img src={owner1} width={50} />
+                                                            </div>
+                                                            <div className='player_detail'>
+                                                                <p className='m-0 fw-bold' >{data.fullName}</p>
+                                                                <small>{data.specification1}</small>
+                                                            </div>
+                                                            <div className='player_img'>
+                                                                <img src={teamowner1} width={50} />
+                                                            </div>
+                                                        </div>
+                                                )) : ""
+                                            }
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className='col-5 bg-light' style={{height:"fit-content"}}>
+                                    <div className='Team2_col text-center'>
+                                        <div className='Team2_col_heading mt-2 py-3 bg-primary text-light'>
+                                            <h2>Team 2 Players</h2>
+                                        </div>
+                                        <hr />
+                                        <div className='Team2_col_players_list'>
+                                        {
+                                                owner2Team.length > 0 ? owner2Team.map((data) => (
+                                                    <div className='d-flex justify-content-between' key={data.id}>
+                                                        <div className='team_img'>
+                                                            <img src={owner2} width={50} />
+                                                        </div>
+                                                        <div className='player_detail'>
+                                                            <p className='m-0 fw-bold' >{data.fullName}</p>
+                                                            <small>{data.specification1}</small>
+                                                        </div>
+                                                        <div className='player_img'>
+                                                            <img src={teamowner2} width={50} />
+                                                        </div>
+                                                    </div>
+                                                )) : ""
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </Tab>
@@ -130,7 +203,7 @@ const AuctionLive = () => {
                                 {
                                     soldPlayers.length > 0 ? soldPlayers.map((data) => (
                                         <div className='col-4 my-3' style={{ position: "relative" }} key={data.id}>
-                                            <Players name={data.fullName} specification={data.specification1} category={data.category} soldPlayer={true} bidPrice={data.bidValue} />
+                                            <Players name={data.fullName} specification={data.specification1} category={data.category} soldPlayer={true} bidPrice={data.bidValue} owner={data.owner} />
                                         </div>
                                     )) : ""
                                 }
@@ -139,7 +212,19 @@ const AuctionLive = () => {
                     </div>
                 </Tab>
                 <Tab eventKey="Unsold_players" title="Unsold_players" className='auction_tab'>
-                    Unsold players
+                <div className='auction'>
+                        <div className='container'>
+                            <div className='row'>
+                                {
+                                    unsoldPlayers.length > 0 ? unsoldPlayers.map((data) => (
+                                        <div className='col-4 my-3' style={{ position: "relative" }} key={data.id}>
+                                            <Players name={data.fullName} specification={data.specification1} category={data.category} bidPrice={data.bidValue} />
+                                        </div>
+                                    )) : ""
+                                }
+                            </div>
+                        </div>
+                    </div>
                 </Tab>
                 <Tab eventKey="YTA" title="YTA" className='auction_tab'>
                     <div className='auction'>
@@ -147,23 +232,34 @@ const AuctionLive = () => {
                         <div className='container yet_to_auction pt-5'>
                             <div className='find_player_div mb-3'>
                                 <div className='find_player_div_filter'>
-                                    <strong className='text-light'>Filter: </strong>
-                                    <ButtonGroup>
-                                        {radios.map((radio, idx) => (
-                                            <ToggleButton
-                                                key={idx}
-                                                id={`radio-${idx}`}
-                                                type="radio"
-                                                variant={'outline-warning'}
-                                                name="radio"
-                                                value={radio.value}
-                                                checked={radioValue === radio.value}
-                                                onChange={() => { setRadioValue(radio.value); setTabChange(true) }}
-                                            >
-                                                {radio.name}
-                                            </ToggleButton>
-                                        ))}
-                                    </ButtonGroup>
+                                    ]{
+                                        players.length > 0 ? (
+                                            <>
+                                                <strong className='text-light'>Filter: </strong>
+                                                <ButtonGroup>
+                                                    {radios.map((radio, idx) => (
+                                                        <ToggleButton
+                                                            key={idx}
+                                                            id={`radio-${idx}`}
+                                                            type="radio"
+                                                            variant={'outline-warning'}
+                                                            name="radio"
+                                                            value={radio.value}
+                                                            checked={radioValue === radio.value}
+                                                            onChange={() => { setRadioValue(radio.value); setTabChange(true) }}
+                                                        >
+                                                            {radio.name}
+                                                        </ToggleButton>
+                                                    ))}
+                                                </ButtonGroup>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <h2 className='text-light'>Please fill players registeration form to add players for auction</h2>
+                                                <Button onClick={() => navigate(`/welcome/${param.name}/formPage`)}>Click Here to register players</Button>
+                                            </>
+                                        )
+                                    }
                                 </div>
                             </div>
                             <div className='row'>

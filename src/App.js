@@ -21,11 +21,14 @@ function App() {
   const [turn, setTurn] = useState(1);
   const [newPlayerBtn, setNewPlayerBtn] = useState(false);
   const [soldPlayers, setSoldPlayers] = useState([]);
-  const [auctionEnded, setAuctionEnd] = useState(false);
+  const [auctionEnded, setAuctionEnd] = useState(null);
   const [formPage, setFormPage] = useState(false);
   const [auctionPage, setAuctionPage] = useState(false);
   const [accLanding, setAccLanding] = useState(false);
-  const [userParamName, setUserParamName] = useState("")
+  const [userParamName, setUserParamName] = useState("");
+  const [unsoldPlayers,setUnSoldPlayers] = useState([]);
+  const [owner1Team, setOwner1Team] = useState([]);
+  const [owner2Team, setOwner2Team] = useState([]);
   return (
     <>
       <ContextAuth.Provider
@@ -46,16 +49,31 @@ function App() {
           setAuctionEnd,
           loggedIn,
           setLoggedIn,
-          formPage, setFormPage,auctionPage, setAuctionPage,accLanding, setAccLanding, userParamName, setUserParamName
+          formPage, 
+          setFormPage, 
+          auctionPage, 
+          setAuctionPage, 
+          accLanding, 
+          setAccLanding, 
+          userParamName, 
+          setUserParamName,
+          unsoldPlayers,
+          setUnSoldPlayers,
+          owner1Team,
+          setOwner1Team,
+          owner2Team,
+          setOwner2Team
         }}
       >
         <BrowserRouter>
           <Routes>
             <Route path="/" index element={<LandingPage />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/welcome/:name/" element={<AccountLanding />}>
-              <Route path=":name/liveAuction" element={<AuctionLive />} />
-              <Route path=":name/formPage" element={<FormPagePlayer />} />
+            <Route path="/welcome/" element={<AccountLanding />}>
+              <Route path=":name" element={<AccountLanding />} >
+                <Route path="liveAuction" element={<AuctionLive />} />
+                <Route path="formPage" element={<FormPagePlayer />} />
+              </Route>
             </Route>
             <Route path="/unauthorizedPage" element={<UnauthorizedAccess />} />
             <Route path="*" element={<PageNotFound />} />

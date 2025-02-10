@@ -1,12 +1,4 @@
 {
-  "soldPlayers": [
-    {
-      "id": "9b9b",
-      "bidValue": 1550,
-      "category": "Gold",
-      "fullName": "Shubham Rogye",
-      "specification1": "Batsman",
-      "specification2": "Right-Hand-Batsman"
-    }
-  ]
+  "soldPlayers": [],
+  "unsoldPlayers": []
 }

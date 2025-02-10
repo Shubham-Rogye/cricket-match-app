@@ -266,3 +266,59 @@ ul.shadow.py-3.pe-5.ps-3.logoutDropDwn:after {
   border: 10px solid #09d409;
   border-color: transparent transparent #09d409 transparent;
 }
+
+.Team2_col_players_list > div, .Team1_col_players_list > div{
+  margin-bottom:10px ;
+}
+
+.timer {
+  position: absolute;
+  background: #fff;
+  padding: 10px;
+  border-radius: 50%;
+  margin: 0 auto;
+  left: -60px;
+  width: 48px;
+  border: 4px solid red;
+  margin-top: 2px;
+  top: 0;
+  text-align: center;
+}
+
+.timer::before {
+  content: "";
+  position: absolute;
+  width: 15px;
+  height: 10px;
+  background: red;
+  right: -16px;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+}
+
+.timer2 {
+  position: absolute;
+  background: #fff;
+  padding: 10px;
+  border-radius: 50%;
+  margin: 0 auto;
+  right: -60px;
+  width: 48px;
+  border: 4px solid red;
+  margin-top: 2px;
+  top: 0;
+  text-align: center;
+}
+
+.timer2::before {
+  content: "";
+  position: absolute;
+  width: 15px;
+  height: 10px;
+  background: red;
+  left: -16px;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+}

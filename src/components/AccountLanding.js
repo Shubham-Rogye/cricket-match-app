@@ -56,7 +56,7 @@ const AccountLanding = () => {
     if (!loggedIn && !alreadyLogin) {
       navigate("/unauthorizedPage");
     }
-    setUserParamName(param.name)
+    setUserParamName(param.name);
   }, []);
 
   const redirctTo = () => {
@@ -134,7 +134,7 @@ const AccountLanding = () => {
                     <div className="container-fluid">
                       <div className="row">
                         <div className="col-5 d-flex align-items-center ms-3 p-3 shadow welcome_box rounded" style={{background:"#fff"}}>
-                          <i class="bi bi-person-circle"></i>
+                          <i className="bi bi-person-circle"></i>
                           <p className="m-0 ms-2">Welcome {param.name}</p>
                         </div>
                         <div className="col-5 d-flex align-items-center ms-3 p-3 shadow rounded" style={{background:"#fff"}}>
@@ -171,7 +171,7 @@ const AccountLanding = () => {
                     <>
                       <div className="d-flex justify-content-center">
                         <div className="col-12 p-3 bg-light">
-                          <table class="table table-hover">
+                          <table className="table table-hover">
                             <thead>
                               <tr>
                                 <th scope="col">#</th>
@@ -190,19 +190,19 @@ const AccountLanding = () => {
                                     href="#"
                                     className="link-underline link-underline-opacity-0 text-primary"
                                   >
-                                    <i class="bi bi-eye"></i>View
+                                    <i className="bi bi-eye"></i>View
                                   </a>
                                   <a
                                     href="#"
                                     className="link-underline link-underline-opacity-0 mx-4 text-warning"
                                   >
-                                    <i class="bi bi-pencil-square"></i>Edit
+                                    <i className="bi bi-pencil-square"></i>Edit
                                   </a>
                                   <a
                                     href="#"
                                     className="link-underline link-underline-opacity-0 text-success-emphasis"
                                   >
-                                    <i class="bi bi-download"></i>Data export
+                                    <i className="bi bi-download"></i>Data export
                                   </a>
                                 </td>
                               </tr>
@@ -215,19 +215,19 @@ const AccountLanding = () => {
                                     href="#"
                                     className="link-underline link-underline-opacity-0 text-primary"
                                   >
-                                    <i class="bi bi-eye"></i>View
+                                    <i className="bi bi-eye"></i>View
                                   </a>
                                   <a
                                     href="#"
                                     className="link-underline link-underline-opacity-0 mx-4 text-warning"
                                   >
-                                    <i class="bi bi-pencil-square"></i>Edit
+                                    <i className="bi bi-pencil-square"></i>Edit
                                   </a>
                                   <a
                                     href="#"
                                     className="link-underline link-underline-opacity-0 text-success-emphasis"
                                   >
-                                    <i class="bi bi-download"></i>Data export
+                                    <i className="bi bi-download"></i>Data export
                                   </a>
                                 </td>
                               </tr>
@@ -240,19 +240,19 @@ const AccountLanding = () => {
                                     href="#"
                                     className="link-underline link-underline-opacity-0 text-primary"
                                   >
-                                    <i class="bi bi-eye"></i>View
+                                    <i className="bi bi-eye"></i>View
                                   </a>
                                   <a
                                     href="#"
                                     className="link-underline link-underline-opacity-0 mx-4 text-warning"
                                   >
-                                    <i class="bi bi-pencil-square"></i>Edit
+                                    <i className="bi bi-pencil-square"></i>Edit
                                   </a>
                                   <a
                                     href="#"
                                     className="link-underline link-underline-opacity-0 text-success-emphasis"
                                   >
-                                    <i class="bi bi-download"></i>Data export
+                                    <i className="bi bi-download"></i>Data export
                                   </a>
                                 </td>
                               </tr>
@@ -265,52 +265,52 @@ const AccountLanding = () => {
                                     href="#"
                                     className="link-underline link-underline-opacity-0 text-primary"
                                   >
-                                    <i class="bi bi-eye"></i>View
+                                    <i className="bi bi-eye"></i>View
                                   </a>
                                   <a
                                     href="#"
                                     className="link-underline link-underline-opacity-0 mx-4 text-warning"
                                   >
-                                    <i class="bi bi-pencil-square"></i>Edit
+                                    <i className="bi bi-pencil-square"></i>Edit
                                   </a>
                                   <a
                                     href="#"
                                     className="link-underline link-underline-opacity-0 text-success-emphasis"
                                   >
-                                    <i class="bi bi-download"></i>Data export
+                                    <i className="bi bi-download"></i>Data export
                                   </a>
                                 </td>
                               </tr>
                             </tbody>
                           </table>
                           <nav aria-label="Page navigation example">
-                            <ul class="pagination justify-content-center">
-                              <li class="page-item">
+                            <ul className="pagination justify-content-center">
+                              <li className="page-item">
                                 <a
-                                  class="page-link"
+                                  className="page-link"
                                   href="#"
                                   aria-label="Previous"
                                 >
                                   <span aria-hidden="true">&laquo;</span>
                                 </a>
                               </li>
-                              <li class="page-item">
-                                <a class="page-link" href="#">
+                              <li className="page-item">
+                                <a className="page-link" href="#">
                                   1
                                 </a>
                               </li>
-                              <li class="page-item">
-                                <a class="page-link" href="#">
+                              <li className="page-item">
+                                <a className="page-link" href="#">
                                   2
                                 </a>
                               </li>
-                              <li class="page-item">
-                                <a class="page-link" href="#">
+                              <li className="page-item">
+                                <a className="page-link" href="#">
                                   3
                                 </a>
                               </li>
-                              <li class="page-item">
-                                <a class="page-link" href="#" aria-label="Next">
+                              <li className="page-item">
+                                <a className="page-link" href="#" aria-label="Next">
                                   <span aria-hidden="true">&raquo;</span>
                                 </a>
                               </li>

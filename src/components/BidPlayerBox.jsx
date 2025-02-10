@@ -4,11 +4,28 @@ import Button from 'react-bootstrap/Button'
 import sold from '../sold-removebg-preview.png'
 import { ContextAuth } from '../App'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
+
 
 const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerSpec1, playerId }) => {
+    const {userParamName} = useContext(ContextAuth)
+    const { bid, setBid, turn, setTurn, newPlayerBtn, setNewPlayerBtn, auctionEnded, setAuctionEnd } = useContext(ContextAuth)
     let soldPlayersURL = "http://localhost:6500/soldPlayers"
+    let unsoldPlayersURL = "http://localhost:6500/unsoldPlayers"
     let url = 'http://localhost:5000/playersCategory'
-    const { loginPage, setLoginPage, loggedOut, setLoggedOut, bid, setBid, turn, setTurn, newPlayerBtn, setNewPlayerBtn, auctionEnded, setAuctionEnd } = useContext(ContextAuth)
+    const navigate = useNavigate();
+    const [soldActive, setSoldActive] = useState(false)
+    const [timerCount, setTimerCount] = useState(30)
+    const [forUnsold, setForUnsold] = useState(
+        {
+            id: playerId,
+            bidValue: playerBidVal,
+            category: playerCat,
+            fullName: playerName,
+            specification1: playerSpec,
+            specification2: playerSpec1
+        }
+    )
     const randomPlayerChange = useRef(
         [
             {
@@ -17,11 +34,29 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
                 category: playerCat,
                 fullName: playerName,
                 specification1: playerSpec,
-                specification2: playerSpec1
+                specification2: playerSpec1,
+                owner: 1
             }
         ]
     )
-    const [soldActive, setSoldActive] = useState(false)
+
+    useEffect(()=>{
+        const timer = timerCount > 0 && setInterval(()=> setTimerCount(timerCount - 1),1000);
+        
+        if (timerCount == 0) {
+            if (turn == 1) {
+                setTurn(turn + 1);
+            } else {
+                setTurn(turn - 1);
+            }
+            setTimerCount(30)
+        }
+
+        if(newPlayerBtn){
+            clearInterval(timer);
+        }
+        return () => clearInterval(timer);
+    },[timerCount])
 
 
     const bidBtnClick = () => {
@@ -31,11 +66,13 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
         } else {
             setTurn(turn - 1);
         }
+        setTimerCount(30);
     }
 
     const soldBtnClick = (id) => {
         setSoldActive(true)
         setNewPlayerBtn(true)
+        randomPlayerChange.current[0].owner = turn == 1 ? 2 : 1
         randomPlayerChange.current[0].bidValue = bid;
 
         axios.delete(url + "/" + id)
@@ -47,7 +84,18 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
 
     }
 
+    const unsoldBtnClick = (id) => {
+        setNewPlayerBtn(true)
+        axios.delete(url + "/" + id)
+            .then((res) => console.log('record deleted'))
+            .catch((err) => console.log(err))
+        axios.post(unsoldPlayersURL, forUnsold)
+            .then((res) => console.log('player add to unSold'))
+
+    }
+
     const newPlayerBtnClicked = () => {
+        setTimerCount(30);
         setSoldActive(false)
         setNewPlayerBtn(false);
         axios.get(url)
@@ -92,14 +140,18 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
                         <Button variant="primary" size='sm' onClick={bidBtnClick} disabled={newPlayerBtn}>Increase Bid</Button>
                     </div>
                     <div className='mt-3 d-flex justify-content-center'>
-                        <Button variant="danger" size='sm' disabled={newPlayerBtn}>Unsold</Button>
+                        <Button variant="danger" size='sm' onClick={()=>unsoldBtnClick(playerElm.id)}disabled={newPlayerBtn}>Unsold</Button>
                         <Button variant="success" size='sm' className='mx-2' onClick={() => soldBtnClick(playerElm.id)} disabled={newPlayerBtn}>Sold out</Button>
                         <Button variant="info" size='sm' disabled={!newPlayerBtn} onClick={newPlayerBtnClicked}>New Player</Button>
                     </div>
                 </div>
+                <div className={turn == 1 ? "timer":"timer2"}>
+                    <span>{timerCount}</span>
+                </div>
                 <img src={sold} className={soldActive ? "active" : "d-none"} width={150} />
             </div>
-        )) : (<><h2>Auction ended</h2></>)
+        )) : (<><Button onClick={() => navigate(`/welcome/${userParamName}`)} className='bg-danger'>Auction ended, Back To Dashboard
+    </Button></>)
     )
 }
 
