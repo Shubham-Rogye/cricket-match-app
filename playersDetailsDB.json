@@ -1,60 +1,172 @@
 {
   "playersCategory": [
     {
-      "id": "1610",
-      "fullName": "Virat Kohli",
+      "id": "66ef",
+      "fullName": "Sanket Chawan",
       "category": "Platnium",
       "specification1": "Batsman",
       "specification2": "Right-Hand-Batsman",
-      "bidValue": "500",
+      "bidValue": 2000,
       "mobileNo": "8855885588",
       "photo": [
         {
-          "name": "vk18-removebg-preview.png",
-          "size": 312337,
-          "type": "image/png"
+          "name": "uploadPP.jpg",
+          "size": 87837,
+          "type": "image/jpeg"
         }
       ]
     },
     {
-      "id": "74ad",
+      "id": "bd19",
+      "fullName": "Prathamesh Desai",
+      "category": "Platnium",
+      "specification1": "Bowler",
+      "specification2": "Right-Arm Fast Bowler",
+      "bidValue": 2000,
+      "mobileNo": "8855885588",
+      "photo": [
+        {
+          "name": "uploadPP.jpg",
+          "size": 87837,
+          "type": "image/jpeg"
+        }
+      ]
+    },
+    {
+      "id": "8d95",
       "fullName": "Shubham Rogye",
+      "category": "Gold",
+      "specification1": "All Rounder",
+      "specification2": "Right-Hand-Batsman",
+      "bidValue": 1500,
+      "mobileNo": "8855885588",
+      "photo": [
+        {
+          "name": "uploadPP.jpg",
+          "size": 87837,
+          "type": "image/jpeg"
+        }
+      ]
+    },
+    {
+      "id": "cb6d",
+      "fullName": "Sushant Poojary",
+      "category": "Gold",
+      "specification1": "Batsman",
+      "specification2": "Right-Hand-Batsman",
+      "bidValue": 1500,
+      "mobileNo": "8855885588",
+      "photo": [
+        {
+          "name": "uploadPP.jpg",
+          "size": 87837,
+          "type": "image/jpeg"
+        }
+      ]
+    },
+    {
+      "id": "b8e5",
+      "fullName": "Aditya Samant",
+      "category": "Gold",
+      "specification1": "Batsman",
+      "specification2": "Right-Hand-Batsman",
+      "bidValue": 1500,
+      "mobileNo": "8855885588",
+      "photo": [
+        {
+          "name": "uploadPP.jpg",
+          "size": 87837,
+          "type": "image/jpeg"
+        }
+      ]
+    },
+    {
+      "id": "0ae3",
+      "fullName": "Akash Shukla",
       "category": "Silver",
       "specification1": "All Rounder",
       "specification2": "Right-Hand-Batsman",
-      "bidValue": "500",
+      "bidValue": 500,
       "mobileNo": "8855885588",
       "photo": [
         {
-          "name": "vk18-removebg-preview.png",
-          "size": 312337,
-          "type": "image/png"
+          "name": "uploadPP.jpg",
+          "size": 87837,
+          "type": "image/jpeg"
         }
       ]
     },
     {
-      "id": "0547",
-      "fullName": "Rohit Sharma",
-      "category": "Platnium",
+      "id": "4068",
+      "fullName": "Chandan Saw",
+      "category": "Silver",
+      "specification1": "Bowler",
+      "specification2": "Right-Arm Fast Bowler",
+      "bidValue": 500,
+      "mobileNo": "8855885588",
+      "photo": [
+        {
+          "name": "uploadPP.jpg",
+          "size": 87837,
+          "type": "image/jpeg"
+        }
+      ]
+    },
+    {
+      "id": "22dd",
+      "fullName": "tejas Moolya",
+      "category": "Silver",
       "specification1": "All Rounder",
       "specification2": "Right-Hand-Batsman",
-      "bidValue": "500",
+      "bidValue": 500,
       "mobileNo": "8855885588",
       "photo": [
         {
-          "name": "rs-removebg-preview.png",
-          "size": 271858,
-          "type": "image/png"
+          "name": "uploadPP.jpg",
+          "size": 87837,
+          "type": "image/jpeg"
         }
       ]
     },
     {
-      "id": "a1b5",
-      "fullName": "Prathamesh Desai",
-      "category": "Platnium",
+      "id": "769c",
+      "fullName": "Karan Patil",
+      "category": "Silver",
+      "specification1": "All Rounder",
+      "specification2": "Right-Hand-Batsman",
+      "bidValue": 500,
+      "mobileNo": "8855885588",
+      "photo": [
+        {
+          "name": "uploadPP.jpg",
+          "size": 87837,
+          "type": "image/jpeg"
+        }
+      ]
+    },
+    {
+      "id": "1867",
+      "fullName": "Rohan Solkar",
+      "category": "Silver",
       "specification1": "Batsman",
       "specification2": "Right-Hand-Batsman",
-      "bidValue": "500",
+      "bidValue": 500,
+      "mobileNo": "8855885588",
+      "photo": [
+        {
+          "name": "uploadPP.jpg",
+          "size": 87837,
+          "type": "image/jpeg"
+        }
+      ]
+    },
+    {
+      "id": "2da8",
+      "fullName": "Bhushan ",
+      "category": "Silver",
+      "specification1": "Batsman",
+      "specification2": "Right-Hand-Batsman",
+      "bidValue": 500,
       "mobileNo": "8855885588",
       "photo": [
         {

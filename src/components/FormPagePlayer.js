@@ -10,11 +10,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 
-
 const FormPagePlayer = () => {
-    const{formPage, setFormPage,auctionPage, setAuctionPage} = useContext(ContextAuth)
+    const{team,setTeam} = useContext(ContextAuth)
     const [file, setFile] = useState("");
-    const [formFilledData, setFormFilledData] = useState()
+    const [bidValue, setBidValue] = useState(500)
+    const [formFilledData, setFormFilledData] = useState([])
     let url = "http://localhost:5000/playersCategory"
     const navigate = useNavigate();
 
@@ -34,7 +34,7 @@ const FormPagePlayer = () => {
             "category": data.category,
             "specification1": data.specification1,
             "specification2": data.specification2,
-            "bidValue": data.bidValue,
+            "bidValue": bidValue,
             "mobileNo": data.mobileNo,
             "photo": [
                 {
@@ -44,6 +44,8 @@ const FormPagePlayer = () => {
                 }
             ]
         }
+
+        setBidValue(500)
 
         axios.post(url, sentData)
             .then((res) => {
@@ -68,6 +70,17 @@ const FormPagePlayer = () => {
 
     const uploadImg = (e) => {
         setFile(URL.createObjectURL(e.target.files[0]));
+    }
+
+    const handleDel = (id) => {
+        debugger;
+        axios.delete(url+"/"+id)
+        .then((res)=>axios.get(url).then((res)=>setFormFilledData(res.data)))
+        .catch((err)=>alert(err))
+    }
+
+    const handleEditl = (id) => {
+        console.log(id)
     }
 
     useEffect(()=>{
@@ -110,7 +123,7 @@ const FormPagePlayer = () => {
                                 controlId="floatingInput"
                                 label="Category"
                             >
-                                <Form.Select aria-label="Floating label select example" {...register("category", { required: true })}>
+                                <Form.Select aria-label="Floating label select example" {...register("category", { required: true, onChange: () => setBidValue(watch("category") == "Gold" ? 1500 : watch("category") == "Platnium" ? 2000 : 500) })}>
                                     <option ></option>
                                     <option value="Gold">Gold</option>
                                     <option value="Silver">Silver</option>
@@ -179,7 +192,7 @@ const FormPagePlayer = () => {
                                 controlId="floatingInput"
                                 label="Min Bid Value"
                             >
-                                <Form.Control type="number" value={watch("category") == "Gold" ? 1500 : watch("category") == "Platnium" ? 2000 : 500} disabled  {...register("bidValue", { required: true })} />
+                                <Form.Control type="number" value={bidValue} disabled  {...register("bidValue", { required: true})} />
                             </FloatingLabel>
                             {errors.bidValue && <span className='error'>This field is required</span>}
                         </div>
@@ -205,7 +218,7 @@ const FormPagePlayer = () => {
                 defaultActiveKey="teams"
                 transition={false}
                 id="noanim-tab-example"
-                className="my-3 justify-content-center"
+                className="my-3 justify-content-center form_page_tabs"
             >
                 <Tab eventKey="teams" title="Teams">
                     <div className='container'>
@@ -221,28 +234,21 @@ const FormPagePlayer = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td >1</td>
-                                    <td>Mark</td>
-                                    <td>Chacha Phaltan</td>
-                                    <td>Sanket Chacha</td>
-                                    <td>6000</td>
-                                    <td>
-                                        <span>edit</span>
-                                        <span>delete</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td >2</td>
-                                    <td>Mark</td>
-                                    <td>Pratz Warriors</td>
-                                    <td>Prathmesh Desai</td>
-                                    <td>6000</td>
-                                    <td>
-                                        <span>edit</span>
-                                        <span>delete</span>
-                                    </td>
-                                </tr>
+                                {
+                                    team.map((elm, index)=>(
+                                        <tr key={elm.id}>
+                                            <td>{index + 1}</td>
+                                            <td><img src={elm.logo}/></td>
+                                            <td>{elm.name}</td>
+                                            <td>{elm.owner}</td>
+                                            <td>{elm.points}</td>
+                                            <td>
+                                                <a href='#'><i class="bi bi-pencil-fill"></i>Edit</a>
+                                                <a href='#'><i class="bi bi-trash3"></i>Delete</a>
+                                            </td>
+                                        </tr>
+                                    ))
+                                }
                             </tbody>
                         </table>
                     </div>
@@ -270,8 +276,8 @@ const FormPagePlayer = () => {
                                     <td>4</td>
                                     <td>500</td>
                                     <td>
-                                        <span>edit</span>
-                                        <span>delete</span>
+                                        <a href='#'><i class="bi bi-pencil-fill"></i>Edit</a>
+                                        <a href='#'><i class="bi bi-trash3"></i>Delete</a>
                                     </td>
                                 </tr>
                                 <tr>
@@ -282,8 +288,8 @@ const FormPagePlayer = () => {
                                     <td>1</td>
                                     <td>500</td>
                                     <td>
-                                        <span>edit</span>
-                                        <span>delete</span>
+                                        <a href='#'><i class="bi bi-pencil-fill"></i>Edit</a>
+                                        <a href='#'><i class="bi bi-trash3"></i>Delete</a>
                                     </td>
                                 </tr>
                                 <tr>
@@ -294,8 +300,8 @@ const FormPagePlayer = () => {
                                     <td>1</td>
                                     <td>100</td>
                                     <td>
-                                        <span>edit</span>
-                                        <span>delete</span>
+                                        <a href='#'><i class="bi bi-pencil-fill"></i>Edit</a>
+                                        <a href='#'><i class="bi bi-trash3"></i>Delete</a>
                                     </td>
                                 </tr>
                             </tbody>
@@ -321,8 +327,8 @@ const FormPagePlayer = () => {
                                             <td><strong>{elm.category}</strong><br /><small>{elm.bidValue}</small></td>
                                             <td>True</td>
                                             <td>
-                                                <span>edit</span>
-                                                <span>delete</span>
+                                                <a onClick={()=>handleEditl(elm.id)}><i class="bi bi-pencil-fill"></i>Edit</a>
+                                                <a onClick={()=>handleDel(elm.id)}><i class="bi bi-trash3"></i>Delete</a>
                                             </td>
                                         </tr>
                                     )) : null

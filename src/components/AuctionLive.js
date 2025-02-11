@@ -11,6 +11,7 @@ import owner2 from '../rs-removebg-preview.png'
 import BidPlayerBox from './BidPlayerBox';
 import { ContextAuth } from '../App';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useReactToPrint } from "react-to-print";
 
 import teamowner1 from '../team1.png'
 import teamowner2 from '../team3.png'
@@ -22,7 +23,7 @@ const AuctionLive = () => {
     let URL = "http://localhost:5000/playersCategory"
     let soldPlayersURL = "http://localhost:6500/soldPlayers"
     let unsoldPlayersURL = "http://localhost:6500/unsoldPlayers"
-    const { setBid, turn, soldPlayers, setSoldPlayers, auctionEnded, setAuctionEnd, userParamName, unsoldPlayers,setUnSoldPlayers, owner1Team, setOwner1Team, owner2Team, setOwner2Team } = useContext(ContextAuth)
+    const { setBid, turn, soldPlayers, setSoldPlayers, auctionEnded, setAuctionEnd, userParamName, unsoldPlayers,setUnSoldPlayers, owner1Team, setOwner1Team, owner2Team, setOwner2Team, team } = useContext(ContextAuth)
 
     const [auctiveLive, setAuctionLive] = useState(false);
     const [players, setPlayers] = useState([]);
@@ -31,6 +32,8 @@ const AuctionLive = () => {
     const [tabChange, setTabChange] = useState(false);
     const [newTab, setNewTab] = useState(false);
     const randomPlayer = useRef([]);
+    const contentRef = useRef(null);
+    const reactToPrintFn = useReactToPrint({ contentRef });
     
 
     const radios = [
@@ -138,17 +141,19 @@ const AuctionLive = () => {
                 <Tab eventKey="Teams" title="Teams" className='auction_tab'>
                     <div className='auction pt-5'>
                         <div className='container'>
-                            <div className='row  justify-content-between'>
-                                <div className='col-5 bg-light' style={{height:"fit-content"}}>
-                                    <div className='Team1_col text-center'>
-                                        <div className='Team1_col_heading mt-2 py-3 bg-info text-light'>
-                                            <h2>Team 1 players</h2>
-                                        </div>
-                                        <hr />
-                                        <div className='Team1_col_players_list'>
-                                            {
-                                                owner1Team.length > 0 ? owner1Team.map((data) => (
-                                                    <div className='d-flex justify-content-between' key={data.id}>
+                            <div className='row  justify-content-between' style={{gap:"6px"}} ref={contentRef}>
+                                {
+                                    team.map((elm, index)=>(
+                                        <div className='col bg-light' style={{ height: "fit-content" }}>
+                                            <div className='Team1_col text-center' key={elm.id}>
+                                                <div className={index == 0 ? 'Team1_col_heading mt-2 py-3 bg-info text-light':'Team1_col_heading mt-2 py-3 bg-primary text-light'}>
+                                                    <h2>{elm.name}</h2>
+                                                </div>
+                                                <hr />
+                                                <div className='Team1_col_players_list'>
+                                                    {
+                                                       index == 0 ? (owner1Team.length > 0 ? owner1Team.map((data) => (
+                                                        <div className='d-flex justify-content-between' key={data.id}>
                                                             <div className='team_img'>
                                                                 <img src={owner1} width={50} />
                                                             </div>
@@ -160,38 +165,30 @@ const AuctionLive = () => {
                                                                 <img src={teamowner1} width={50} />
                                                             </div>
                                                         </div>
-                                                )) : ""
-                                            }
+                                                    )) : ""):(owner2Team.length > 0 ? owner2Team.map((data) => (
+                                                        <div className='d-flex justify-content-between' key={data.id}>
+                                                            <div className='team_img'>
+                                                                <img src={owner2} width={50} />
+                                                            </div>
+                                                            <div className='player_detail'>
+                                                                <p className='m-0 fw-bold' >{data.fullName}</p>
+                                                                <small>{data.specification1}</small>
+                                                            </div>
+                                                            <div className='player_img'>
+                                                                <img src={teamowner2} width={50} />
+                                                            </div>
+                                                        </div>
+                                                    )) : "")
+                                                    }
 
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div className='col-5 bg-light' style={{height:"fit-content"}}>
-                                    <div className='Team2_col text-center'>
-                                        <div className='Team2_col_heading mt-2 py-3 bg-primary text-light'>
-                                            <h2>Team 2 Players</h2>
-                                        </div>
-                                        <hr />
-                                        <div className='Team2_col_players_list'>
-                                        {
-                                                owner2Team.length > 0 ? owner2Team.map((data) => (
-                                                    <div className='d-flex justify-content-between' key={data.id}>
-                                                        <div className='team_img'>
-                                                            <img src={owner2} width={50} />
-                                                        </div>
-                                                        <div className='player_detail'>
-                                                            <p className='m-0 fw-bold' >{data.fullName}</p>
-                                                            <small>{data.specification1}</small>
-                                                        </div>
-                                                        <div className='player_img'>
-                                                            <img src={teamowner2} width={50} />
-                                                        </div>
-                                                    </div>
-                                                )) : ""
-                                            }
-                                        </div>
-                                    </div>
-                                </div>
+                                    ))
+                                }
+                            </div>
+                            <div className='d-flex justify-content-center mt-3'>
+                                <Button variant='danger' onClick={() => reactToPrintFn()}>Take Print</Button>                                
                             </div>
                         </div>
                     </div>

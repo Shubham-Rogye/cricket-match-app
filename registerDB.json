@@ -97,6 +97,19 @@
       "userDOB": "1997-12-07",
       "userEmail": "rohan@test.com",
       "userPassword": "Rohan@123"
+    },
+    {
+      "id": "943e",
+      "userFullName": "Shubham Rogye",
+      "userDOB": "1998-04-28",
+      "userEmail": "shubham@test.com"
+    },
+    {
+      "id": "8d03",
+      "userFullName": "asdasd",
+      "userDOB": "1998-04-28",
+      "userEmail": "SHUBHAM@TEST.COM",
+      "userPassword": "sHUBHAM@123"
     }
   ]
 }

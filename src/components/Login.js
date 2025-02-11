@@ -18,11 +18,7 @@ const Login = () => {
     setError,
     clearErrors,
     formState: { errors },
-  } = useForm(
-    {
-      criteriaMode: "all",
-    }
-  )
+  } = useForm()
 
   const [registerUser, setRegisterUser] = useState({
     userFullName: "",
@@ -53,9 +49,9 @@ const Login = () => {
     const passwordConfirm = watch("userConfirmPassword");
 
     if (password == passwordConfirm) {
-      clearErrors("userConfirmPassword")
+      clearErrors("userConfirmPassword1")
     } else {
-      setError("userConfirmPassword", {
+      setError("userConfirmPassword1", {
         type: "password mismatch",
         message: "Password did not match"
       });
@@ -92,7 +88,7 @@ const Login = () => {
   }, [accountRegistered])
 
   const onSubmit = (data) => {
-
+      console.log(errors)
         if(accountRegistered){
           // let userFilteredData = []
           const userFilteredData = getData.filter((userData) => userData.userEmail == data.userEmail);
@@ -162,7 +158,7 @@ const Login = () => {
                   message: !accountRegistered && "Password must be at least 8 characters" 
                 },
                 pattern: !accountRegistered && /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,15}$/,
-                onChange: () => { setPasswordMatchCheck(watch("userPassword")); setRegisterUser({...registerUser, userPassword:watch("userPassword")})} })} />
+                onChange: () => {setPasswordMatchCheck(watch("userPassword")); setRegisterUser({...registerUser, userPassword:watch("userPassword")}); reset({userConfirmPassword: ""})} })} />
               {errors?.userPassword?.type === "required" && <span className='errorMessage'>This field is required</span>}
               {!accountRegistered && <>{errors?.userPassword?.type === "minLength" && <span className='errorMessage'>{errors.userPassword.message}</span>}{errors?.userPassword?.type === "pattern" && <span className='errorMessage'>Password must contain aleast 1 capital letter & 1 number</span>}</>}
             </div>
@@ -172,8 +168,8 @@ const Login = () => {
                 <i className={showPass ? 'bi bi-eye-slash-fill':'bi bi-eye-fill'} onClick={()=>setShowPass(!showPass)}></i>
                   <label className='form-label'>Confirm password</label>
                   <input type={showPass ? 'text':'password'} className={errors.userConfirmPassword ? 'form-control error' : 'form-control'} {...register("userConfirmPassword", { required: true, onChange: checkPassword })} />
-                  {errors?.userConfirmPassword?.type === "password mismatch" && <span className='errorMessage'>{errors.userConfirmPassword.message}</span>}
                   {errors?.userConfirmPassword?.type === "required" && <span className='errorMessage'>This field is required</span>}
+                  {errors?.userConfirmPassword1?.type === "password mismatch" && <span className='errorMessage'>{errors.userConfirmPassword1.message}</span>}
                 </div>
               </>
             ) : null}

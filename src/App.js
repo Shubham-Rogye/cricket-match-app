@@ -10,6 +10,8 @@ import AuctionLive from "./components/AuctionLive";
 import FormPagePlayer from "./components/FormPagePlayer";
 import UnauthorizedAccess from "./components/UnauthorizedAccess";
 import PageNotFound from "./components/PageNotFound";
+import owner1 from './team1.png'
+import owner2 from './team3.png'
 
 export const ContextAuth = createContext();
 
@@ -29,6 +31,20 @@ function App() {
   const [unsoldPlayers,setUnSoldPlayers] = useState([]);
   const [owner1Team, setOwner1Team] = useState([]);
   const [owner2Team, setOwner2Team] = useState([]);
+  const [team, setTeam] = useState([
+    {
+      "logo": owner1,
+      "name":"Chacha Phaltan",
+      "owner":"Sanket Chawan",
+      "points":6000
+    },
+    {
+      "logo": owner2,
+      "name":"Pratz warriors",
+      "owner":"Prathmesh Desai",
+      "points":6000
+    }
+  ])
   return (
     <>
       <ContextAuth.Provider
@@ -62,7 +78,9 @@ function App() {
           owner1Team,
           setOwner1Team,
           owner2Team,
-          setOwner2Team
+          setOwner2Team,
+          team,
+          setTeam
         }}
       >
         <BrowserRouter>
