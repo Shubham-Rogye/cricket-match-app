@@ -253,7 +253,7 @@
   color: #fff !important;
 }
 
-ul.shadow.py-3.pe-5.ps-3.logoutDropDwn:after {
+ul.shadow.logoutDropDwn:after {
   content: "";
   position: absolute;
   width: 0px;
@@ -331,4 +331,14 @@ ul.shadow.py-3.pe-5.ps-3.logoutDropDwn:after {
 
 .form_page_tabs ~ .tab-content table a:nth-child(2){
   color: red;
+}
+.userLogoutTab {
+  transition: 0.4s ease;
+  background: #202020;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.userLogoutTab:hover {
+  background: #09d409;
 }

@@ -69,16 +69,15 @@ const AccountLanding = () => {
         <Outlet />
       ) : (
         <>
-          <header className="d-flex user_account_nav py-3 px-4">
-            <div className="d-flex justify-content-between w-100">
+          <header className="d-flex user_account_nav ps-4">
+            <div className="d-flex justify-content-between w-100 align-items-center">
               <i
                 className={leftBox ? "bi bi-x" : "bi bi-list"}
                 style={{ cursor: "pointer" }}
                 onClick={() => setLeftBox(!leftBox)}
               ></i>
               <div
-                className="d-flex"
-                style={{ gap: "10px", cursor: "pointer" }}
+                className="d-flex p-3 userLogoutTab"
                 onClick={() => setDropDown(!dropDown)}
               >
                 <span>Hi, {param.name}</span>
@@ -98,9 +97,9 @@ const AccountLanding = () => {
                   transition:"all ease .5s",
                   cursor:"pointer"
                 }}
-                className="shadow py-3 pe-5 ps-3 logoutDropDwn"
+                className="shadow ps-0 logoutDropDwn"
               >
-                <li onClick={redirctTo}>Logout</li>
+                <li className="py-3 pe-5 ps-3" onClick={redirctTo}>Logout</li>
               </ul>
             ) : null}
           </header>
