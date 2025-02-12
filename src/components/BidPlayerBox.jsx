@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom'
 
 const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerSpec1, playerId }) => {
     const {userParamName} = useContext(ContextAuth)
-    const { bid, setBid, turn, setTurn, newPlayerBtn, setNewPlayerBtn, auctionEnded, setAuctionEnd } = useContext(ContextAuth)
+    const { bid, setBid, turn, setTurn, newPlayerBtn, setNewPlayerBtn, auctionEnded, setAuctionEnd, team, setTeam } = useContext(ContextAuth)
     let soldPlayersURL = "http://localhost:6500/soldPlayers"
     let unsoldPlayersURL = "http://localhost:6500/unsoldPlayers"
     let url = 'http://localhost:5000/playersCategory'
@@ -74,7 +74,12 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
         setNewPlayerBtn(true)
         randomPlayerChange.current[0].owner = turn == 1 ? 2 : 1
         randomPlayerChange.current[0].bidValue = bid;
-
+        
+        // setTeam({...team, team[(turn == 1 ? 2 : 1) - 1].points = team[(turn ==?1 ? 2 : 1) - 1].points - bid})
+        setTeam((prevArray)=>{
+            prevArray[(turn == 1 ? 2 : 1) - 1].points = prevArray[(turn == 1 ? 2 : 1) - 1].points - bid;
+            return [...prevArray]
+        })
         axios.delete(url + "/" + id)
             .then((res) => console.log('record deleted'))
             .catch((err) => console.log(err))

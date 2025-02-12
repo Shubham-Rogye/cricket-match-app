@@ -114,13 +114,29 @@ const AuctionLive = () => {
                                         <div className='auction_box d-flex justify-content-space'>
                                             {!auctionEnded ? <div className='auction_box_owner1_section text-center' style={{ opacity: turn != 1 && "0.2" }}>
                                                 <img src={owner1} />
-                                                {turn == 1 && <h2 className='bg-danger text-light'>Your turn</h2>}
+                                                {turn == 1 && 
+                                                    <>
+                                                    <h2 className='bg-danger text-light'>{team[0].owner}'s turn</h2>
+                                                    <div className='points_left bg-light'>
+                                                        {team[0].points}
+                                                    </div>
+                                                    </>
+                                                }
+                                                
                                             </div> : null}
                                             <BidPlayerBox playerName={randomPlayer.current[0].fullName} playerCat={randomPlayer.current[0].category} playerBidVal={randomPlayer.current[0].bidValue} playerSpec={randomPlayer.current[0].specification1} playerSpec1={randomPlayer.current[0].specification2} playerId={randomPlayer.current[0].id} />
                                             {
                                                 !auctionEnded ? <div className='auction_box_owner2_section text-center' style={{ opacity: turn != 2 && "0.2" }}>
                                                 <img src={owner2} />
-                                                {turn == 2 && <h2 className='bg-danger text-light'>Your turn</h2>}
+                                                {turn == 2 && 
+                                                        <>
+                                                            <h2 className='bg-danger text-light'>{team[1].owner}'s turn</h2>
+                                                            <div className='points_left bg-light'>
+                                                                {team[1].points}
+                                                            </div>
+                                                        </>
+                                                }
+                                                
                                             </div>: null
                                             }
                                         </div>

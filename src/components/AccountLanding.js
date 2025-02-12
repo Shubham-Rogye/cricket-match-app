@@ -1,12 +1,23 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link, Outlet, useNavigate, useParams } from "react-router-dom";
 import { ContextAuth } from "../App";
+import { Button, InputGroup } from "react-bootstrap";
+import axios from "axios";
+import Form from 'react-bootstrap/Form';
 
 const AccountLanding = () => {
+  const auctionDBurl = "http://localhost:7000/auctions"
   const param = useParams();
   const [dropDown, setDropDown] = useState(false);
   const [leftBox, setLeftBox] = useState(true);
+  const [auctionField, setAuctionField] = useState(false);
+  const [auctions, setAuctions] = useState([]);
   const navigationEntries = window.performance.getEntriesByType("navigation");
+  const [auctionVal, setAuctionVal] = useState("")
+  const [auctionValEdit, setAuctionValEdit] = useState({
+    isUpdate: false,
+    toUpdateId:""
+  })
   const {
     loginPage,
     setLoginPage,
@@ -57,12 +68,23 @@ const AccountLanding = () => {
       navigate("/unauthorizedPage");
     }
     setUserParamName(param.name);
+    axios.get(auctionDBurl)
+    .then((res)=>setAuctions(res.data))
+    .catch((err)=>console.log(err))
   }, []);
 
   const redirctTo = () => {
     navigate("/login");
     setLoggedOut(true);
   };
+
+  const handleAddAuction = () => {
+    auctionValEdit.isUpdate ? axios.update(auctionDBurl+"/"+auctionValEdit.toUpdateId, {name:auctionVal})
+    .then((res) => axios.get(auctionDBurl).then((res)=>setAuctions(res.data),setAuctionField(!auctionField))) :
+    axios.post(auctionDBurl, {name:auctionVal})
+    .then((res) => axios.get(auctionDBurl).then((res)=>setAuctions(res.data),setAuctionField(!auctionField)));
+  }
+
   return (
     <>
       {window.location.href.includes('/liveAuction') || window.location.href.includes('/formPage') ? (
@@ -131,37 +153,63 @@ const AccountLanding = () => {
                   </h2>
                   {active == 1 ? (
                     <div className="container-fluid">
-                      <div className="row">
-                        <div className="col-5 d-flex align-items-center ms-3 p-3 shadow welcome_box rounded" style={{background:"#fff"}}>
+                      <div className="d-flex" style={{gap:"5px"}}>
+                        <div className="col-6 d-flex align-items-center p-3 shadow welcome_box rounded" style={{background:"#fff"}}>
                           <i className="bi bi-person-circle"></i>
                           <p className="m-0 ms-2">Welcome {param.name}</p>
                         </div>
-                        <div className="col-5 d-flex align-items-center ms-3 p-3 shadow rounded" style={{background:"#fff"}}>
+                        <div className="col-6 d-flex align-items-center p-3 shadow rounded" style={{background:"#fff"}}>
                           <div className="w-100">
-                            <strong>My Auctions</strong>
-                            <div className="shadow-sm mt-3 py-2 px-3">
-                              <p className="m-0">IDFC Auction Demo</p>
-                              <Link
-                                to={`${param.name}/formPage`}
-                                className="link-underline link-underline-opacity-0 text-primary"
-                                onClick={() => setFormPage(true)}
-                              >
-                                View
-                              </Link>
-                              <Link
-                                to="#"
-                                className="link-underline link-underline-opacity-0 ms-2 text-warning"
-                              >
-                                Edit
-                              </Link>
-                              <Link
-                                to={`${param.name}/liveAuction`}
-                                className="link-underline link-underline-opacity-0 ms-2 text-info"
-                                onClick={() => setAuctionPage(true)}
-                              >
-                                Live
-                              </Link>
+                            <div className="d-flex justify-content-between">
+                                <strong>My Auctions</strong>
+                                <Button variant="outline-dark" size="sm" onClick={()=>setAuctionField(!auctionField)}>{auctionField ? "Cancel" : "Create New Auction"}</Button>
                             </div>
+                              {
+                                auctionField && <InputGroup className="my-3">
+                                <Form.Control
+                                  aria-label="Example text with button addon"
+                                  aria-describedby="basic-addon1"
+                                  placeholder="Add Auction Name"
+                                  value={auctionVal}
+                                  onChange={(e) => {setAuctionVal(e.target.value)}}
+                                />
+                                <Button disabled={auctionVal.length == 0} variant="dark" id="button-addon1" onClick={()=>handleAddAuction()}>
+                                  Add
+                                </Button>
+                              </InputGroup>
+                              }
+                              {
+                                auctions.length > 0 ? auctions.map((elm)=>(
+                                  <>
+                                    <div className="shadow-sm mt-3 py-2 px-3 d-flex justify-content-between" key={elm.id}>
+                                      <p className="m-0">{elm.name}</p>
+                                      <div className="auctions_actionLinks">
+                                        <Link
+                                          to={`${param.name}/formPage`}
+                                          className="link-underline link-underline-opacity-0 text-primary"
+                                          onClick={() => setFormPage(true)}
+                                        >
+                                          View
+                                        </Link>
+                                        <Link
+                                          to="#"
+                                          className="link-underline link-underline-opacity-0 ms-2 text-warning"
+                                          onClick={() => {setAuctionField(true); setAuctionValEdit({...auctionValEdit, isUpdate:true, toUpdateId:elm.id}, ); setAuctionVal(elm.name)}}
+                                        >
+                                          Edit
+                                        </Link>
+                                        <Link
+                                          to={`${param.name}/liveAuction`}
+                                          className="link-underline link-underline-opacity-0 ms-2 text-info"
+                                          onClick={() => setAuctionPage(true)}
+                                        >
+                                          Live
+                                        </Link>
+                                      </div>
+                                    </div>
+                                  </>
+                                )):null
+                              }
                           </div>
                         </div>
                       </div>
