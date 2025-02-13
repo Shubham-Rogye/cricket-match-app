@@ -15,6 +15,7 @@ const FormPagePlayer = () => {
     const [file, setFile] = useState("");
     const [bidValue, setBidValue] = useState(500)
     const [formFilledData, setFormFilledData] = useState([])
+    const [switchOn, setSwitchOn] = useState(false)
     let url = "http://localhost:5000/playersCategory"
     const navigate = useNavigate();
 
@@ -27,8 +28,6 @@ const FormPagePlayer = () => {
     } = useForm()
 
     const onSubmit = (data) => {
-        console.log(data)
-
         var sentData = {
             "fullName": data.fullName,
             "category": data.category,
@@ -36,6 +35,7 @@ const FormPagePlayer = () => {
             "specification2": data.specification2,
             "bidValue": bidValue,
             "mobileNo": data.mobileNo,
+            "captain":switchOn,
             "photo": [
                 {
                     name: data.photo[0].name,
@@ -45,17 +45,48 @@ const FormPagePlayer = () => {
             ]
         }
 
-        setBidValue(500)
+        setBidValue(500);
+        setSwitchOn(false);
+            
+        axios.get(url)
+        .then((res)=>{
+            if(res.data.length > 0){
+                const totalCaptainsCheck = []
 
-        axios.post(url, sentData)
-            .then((res) => {
-                console.log('Record added');
-                axios.get(url)
-                .then((res) => {
-                    setFormFilledData(res.data);                    
-                })
-            })
-            console.log(formFilledData);
+                if(switchOn){
+                    res.data.filter((cap) => {
+                        if(cap.captain == true){
+                            totalCaptainsCheck.push(cap.captain)
+                        }
+                    })
+                }
+
+                if (totalCaptainsCheck.length > 1){
+                    alert("More than two captains are not allowed")
+                } else{
+                    axios.post(url, sentData)
+                    .then((res) => {
+                        console.log('Record added');
+                        axios.get(url)
+                            .then((res) => {
+                                setFormFilledData(res.data);
+                            })
+                    })
+                }
+            } else{
+                axios.post(url, sentData)
+                    .then((res) => {
+                        console.log('Record added');
+                        axios.get(url)
+                            .then((res) => {
+                                setFormFilledData(res.data);
+                            })
+                    })
+            }
+        })
+        
+            // console.log(formFilledData);
+            setSwitchOn(false);
             setFile("")
 
         reset({
@@ -81,6 +112,10 @@ const FormPagePlayer = () => {
 
     const handleEditl = (id) => {
         console.log(id)
+    }
+
+    const onSwitchChange = () => {
+        setSwitchOn(!switchOn)
     }
 
     useEffect(()=>{
@@ -206,6 +241,15 @@ const FormPagePlayer = () => {
                             {errors?.mobileNo?.type === "required" && <span className='error'>This field is required</span>}
                             {(errors?.mobileNo?.type === "minLength" || errors?.mobileNo?.type === "maxLength") && <span className='error'>{errors?.mobileNo?.message}</span>}
                         </div>
+                        <div className='col-6'>
+                                <Form.Check
+                                    onChange={onSwitchChange}
+                                    type="switch"
+                                    id="custom-switch"
+                                    label="Is Captain"
+                                    checked={switchOn}
+                                />
+                        </div>
                     </div>
                 </div>
                 <div className='text-center my-3'>
@@ -315,7 +359,7 @@ const FormPagePlayer = () => {
                                 <tr>
                                     <th scope="col">Player</th>
                                     <th scope="col">Category</th>
-                                    <th scope="col">Is verified</th>
+                                    <th scope="col">Captain</th>
                                     <th scope="col">Actions</th>
                                 </tr>
                             </thead>
@@ -325,7 +369,7 @@ const FormPagePlayer = () => {
                                         <tr key={elm.id}>
                                             <td><strong>{elm.fullName}</strong><br /><small>{elm.specification1}</small></td>
                                             <td><strong>{elm.category}</strong><br /><small>{elm.bidValue}</small></td>
-                                            <td>True</td>
+                                            <td><i class={elm.captain ? "bi bi-check-lg" : "bi bi-ban"}></i></td>
                                             <td>
                                                 <a onClick={()=>handleEditl(elm.id)}><i class="bi bi-pencil-fill"></i>Edit</a>
                                                 <a onClick={()=>handleDel(elm.id)}><i class="bi bi-trash3"></i>Delete</a>

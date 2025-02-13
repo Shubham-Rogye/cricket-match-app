@@ -40,7 +40,8 @@ const AccountLanding = () => {
     boxShadow: "4px 14px 14px #cecece",
     height: "calc(100vh - 56px)",
     position: "sticky",
-    overflow: "hidden",
+    opacity:"0",
+    transition:"all ease 0.8s"
   };
 
   const left_box_show = {
@@ -49,10 +50,13 @@ const AccountLanding = () => {
     boxShadow: "4px 14px 14px #cecece",
     height: "calc(100vh - 56px)",
     position: "sticky",
+    opacity:"1",
+    transition:"all ease 0.8s"
   };
 
   const [active, setActive] = useState(1);
-
+  let paramFirstName =  param.name;
+  paramFirstName = paramFirstName.split(" ").shift();
   useEffect(() => {
     if ( (navigationEntries.length > 0 && navigationEntries[0].type === "reload")) {
         var alreadyLogin = true;
@@ -67,6 +71,7 @@ const AccountLanding = () => {
     if (!loggedIn && !alreadyLogin) {
       navigate("/unauthorizedPage");
     }
+    
     setUserParamName(param.name);
     axios.get(auctionDBurl)
     .then((res)=>setAuctions(res.data))
@@ -79,10 +84,15 @@ const AccountLanding = () => {
   };
 
   const handleAddAuction = () => {
-    auctionValEdit.isUpdate ? axios.update(auctionDBurl+"/"+auctionValEdit.toUpdateId, {name:auctionVal})
+    auctionValEdit.isUpdate ? axios.put(auctionDBurl+"/"+auctionValEdit.toUpdateId, {name:auctionVal})
     .then((res) => axios.get(auctionDBurl).then((res)=>setAuctions(res.data),setAuctionField(!auctionField))) :
     axios.post(auctionDBurl, {name:auctionVal})
     .then((res) => axios.get(auctionDBurl).then((res)=>setAuctions(res.data),setAuctionField(!auctionField)));
+  }
+
+  const handleDelAuction = (id) => {
+    axios.delete(auctionDBurl+"/"+id)
+    .then((res)=> axios.get(auctionDBurl).then((res)=>setAuctions(res.data)))
   }
 
   return (
@@ -102,7 +112,7 @@ const AccountLanding = () => {
                 className="d-flex p-3 userLogoutTab"
                 onClick={() => setDropDown(!dropDown)}
               >
-                <span>Hi, {param.name}</span>
+                <span>Hi, {paramFirstName}</span>
                 <i className="bi bi-person-circle"></i>
               </div>
             </div>
@@ -141,6 +151,7 @@ const AccountLanding = () => {
                   <li
                     className={active == 2 ? "active" : ""}
                     onClick={() => setActive(2)}
+                    style={{pointerEvents:"none"}}
                   >
                     Auction
                   </li>
@@ -156,13 +167,13 @@ const AccountLanding = () => {
                       <div className="d-flex" style={{gap:"5px"}}>
                         <div className="col-6 d-flex align-items-center p-3 shadow welcome_box rounded" style={{background:"#fff"}}>
                           <i className="bi bi-person-circle"></i>
-                          <p className="m-0 ms-2">Welcome {param.name}</p>
+                          <p className="m-0 ms-2">Welcome {paramFirstName}</p>
                         </div>
                         <div className="col-6 d-flex align-items-center p-3 shadow rounded" style={{background:"#fff"}}>
                           <div className="w-100">
                             <div className="d-flex justify-content-between">
                                 <strong>My Auctions</strong>
-                                <Button variant="outline-dark" size="sm" onClick={()=>setAuctionField(!auctionField)}>{auctionField ? "Cancel" : "Create New Auction"}</Button>
+                                <Button variant="outline-dark" size="sm" onClick={()=>{setAuctionField(!auctionField); setAuctionVal("")}}>{auctionField ? "Cancel" : "Create New Auction"}</Button>
                             </div>
                               {
                                 auctionField && <InputGroup className="my-3">
@@ -204,6 +215,13 @@ const AccountLanding = () => {
                                           onClick={() => setAuctionPage(true)}
                                         >
                                           Live
+                                        </Link>
+                                        <Link
+                                          to="#"
+                                          className="link-underline link-underline-opacity-0 ms-2 text-danger"
+                                          onClick={() => {handleDelAuction(elm.id)}}
+                                        >
+                                          Delete
                                         </Link>
                                       </div>
                                     </div>

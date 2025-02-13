@@ -6,7 +6,7 @@ import all_rounder from '../all_rounder.png'
 import owner1 from '../team1.png'
 import owner2 from '../team3.png'
 
-const Players = ({ name, specification, category,bidPrice, soldPlayer, owner }) => {
+const Players = ({ name, specification, category,bidPrice, soldPlayer, owner, captain }) => {
     return (
         <>
             <div className='yet_to_auction_player bg-white d-flex shadow p-3 align-items-center rounded'>
@@ -14,7 +14,7 @@ const Players = ({ name, specification, category,bidPrice, soldPlayer, owner }) 
                     <img src={userPp} width="75" />
                 </div>
                 <div className='yet_to_auction_player_details px-3'>
-                    <h3 className='m-0'>{name}</h3>
+                    <h3 className='m-0'>{name} <small style={{color:"red"}}>{captain && "(c)"}</small></h3>
                     <span>{specification}</span><br />
                     <small>{category}</small>
                     {soldPlayer && <p className='m-0'><strong>SOLD AT</strong> {bidPrice}</p>}

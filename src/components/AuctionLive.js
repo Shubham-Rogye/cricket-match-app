@@ -47,7 +47,7 @@ const AuctionLive = () => {
 
     const auctionCheck = () => {
         const randomStringValues = [];
-        players.filter((el) => randomStringValues.push(el.id))
+        players.filter((el) => el.captain == false && randomStringValues.push(el.id))
 
         const randomPlayerGen = Math.floor(Math.random() * randomStringValues.length);
         let randomStringSingleVal = randomStringValues[randomPlayerGen]
@@ -77,7 +77,6 @@ const AuctionLive = () => {
     }, [radioValue, soldPlayers])
 
     useEffect(() => {
-        console.log('updated')
         axios.get(soldPlayersURL)
         .then((res) => {
             setSoldPlayers(res.data);
@@ -90,10 +89,6 @@ const AuctionLive = () => {
         .catch((err) => console.log(err))
         return
     },[newTab])
-    
-    useEffect(()=>{
-        setAuctionEnd(false);
-    },[])
 
 
     return (
@@ -245,7 +240,7 @@ const AuctionLive = () => {
                         <div className='container yet_to_auction pt-5'>
                             <div className='find_player_div mb-3'>
                                 <div className='find_player_div_filter'>
-                                    ]{
+                                    {
                                         players.length > 0 ? (
                                             <>
                                                 <strong className='text-light'>Filter: </strong>
@@ -279,11 +274,11 @@ const AuctionLive = () => {
                                 {
                                     !tabChange ? players.map((data) => (
                                         <div className='col-4 mb-3' style={{ position: "relative" }} key={data.id}>
-                                            <Players name={data.fullName} specification={data.specification1} category={data.category} bidPrice={data.bidValue} soldPlayers={false} />
+                                            <Players name={data.fullName} specification={data.specification1} category={data.category} bidPrice={data.bidValue} soldPlayers={false} captain={data.captain}/>
                                         </div>
                                     )) : playerToShow.map((data) => (
                                         <div className='col-4 mb-3' style={{ position: "relative" }} key={data.id}>
-                                            <Players name={data.fullName} specification={data.specification1} category={data.category} bidPrice={data.bidValue} soldPlayers={false} />
+                                            <Players name={data.fullName} specification={data.specification1} category={data.category} bidPrice={data.bidValue} soldPlayers={false} captain={data.captain}/>
                                         </div>
                                     ))
                                 }

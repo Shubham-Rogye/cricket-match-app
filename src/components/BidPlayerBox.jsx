@@ -106,7 +106,7 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
         axios.get(url)
             .then((res) => {
                 const randomStringValues = [];
-                res.data.filter((el) => randomStringValues.push(el.id))
+                res.data.filter((el) => el.captain == false && randomStringValues.push(el.id))
 
 
                 let randomNum = Math.floor(Math.random() * randomStringValues.length)
