@@ -110,6 +110,13 @@
       "userDOB": "1998-04-28",
       "userEmail": "SHUBHAM@TEST.COM",
       "userPassword": "sHUBHAM@123"
+    },
+    {
+      "id": "6bbe",
+      "userFullName": "Aakash Shukla",
+      "userDOB": "1997-11-25",
+      "userEmail": "aakash@gmail.com",
+      "userPassword": "Akash@123456"
     }
   ]
 }

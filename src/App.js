@@ -32,18 +32,7 @@ function App() {
   const [owner1Team, setOwner1Team] = useState([]);
   const [owner2Team, setOwner2Team] = useState([]);
   const [team, setTeam] = useState([
-    {
-      "logo": owner1,
-      "name":"Chacha Phaltan",
-      "owner":"Sanket Chawan",
-      "points":6000
-    },
-    {
-      "logo": owner2,
-      "name":"Pratz warriors",
-      "owner":"Prathmesh Desai",
-      "points":6000
-    }
+    
   ])
   return (
     <>

@@ -1,12 +1,3 @@
 {
-  "auctions": [
-    {
-      "id": "9984",
-      "name": "IDFC Demo"
-    },
-    {
-      "id": "ca24",
-      "name": "IDFC Turf"
-    }
-  ]
+  "auctions": []
 }

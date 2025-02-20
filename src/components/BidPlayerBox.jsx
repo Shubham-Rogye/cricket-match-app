@@ -5,6 +5,7 @@ import sold from '../sold-removebg-preview.png'
 import { ContextAuth } from '../App'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { set } from 'react-hook-form'
 
 
 const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerSpec1, playerId }) => {
@@ -40,6 +41,9 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
         ]
     )
 
+    const [maxPlayers, setMaxPlayers] = useState(0);
+    const teamS = useRef(team)
+
     useEffect(()=>{
         const timer = timerCount > 0 && setInterval(()=> setTimerCount(timerCount - 1),1000);
         
@@ -58,6 +62,11 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
         return () => clearInterval(timer);
     },[timerCount])
 
+    useEffect(()=>{
+        axios.get(url)
+        .then((res)=> (res.data.length-2) % 2 === 0 ? setMaxPlayers(res.data.length/2 - 1):setMaxPlayers(res.data.length/2 - 1.5))
+    },[])
+
 
     const bidBtnClick = () => {
         setBid(parseInt(bid) + 50)
@@ -70,22 +79,37 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
     }
 
     const soldBtnClick = (id) => {
-        setSoldActive(true)
-        setNewPlayerBtn(true)
-        randomPlayerChange.current[0].owner = turn == 1 ? 2 : 1
-        randomPlayerChange.current[0].bidValue = bid;
-        
-        // setTeam({...team, team[(turn == 1 ? 2 : 1) - 1].points = team[(turn ==?1 ? 2 : 1) - 1].points - bid})
-        setTeam((prevArray)=>{
-            prevArray[(turn == 1 ? 2 : 1) - 1].points = prevArray[(turn == 1 ? 2 : 1) - 1].points - bid;
-            return [...prevArray]
-        })
-        axios.delete(url + "/" + id)
-            .then((res) => console.log('record deleted'))
-            .catch((err) => console.log(err))
 
-        axios.post(soldPlayersURL, randomPlayerChange.current[0])
-            .then((res) => console.log('playerSold'))
+        if(team[(turn == 1 ? 2 : 1) - 1].points < bid){
+            alert("You don't have sufficient points to buy");
+        }else{
+            axios.get(soldPlayersURL)
+            .then((res) => {
+                var team1TotalPlayers = res.data.filter((elm)=>elm.owner == 1)
+                var team2TotalPlayers = res.data.filter((elm)=>elm.owner == 2)
+
+                if(team1TotalPlayers.length >= maxPlayers){
+                    alert(`Cannot add more than ${maxPlayers} in one team, Please sell remaining players to team 2`)
+                } else if(team2TotalPlayers.length >= maxPlayers){
+                    alert(`Cannot add more than ${maxPlayers} in one team, Please sell remaining players to team 1`)
+                } else{
+                    setSoldActive(true)
+                    setNewPlayerBtn(true)
+                    teamS.current[(turn == 1 ? 2 : 1) - 1].points = teamS.current[(turn == 1 ? 2 : 1) - 1].points - bid;
+                    setTeam(teamS.current)
+                    randomPlayerChange.current[0].owner = turn == 1 ? 2 : 1
+                    randomPlayerChange.current[0].bidValue = bid;
+                    axios.delete(url + "/" + id)
+                        .then((res) => console.log('record deleted'))
+                        .catch((err) => console.log(err))
+
+                    axios.post(soldPlayersURL, randomPlayerChange.current[0])
+                        .then((res) => console.log('playerSold'))
+                }
+            });
+
+            
+        }
 
     }
 

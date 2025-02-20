@@ -1,14 +1,4 @@
 {
-  "soldPlayers": [
-    {
-      "id": "4068",
-      "bidValue": 1000,
-      "category": "Silver",
-      "fullName": "Chandan Saw",
-      "specification1": "Bowler",
-      "specification2": "Right-Arm Fast Bowler",
-      "owner": 2
-    }
-  ],
+  "soldPlayers": [],
   "unsoldPlayers": []
 }
