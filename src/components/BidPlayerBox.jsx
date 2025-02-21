@@ -2,10 +2,10 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import userPp from '../userPP.svg'
 import Button from 'react-bootstrap/Button'
 import sold from '../sold-removebg-preview.png'
+import unsold from "../unSold.png"
 import { ContextAuth } from '../App'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
-import { set } from 'react-hook-form'
 
 
 const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerSpec1, playerId }) => {
@@ -42,18 +42,23 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
     )
 
     const [maxPlayers, setMaxPlayers] = useState(0);
+    const [unSoldBtnDisable, setUnSoldBtnDisable] = useState(false);
+    const [unSoldPlayerList, setUnSoldPlayerList] = useState(false);
+    const [unSoldImage, setUnSoldImg] = useState(false)
     const teamS = useRef(team)
 
     useEffect(()=>{
         const timer = timerCount > 0 && setInterval(()=> setTimerCount(timerCount - 1),1000);
         
         if (timerCount == 0) {
-            if (turn == 1) {
-                setTurn(turn + 1);
-            } else {
-                setTurn(turn - 1);
-            }
-            setTimerCount(30)
+            axios.delete(url + "/" + playerId)
+            .then((res) => console.log('record deleted'))
+            .catch((err) => console.log(err))
+            axios.post(unsoldPlayersURL, forUnsold)
+            .then((res) => console.log('player add to unSold'))
+            setUnSoldImg(true);
+            setSoldActive(true);
+            setNewPlayerBtn(true);
         }
 
         if(newPlayerBtn){
@@ -69,7 +74,9 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
 
 
     const bidBtnClick = () => {
+
         setBid(parseInt(bid) + 50)
+        setUnSoldBtnDisable(true)
         if (turn == 1) {
             setTurn(turn + 1);
         } else {
@@ -88,10 +95,10 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
                 var team1TotalPlayers = res.data.filter((elm)=>elm.owner == 1)
                 var team2TotalPlayers = res.data.filter((elm)=>elm.owner == 2)
 
-                if(team1TotalPlayers.length >= maxPlayers){
-                    alert(`Cannot add more than ${maxPlayers} in one team, Please sell remaining players to team 2`)
-                } else if(team2TotalPlayers.length >= maxPlayers){
-                    alert(`Cannot add more than ${maxPlayers} in one team, Please sell remaining players to team 1`)
+                if(turn == 2 && team1TotalPlayers.length >= maxPlayers){
+                    alert(`Cannot add more than ${maxPlayers} players in one team, Please sell remaining players to team 2`)
+                } else if(turn == 1 && team2TotalPlayers.length >= maxPlayers){
+                    alert(`Cannot add more than ${maxPlayers} players in one team, Please sell remaining players to team 1`)
                 } else{
                     setSoldActive(true)
                     setNewPlayerBtn(true)
@@ -99,7 +106,7 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
                     setTeam(teamS.current)
                     randomPlayerChange.current[0].owner = turn == 1 ? 2 : 1
                     randomPlayerChange.current[0].bidValue = bid;
-                    axios.delete(url + "/" + id)
+                    axios.delete(unSoldPlayerList ? unsoldPlayersURL + "/" + id : url + "/" + id)
                         .then((res) => console.log('record deleted'))
                         .catch((err) => console.log(err))
 
@@ -114,6 +121,8 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
     }
 
     const unsoldBtnClick = (id) => {
+        setUnSoldImg(true)
+        setSoldActive(true)
         setNewPlayerBtn(true)
         axios.delete(url + "/" + id)
             .then((res) => console.log('record deleted'))
@@ -124,6 +133,8 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
     }
 
     const newPlayerBtnClicked = () => {
+        setUnSoldImg(false)
+        setUnSoldBtnDisable(false)
         setTimerCount(30);
         setSoldActive(false)
         setNewPlayerBtn(false);
@@ -137,8 +148,23 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
                 randomNum = randomStringValues[randomNum]
                 randomPlayerChange.current = res.data.filter((fl) => fl.id == randomNum)
                 if (randomPlayerChange.current.length == 0) {
-                    setAuctionEnd(true)
-                } else {
+                    
+                    axios.get(unsoldPlayersURL)
+                    .then((res)=>{
+                        const randomStringValues = [];
+                        res.data.filter((el) => randomStringValues.push(el.id))
+                        let randomNum = Math.floor(Math.random() * randomStringValues.length)
+                        randomNum = randomStringValues[randomNum]
+                        randomPlayerChange.current = res.data.filter((fl) => fl.id == randomNum)
+
+                        if(randomPlayerChange.current.length == 0){
+                            setAuctionEnd(true)
+                        } else{
+                            setUnSoldPlayerList(true);
+                            setBid(parseInt(randomPlayerChange.current[0].bidValue))
+                        }
+                    })
+                } else{
                     setBid(parseInt(randomPlayerChange.current[0].bidValue))
                 }
             })
@@ -169,7 +195,7 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
                         <Button variant="primary" size='sm' onClick={bidBtnClick} disabled={newPlayerBtn}>Increase Bid</Button>
                     </div>
                     <div className='mt-3 d-flex justify-content-center'>
-                        <Button variant="danger" size='sm' onClick={()=>unsoldBtnClick(playerElm.id)}disabled={newPlayerBtn}>Unsold</Button>
+                        <Button variant="danger" size='sm' onClick={()=>unsoldBtnClick(playerElm.id)}disabled={newPlayerBtn || unSoldBtnDisable}>Unsold</Button>
                         <Button variant="success" size='sm' className='mx-2' onClick={() => soldBtnClick(playerElm.id)} disabled={newPlayerBtn}>Sold out</Button>
                         <Button variant="info" size='sm' disabled={!newPlayerBtn} onClick={newPlayerBtnClicked}>New Player</Button>
                     </div>
@@ -177,7 +203,7 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
                 <div className={turn == 1 ? "timer":"timer2"}>
                     <span>{timerCount}</span>
                 </div>
-                <img src={sold} className={soldActive ? "active" : "d-none"} width={150} />
+                <img src={unSoldImage ? unsold : sold} className={soldActive ? "active" : "d-none"} width={150} />
             </div>
         )) : (<><Button onClick={() => navigate(`/welcome/${userParamName}`)} className='bg-danger'>Auction ended, Back To Dashboard
     </Button></>)

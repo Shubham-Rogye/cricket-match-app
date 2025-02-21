@@ -1,3 +1,8 @@
 {
-  "auctions": []
+  "auctions": [
+    {
+      "id": "aa4b",
+      "name": "Test"
+    }
+  ]
 }

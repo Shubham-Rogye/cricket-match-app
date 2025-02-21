@@ -1,4 +1,13 @@
 {
   "soldPlayers": [],
-  "unsoldPlayers": []
+  "unsoldPlayers": [
+    {
+      "id": "ee7b",
+      "bidValue": 500,
+      "category": "Silver",
+      "fullName": "Akash Shukla",
+      "specification1": "Batsman",
+      "specification2": "Right-Hand-Batsman"
+    }
+  ]
 }
