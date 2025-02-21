@@ -155,7 +155,7 @@
 
 .auction{
   min-height: calc(100vh - 41px);
-  background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%);
+  background: linear-gradient(268deg, #FDD819 0%, #FDD819 35%, #E80505 100%);
 }
 
 .auction_status{
@@ -341,4 +341,9 @@ ul.shadow.logoutDropDwn:after {
 
 .userLogoutTab:hover {
   background: #09d409;
+}
+
+.team_img img{
+  width: 50px;
+  height: 55px;
 }

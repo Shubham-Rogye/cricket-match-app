@@ -6,12 +6,13 @@ import Players from './Players';
 import axios from 'axios';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import ToggleButton from 'react-bootstrap/ToggleButton';
-import owner1 from '../vk18-removebg-preview.png'
-import owner2 from '../rs-removebg-preview.png'
+import owner1 from '../chandu.png'
+import owner2 from '../aditya.png'
 import BidPlayerBox from './BidPlayerBox';
 import { ContextAuth } from '../App';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useReactToPrint } from "react-to-print";
+
 
 import teamowner1 from '../team1.png'
 import teamowner2 from '../team3.png'
@@ -106,12 +107,12 @@ const AuctionLive = () => {
                             auctiveLive ?
                                 (
                                     <div className='auction_status d-flex justify-content-center align-items-center'>
-                                        <div className='auction_box d-flex justify-content-space'>
+                                        <div className='auction_box d-flex justify-content-space align-items-center'>
                                             {!auctionEnded ? <div className='auction_box_owner1_section text-center' style={{ opacity: turn != 1 && "0.2" }}>
-                                                <img src={owner1} />
+                                                <img src={owner1} style={{height:"455px"}}/>
                                                 {turn == 1 && 
                                                     <>
-                                                    <h2 className='bg-danger text-light'>{team[0].owner}'s turn</h2>
+                                                    <h2 className='bg-dark text-light'>{team[0].name}</h2>
                                                     <div className='points_left bg-light'>
                                                         {team[0].points}
                                                     </div>
@@ -122,10 +123,10 @@ const AuctionLive = () => {
                                             <BidPlayerBox playerName={randomPlayer.current[0].fullName} playerCat={randomPlayer.current[0].category} playerBidVal={randomPlayer.current[0].bidValue} playerSpec={randomPlayer.current[0].specification1} playerSpec1={randomPlayer.current[0].specification2} playerId={randomPlayer.current[0].id} />
                                             {
                                                 !auctionEnded ? <div className='auction_box_owner2_section text-center' style={{ opacity: turn != 2 && "0.2" }}>
-                                                <img src={owner2} />
+                                                <img src={owner2} style={{height:"455px"}}/>
                                                 {turn == 2 && 
                                                         <>
-                                                            <h2 className='bg-danger text-light'>{team[1].owner}'s turn</h2>
+                                                            <h2 className='bg-dark text-light'>{team[1].name}</h2>
                                                             <div className='points_left bg-light'>
                                                                 {team[1].points}
                                                             </div>
@@ -166,7 +167,7 @@ const AuctionLive = () => {
                                                        index == 0 ? (owner1Team.length > 0 ? owner1Team.map((data) => (
                                                         <div className='d-flex justify-content-between' key={data.id}>
                                                             <div className='team_img'>
-                                                                <img src={owner1} width={50} />
+                                                                <img src={owner1} />
                                                             </div>
                                                             <div className='player_detail'>
                                                                 <p className='m-0 fw-bold' >{data.fullName}</p>
@@ -179,7 +180,7 @@ const AuctionLive = () => {
                                                     )) : ""):(owner2Team.length > 0 ? owner2Team.map((data) => (
                                                         <div className='d-flex justify-content-between' key={data.id}>
                                                             <div className='team_img'>
-                                                                <img src={owner2} width={50} />
+                                                                <img src={owner2} />
                                                             </div>
                                                             <div className='player_detail'>
                                                                 <p className='m-0 fw-bold' >{data.fullName}</p>
