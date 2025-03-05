@@ -98,7 +98,7 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
 
     const soldBtnClick = (id) => {
 
-        if(team[(playerTurn == 1 ? 2 : 1) - 1].points < bidAmount){
+        if(teamDB[(playerTurn == 1 ? 2 : 1) - 1].points < bidAmount){
             alert("You don't have sufficient points to buy");
         }else{
             axios.get(soldPlayersURL)
