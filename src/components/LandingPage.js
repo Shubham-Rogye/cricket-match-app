@@ -3,13 +3,15 @@ import NavbarComp from '../components/Navbar'
 import Banner from '../components/Banner'
 import LastMatchResult from '../components/LastMatchResult'
 import MatchTiming from './MatchTiming'
-import { ContextAuth } from '../App'
+import { useDispatch, useSelector } from 'react-redux'
+import { loginPageFalse } from '../features/ValidityChecks/loginPageCheckSlice'
 const LandingPage = () => {
-  const {loginPage, setLoginPage,loggedOut, setLoggedOut} = useContext(ContextAuth)
-  setLoginPage(false)
+  const loginPageCheck = useSelector((state)=>state.loginPage.value);
+  const dispatch = useDispatch();
+  dispatch(loginPageFalse);
   return (
     <>
-        <NavbarComp valid={loginPage}/>
+        <NavbarComp valid={loginPageCheck}/>
         <Banner/>
         <LastMatchResult/>
         <MatchTiming/>

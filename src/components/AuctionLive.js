@@ -6,25 +6,39 @@ import Players from './Players';
 import axios from 'axios';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import ToggleButton from 'react-bootstrap/ToggleButton';
-import owner1 from '../chandu.png'
-import owner2 from '../aditya.png'
+import owner1 from '../vk18-removebg-preview.png'
+import owner2 from '../rs-removebg-preview.png'
 import BidPlayerBox from './BidPlayerBox';
-import { ContextAuth } from '../App';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useReactToPrint } from "react-to-print";
 
 
 import teamowner1 from '../team1.png'
 import teamowner2 from '../team3.png'
+import { useDispatch, useSelector } from 'react-redux';
+import { setBidValue } from '../features/BidAmount/bidAmountSlice';
+import { auctionEndedTrue } from '../features/ValidityChecks/auctionEndedCheckSlice';
+import { soldPlayerDB } from '../features/GetDataBase/soldPlayersDBSlice';
+import { unSoldPlayerDB } from '../features/GetDataBase/unSoldPlayersDBSlice';
+import { teamOwner1 } from '../features/TeamOwners/teamOwner1Slice';
+import { teamOwner2 } from '../features/TeamOwners/teamOwner2Slice';
 
 
 const AuctionLive = () => {
+    const playerTurn = useSelector((state)=>state.turn.value);
+    const auctionEndedCheck = useSelector((state)=>state.auctionEnded.value);
+    const soldPlayerDBdata = useSelector((state)=>state.soldPlayerDB.value);
+    const unSoldPlayerDBdata = useSelector((state)=>state.unSoldPlayerDB.value);
+    const teamOwner1data = useSelector((state)=>state.teamOwner1.value);
+    const teamOwner2data = useSelector((state)=>state.teamOwner2.value);
+    const urlParamSet = useSelector((state)=>state.urlParam.value);
+    const team = useSelector((state)=>state.team.value)
+    const dispatch = useDispatch();
     const param = useParams();
 
     let URL = "http://localhost:5000/playersCategory"
     let soldPlayersURL = "http://localhost:6500/soldPlayers"
     let unsoldPlayersURL = "http://localhost:6500/unsoldPlayers"
-    const { setBid, turn, soldPlayers, setSoldPlayers, auctionEnded, setAuctionEnd, userParamName, unsoldPlayers,setUnSoldPlayers, owner1Team, setOwner1Team, owner2Team, setOwner2Team, team } = useContext(ContextAuth)
 
     const [auctiveLive, setAuctionLive] = useState(false);
     const [players, setPlayers] = useState([]);
@@ -55,11 +69,11 @@ const AuctionLive = () => {
         const randomPlayerGenenrated = players.filter((elm) => elm.id == randomStringSingleVal)
         randomPlayer.current = randomPlayerGenenrated
         if (randomPlayerGenenrated.length == 0) {
-            setAuctionEnd(true)
+            dispatch(auctionEndedTrue());
             setAuctionLive(false)
         } else {
             setAuctionLive(true);
-            setBid(parseInt(randomPlayer.current[0].bidValue))
+            dispatch(setBidValue(randomPlayer.current[0].bidValue));
         }
     }
 
@@ -75,18 +89,18 @@ const AuctionLive = () => {
         } else {
             setPlayerToShow(players)
         }
-    }, [radioValue, soldPlayers])
+    }, [radioValue, soldPlayerDBdata])
 
     useEffect(() => {
         axios.get(soldPlayersURL)
         .then((res) => {
-            setSoldPlayers(res.data);
-            setOwner1Team(res.data.filter((owner) => owner.owner == 1));
-            setOwner2Team(res.data.filter((owner) => owner.owner == 2)); 
+            dispatch(soldPlayerDB(res.data))
+            dispatch(teamOwner1(res.data.filter((owner) => owner.owner == 1)));
+            dispatch(teamOwner2(res.data.filter((owner) => owner.owner == 2))); 
         }).catch((err) => console.log(err));
 
         axios.get(unsoldPlayersURL)
-        .then((res) => setUnSoldPlayers(res.data))
+        .then((res) => dispatch(unSoldPlayerDB(res.data)))
         .catch((err) => console.log(err))
         return
     },[newTab])
@@ -108,9 +122,9 @@ const AuctionLive = () => {
                                 (
                                     <div className='auction_status d-flex justify-content-center align-items-center'>
                                         <div className='auction_box d-flex justify-content-space align-items-center'>
-                                            {!auctionEnded ? <div className='auction_box_owner1_section text-center' style={{ opacity: turn != 1 && "0.2" }}>
+                                            {!auctionEndedCheck ? <div className='auction_box_owner1_section text-center' style={{ opacity: playerTurn != 1 && "0.2" }}>
                                                 <img src={owner1} style={{height:"455px"}}/>
-                                                {turn == 1 && 
+                                                {playerTurn == 1 && 
                                                     <>
                                                     <h2 className='bg-dark text-light'>{team[0].name}</h2>
                                                     <div className='points_left bg-light'>
@@ -122,9 +136,9 @@ const AuctionLive = () => {
                                             </div> : null}
                                             <BidPlayerBox playerName={randomPlayer.current[0].fullName} playerCat={randomPlayer.current[0].category} playerBidVal={randomPlayer.current[0].bidValue} playerSpec={randomPlayer.current[0].specification1} playerSpec1={randomPlayer.current[0].specification2} playerId={randomPlayer.current[0].id} />
                                             {
-                                                !auctionEnded ? <div className='auction_box_owner2_section text-center' style={{ opacity: turn != 2 && "0.2" }}>
+                                                !auctionEndedCheck ? <div className='auction_box_owner2_section text-center' style={{ opacity: playerTurn != 2 && "0.2" }}>
                                                 <img src={owner2} style={{height:"455px"}}/>
-                                                {turn == 2 && 
+                                                {playerTurn == 2 && 
                                                         <>
                                                             <h2 className='bg-dark text-light'>{team[1].name}</h2>
                                                             <div className='points_left bg-light'>
@@ -138,9 +152,9 @@ const AuctionLive = () => {
                                         </div>
                                     </div>
                                 ) : (
-                                    auctionEnded ? (<div className='auction_status d-flex justify-content-center align-items-center'>
+                                    auctionEndedCheck ? (<div className='auction_status d-flex justify-content-center align-items-center'>
                                         <h2>Please Register players for the auction</h2>
-                                        <Button onClick={() => navigate(`/welcome/${userParamName}`)} style={{ position: "fixed", bottom: "0" }} className='w-100 bg-danger'>
+                                        <Button onClick={() => navigate(`/welcome/${urlParamSet}`)} style={{ position: "fixed", bottom: "0" }} className='w-100 bg-danger'>
                                             Back To Dashboard
                                         </Button>
                                     </div>) : (<div className='auction_status d-flex justify-content-center align-items-center'>
@@ -164,7 +178,7 @@ const AuctionLive = () => {
                                                 <hr />
                                                 <div className='Team1_col_players_list'>
                                                     {
-                                                       index == 0 ? (owner1Team.length > 0 ? owner1Team.map((data) => (
+                                                       index == 0 ? (teamOwner1data.length > 0 ? teamOwner1data.map((data) => (
                                                         <div className='d-flex justify-content-between' key={data.id}>
                                                             <div className='team_img'>
                                                                 <img src={owner1} />
@@ -177,7 +191,7 @@ const AuctionLive = () => {
                                                                 <img src={teamowner1} width={50} />
                                                             </div>
                                                         </div>
-                                                    )) : ""):(owner2Team.length > 0 ? owner2Team.map((data) => (
+                                                    )) : ""):(teamOwner2data.length > 0 ? teamOwner2data.map((data) => (
                                                         <div className='d-flex justify-content-between' key={data.id}>
                                                             <div className='team_img'>
                                                                 <img src={owner2} />
@@ -210,7 +224,7 @@ const AuctionLive = () => {
                         <div className='container'>
                             <div className='row'>
                                 {
-                                    soldPlayers.length > 0 ? soldPlayers.map((data) => (
+                                    soldPlayerDBdata.length > 0 ? soldPlayerDBdata.map((data) => (
                                         <div className='col-4 my-3' style={{ position: "relative" }} key={data.id}>
                                             <Players name={data.fullName} specification={data.specification1} category={data.category} soldPlayer={true} bidPrice={data.bidValue} owner={data.owner} />
                                         </div>
@@ -225,7 +239,7 @@ const AuctionLive = () => {
                         <div className='container'>
                             <div className='row'>
                                 {
-                                    unsoldPlayers.length > 0 ? unsoldPlayers.map((data) => (
+                                    unSoldPlayerDBdata.length > 0 ? unSoldPlayerDBdata.map((data) => (
                                         <div className='col-4 my-3' style={{ position: "relative" }} key={data.id}>
                                             <Players name={data.fullName} specification={data.specification1} category={data.category} bidPrice={data.bidValue} />
                                         </div>

@@ -1,11 +1,18 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, Outlet, useNavigate, useParams } from "react-router-dom";
-import { ContextAuth } from "../App";
 import { Button, InputGroup } from "react-bootstrap";
 import axios from "axios";
 import Form from 'react-bootstrap/Form';
+import { useDispatch, useSelector } from "react-redux";
+import { loggedOutTrue } from "../features/ValidityChecks/loggedOutCheckSlice";
+import { formPageTrue } from "../features/ValidityChecks/formPageCheckSlice";
+import { auctionPageTrue } from "../features/ValidityChecks/auctionPageCheckSlice";
+import { urlParamSet } from "../features/UrlParam/urlParamSlice";
 
 const AccountLanding = () => {
+  const loggedOutCheck = useSelector((state)=>state.loggedOut.value);
+  const loggedInCheck = useSelector((state)=>state.loggedIn.value);
+  const dispatch = useDispatch();
   const auctionDBurl = "http://localhost:7000/auctions"
   const param = useParams();
   const [dropDown, setDropDown] = useState(false);
@@ -18,20 +25,7 @@ const AccountLanding = () => {
     isUpdate: false,
     toUpdateId:""
   })
-  const {
-    loginPage,
-    setLoginPage,
-    loggedOut,
-    setLoggedOut,
-    loggedIn,
-    setLoggedIn,
-    formPage,
-    setFormPage,
-    auctionPage,
-    setAuctionPage,
-    userParamName, 
-    setUserParamName
-  } = useContext(ContextAuth);
+ 
   let navigate = useNavigate();
 
   const left_box_hide = {
@@ -64,15 +58,15 @@ const AccountLanding = () => {
       var alreadyLogin = false;
     }
 
-    if (loggedOut) {
+    if (loggedOutCheck) {
       alert("Session expire login again");
       navigate("/login");
     }
-    if (!loggedIn && !alreadyLogin) {
+    if (!loggedInCheck && !alreadyLogin) {
       navigate("/unauthorizedPage");
     }
     
-    setUserParamName(param.name);
+    dispatch(urlParamSet(param.name));
     axios.get(auctionDBurl)
     .then((res)=>setAuctions(res.data))
     .catch((err)=>console.log(err))
@@ -80,7 +74,7 @@ const AccountLanding = () => {
 
   const redirctTo = () => {
     navigate("/login");
-    setLoggedOut(true);
+    dispatch(loggedOutTrue());
   };
 
   const handleAddAuction = () => {
@@ -198,7 +192,7 @@ const AccountLanding = () => {
                                         <Link
                                           to={`${param.name}/formPage`}
                                           className="link-underline link-underline-opacity-0 text-primary"
-                                          onClick={() => setFormPage(true)}
+                                          onClick={() => dispatch(formPageTrue())}
                                         >
                                           View
                                         </Link>
@@ -212,7 +206,7 @@ const AccountLanding = () => {
                                         <Link
                                           to={`${param.name}/liveAuction`}
                                           className="link-underline link-underline-opacity-0 ms-2 text-info"
-                                          onClick={() => setAuctionPage(true)}
+                                          onClick={() => dispatch(auctionPageTrue())}
                                         >
                                           Live
                                         </Link>

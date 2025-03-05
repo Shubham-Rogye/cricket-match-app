@@ -5,15 +5,17 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
 import uploadPhoto from '../uploadPP.jpg'
 import axios from 'axios';
-import { ContextAuth } from '../App';
 import { Link, useNavigate } from 'react-router-dom';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import owner1 from '../team1.png'
 import owner2 from '../team3.png'
+import { useDispatch, useSelector } from 'react-redux';
+import { team } from '../features/TeamOwners/teamSlice';
 
 const FormPagePlayer = () => {
-    const{team,setTeam} = useContext(ContextAuth)
+    const teamDB = useSelector((state)=>state.team.value);
+    const dispatch = useDispatch();
     const [file, setFile] = useState("");
     const [bidValue, setBidValue] = useState(500)
     const [formFilledData, setFormFilledData] = useState([])
@@ -103,21 +105,21 @@ const FormPagePlayer = () => {
             });
         } else{
             // console.log(data);
-
-            setTeam([{
-                "logo": owner1,
-                "name":data.team1Name,
-                "owner":data.captain1fullName,
-                "points":data.captain1points
-              },
-              {
-                "logo": owner2,
-                "name":data.team2Name,
-                "owner":data.captain2fullName,
-                "points":data.captain2points
-              }])
               
-
+              dispatch(team(
+                [{
+                    "logo": owner1,
+                    "name":data.team1Name,
+                    "owner":data.captain1fullName,
+                    "points":data.captain1points
+                  },
+                  {
+                    "logo": owner2,
+                    "name":data.team2Name,
+                    "owner":data.captain2fullName,
+                    "points":data.captain2points
+                  }]
+              ))
               setCaptains(true);
         }
     }
@@ -149,7 +151,7 @@ const FormPagePlayer = () => {
     },[])
 
     useEffect(()=>{
-        team.length == 2 && setCaptains(true);
+        teamDB.length == 2 && setCaptains(true);
     },[captains])
 
     return (
@@ -367,7 +369,7 @@ const FormPagePlayer = () => {
                             </thead>
                             <tbody>
                                 {
-                                    team.map((elm, index) => (
+                                    teamDB.map((elm, index) => (
                                         <tr key={elm.id}>
                                             <td>{index + 1}</td>
                                             <td><img src={elm.logo} /></td>

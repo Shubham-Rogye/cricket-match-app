@@ -1,3 +1,72 @@
 {
-  "playersCategory": []
+  "playersCategory": [
+    {
+      "id": "b48e",
+      "fullName": "VK",
+      "category": "Platnium",
+      "specification1": "All Rounder",
+      "specification2": "Right-Hand-Batsman",
+      "bidValue": 2000,
+      "mobileNo": "8855885588",
+      "captain": false,
+      "photo": [
+        {
+          "name": "vk18.png",
+          "size": 97544,
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "id": "4157",
+      "fullName": "Rohit Sharma",
+      "category": "Platnium",
+      "specification1": "All Rounder",
+      "specification2": "Right-Hand-Batsman",
+      "bidValue": 2000,
+      "mobileNo": "8855885588",
+      "captain": false,
+      "photo": [
+        {
+          "name": "rs.png",
+          "size": 192364,
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "id": "f27e",
+      "fullName": "Shubham Rogye",
+      "category": "Silver",
+      "specification1": "Batsman",
+      "specification2": "Right-Hand-Batsman",
+      "bidValue": 500,
+      "mobileNo": "8855885588",
+      "captain": false,
+      "photo": [
+        {
+          "name": "uploadPP.jpg",
+          "size": 87837,
+          "type": "image/jpeg"
+        }
+      ]
+    },
+    {
+      "id": "5a49",
+      "fullName": "Akask",
+      "category": "Silver",
+      "specification1": "Batsman",
+      "specification2": "Right-Hand-Batsman",
+      "bidValue": 500,
+      "mobileNo": "8855885588",
+      "captain": false,
+      "photo": [
+        {
+          "name": "uploadPP.jpg",
+          "size": 87837,
+          "type": "image/jpeg"
+        }
+      ]
+    }
+  ]
 }

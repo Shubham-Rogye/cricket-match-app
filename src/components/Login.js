@@ -1,13 +1,20 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import NavbarComp from './Navbar'
-import { ContextAuth } from '../App'
 import { useForm } from "react-hook-form"
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { Zoom, Slide, Bounce, ToastContainer, toast } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux'
+import { loginPageFalse, loginPageTrue } from '../features/ValidityChecks/loginPageCheckSlice'
+import { loggedOutFalse, loggedOutTrue } from '../features/ValidityChecks/loggedOutCheckSlice'
+import { loggedInFalse, loggedInTrue } from '../features/ValidityChecks/loggedInCheckSlice'
 
 
 const Login = () => {
+  const loginPageCheck = useSelector((state)=>state.loginPage.value);
+  const loggedOutCheck = useSelector((state)=>state.loggedOut.value);
+  const loggedInCheck = useSelector((state)=>state.loggedIn.value);
+  const dispatch = useDispatch();
   let URL = "http://localhost:4000/users"
   const navigate = useNavigate();
   const {
@@ -27,13 +34,12 @@ const Login = () => {
     userPassword: ""
 
   })
-  const {loginPage, setLoginPage,loggedOut, setLoggedOut,loggedIn, setLoggedIn} = useContext(ContextAuth);
   const [accountRegistered, setAccountRegistered] = useState(true)
   const [passwordMatchCheck, setPasswordMatchCheck] = useState(null);
   const [showPass, setShowPass] = useState(false);
   const [getData, setGetData] = useState([])
 
-  setLoginPage(true);
+  dispatch(loginPageTrue())
 
   const accountCheck = (e) => {
     e.preventDefault();
@@ -79,7 +85,7 @@ const Login = () => {
   }, [watch("userDOB")]);
 
   useEffect(() => {
-    setLoggedIn(false)
+    dispatch(loggedInFalse());
     axios.get(URL)
       .then((res) => {
         setGetData(res.data);
@@ -88,7 +94,6 @@ const Login = () => {
   }, [accountRegistered])
 
   const onSubmit = (data) => {
-      console.log(errors)
         if(accountRegistered){
           // let userFilteredData = []
           const userFilteredData = getData.filter((userData) => userData.userEmail == data.userEmail);
@@ -96,11 +101,11 @@ const Login = () => {
           if(userFilteredData.length > 0){
             if(userFilteredData[0].userPassword == data.userPassword){
               navigate(`/welcome/${userFilteredData[0].userFullName}`)
-              setLoginPage(false);
-              setLoggedIn(true);
+              dispatch(loginPageFalse());
+              dispatch(loggedInTrue());
               
-              if(loggedOut){
-                setLoggedOut(false)
+              if(loggedOutCheck){
+                dispatch(loggedOutFalse())
               }
             } else{
             toast.error('Invalid password');
@@ -109,8 +114,7 @@ const Login = () => {
           } else{
             toast.error('Email is not registered, Please Sign up')
             // alert("Email is not registered")
-          }
-          console.log(userFilteredData);                   
+          }              
         } else{
           axios.post(URL,registerUser)
           .then((res)=>{toast.success('data has been successfully registered'); reset();setAccountRegistered(!accountRegistered);})
@@ -119,7 +123,7 @@ const Login = () => {
 
   return (
     <>
-      <NavbarComp valid={loginPage} />
+      <NavbarComp valid={loginPageCheck} />
       <section className='d-flex justify-content-center'>
         <div className='login_form_page w-50 shadow p-5 mt-5'>
           <form onSubmit={handleSubmit(onSubmit)}>
