@@ -5,7 +5,7 @@ const initialState = {
 }
 
 export const loggedOutCheckSlice = createSlice({
-  name: 'loggeOut',
+  name: 'loggedOut',
   initialState,
   reducers: {
     loggedOutTrue: (state) => {
