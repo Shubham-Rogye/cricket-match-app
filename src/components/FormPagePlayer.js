@@ -111,13 +111,13 @@ const FormPagePlayer = () => {
                     "logo": owner1,
                     "name":data.team1Name,
                     "owner":data.captain1fullName,
-                    "points":data.captain1points
+                    "points":Number(data.captain1points)
                   },
                   {
                     "logo": owner2,
                     "name":data.team2Name,
                     "owner":data.captain2fullName,
-                    "points":data.captain2points
+                    "points":Number(data.captain2points)
                   }]
               ))
               setCaptains(true);
@@ -356,7 +356,7 @@ const FormPagePlayer = () => {
             >
                 <Tab eventKey="teams" title="Teams">
                     <div className='container'>
-                        <table class="table table-light">
+                        <table className = "table table-light">
                             <thead>
                                 <tr>
                                     <th scope="col">Id</th>
@@ -377,8 +377,8 @@ const FormPagePlayer = () => {
                                             <td>{elm.owner}</td>
                                             <td>{elm.points}</td>
                                             <td>
-                                                <a href='#'><i class="bi bi-pencil-fill"></i>Edit</a>
-                                                <a href='#'><i class="bi bi-trash3"></i>Delete</a>
+                                                <a href='#'><i className = "bi bi-pencil-fill"></i>Edit</a>
+                                                <a href='#'><i className = "bi bi-trash3"></i>Delete</a>
                                             </td>
                                         </tr>
                                     ))
@@ -389,7 +389,7 @@ const FormPagePlayer = () => {
                 </Tab>
                 <Tab eventKey="category" title="Category">
                     <div className='container'>
-                        <table class="table table-light">
+                        <table className = "table table-light">
                             <thead>
                                 <tr>
                                     <th scope="col">Id</th>
@@ -410,8 +410,8 @@ const FormPagePlayer = () => {
                                     <td>4</td>
                                     <td>500</td>
                                     <td>
-                                        <a href='#'><i class="bi bi-pencil-fill"></i>Edit</a>
-                                        <a href='#'><i class="bi bi-trash3"></i>Delete</a>
+                                        <a href='#'><i className = "bi bi-pencil-fill"></i>Edit</a>
+                                        <a href='#'><i className = "bi bi-trash3"></i>Delete</a>
                                     </td>
                                 </tr>
                                 <tr>
@@ -422,8 +422,8 @@ const FormPagePlayer = () => {
                                     <td>1</td>
                                     <td>500</td>
                                     <td>
-                                        <a href='#'><i class="bi bi-pencil-fill"></i>Edit</a>
-                                        <a href='#'><i class="bi bi-trash3"></i>Delete</a>
+                                        <a href='#'><i className = "bi bi-pencil-fill"></i>Edit</a>
+                                        <a href='#'><i className = "bi bi-trash3"></i>Delete</a>
                                     </td>
                                 </tr>
                                 <tr>
@@ -434,8 +434,8 @@ const FormPagePlayer = () => {
                                     <td>1</td>
                                     <td>100</td>
                                     <td>
-                                        <a href='#'><i class="bi bi-pencil-fill"></i>Edit</a>
-                                        <a href='#'><i class="bi bi-trash3"></i>Delete</a>
+                                        <a href='#'><i className = "bi bi-pencil-fill"></i>Edit</a>
+                                        <a href='#'><i className = "bi bi-trash3"></i>Delete</a>
                                     </td>
                                 </tr>
                             </tbody>
@@ -444,7 +444,7 @@ const FormPagePlayer = () => {
                 </Tab>
                 <Tab eventKey="players" title="Players">
                     <div className='container'>
-                        <table class="table table-light">
+                        <table className = "table table-light">
                             <thead>
                                 <tr>
                                     <th scope="col">Player</th>
@@ -459,10 +459,10 @@ const FormPagePlayer = () => {
                                         <tr key={elm.id}>
                                             <td><strong>{elm.fullName}</strong><br /><small>{elm.specification1}</small></td>
                                             <td><strong>{elm.category}</strong><br /><small>{elm.bidValue}</small></td>
-                                            <td><i class={elm.captain ? "bi bi-check-lg" : "bi bi-ban"}></i></td>
+                                            <td><i className = {elm.captain ? "bi bi-check-lg" : "bi bi-ban"}></i></td>
                                             <td>
-                                                <a onClick={() => handleEditl(elm.id)}><i class="bi bi-pencil-fill"></i>Edit</a>
-                                                <a onClick={() => handleDel(elm.id)}><i class="bi bi-trash3"></i>Delete</a>
+                                                <a onClick={() => handleEditl(elm.id)}><i className = "bi bi-pencil-fill"></i>Edit</a>
+                                                <a onClick={() => handleDel(elm.id)}><i className = "bi bi-trash3"></i>Delete</a>
                                             </td>
                                         </tr>
                                     )) : null

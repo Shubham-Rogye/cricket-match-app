@@ -1,111 +1,114 @@
 .navbar_comp {
-    background-color: #ffffff !important;
+  background-color: #ffffff !important;
 }
 
 .navbar_comp .navbar-nav {
-    margin: 0 auto;
-    gap: 15px;
+  margin: 0 auto;
+  gap: 15px;
 }
 
-.navbar_comp .nav-link{
-    color: #06083b;
+.navbar_comp .nav-link {
+  color: #06083b;
 }
 
-.banner_img_div{
-    position: relative;
+.banner_img_div {
+  position: relative;
 }
 
-.banner_img_div img{
-    width: 100%;
-    height: 100%;
+.banner_img_div img {
+  width: 100%;
+  height: 100%;
 }
 
-.banner_img_div > div{
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    background: url(./vk18-removebg-preview.png) right bottom no-repeat, url(./rs-removebg-preview.png) left bottom no-repeat;
+.banner_img_div>div {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: url(./vk18-removebg-preview.png) right bottom no-repeat, url(./rs-removebg-preview.png) left bottom no-repeat;
 }
 
-.last_name_result_boxes{
-    display: flex;
+.last_name_result_boxes {
+  display: flex;
 }
 
-.last_name_result{
-    background-color: #F5F5F5;
+.last_name_result {
+  background-color: #F5F5F5;
 }
 
-.last_name_result_box{
-    background-color: #fff;
+.last_name_result_box {
+  background-color: #fff;
 }
 
-.last_name_result_box_scores{
-    gap: 10px;
+.last_name_result_box_scores {
+  gap: 10px;
 }
 
-.last_name_result_box_scores_team_left h2, .last_name_result_box_scores_team_right h2{
-    margin: 0;
-    color: #929292;
+.last_name_result_box_scores_team_left h2,
+.last_name_result_box_scores_team_right h2 {
+  margin: 0;
+  color: #929292;
 }
 
-.last_name_result_box_scores_team_left.won h2, .last_name_result_box_scores_team_right.won h2{
-    color: #000;
+.last_name_result_box_scores_team_left.won h2,
+.last_name_result_box_scores_team_right.won h2 {
+  color: #000;
 }
 
-.time_table_section{
-    background: url(./time_table_background.jpg) no-repeat;
+.time_table_section {
+  background: url(./time_table_background.jpg) no-repeat;
 }
 
-.nav_upper{
-    background-color: #06083b;
-    color: #fff;
+.nav_upper {
+  background-color: #06083b;
+  color: #fff;
 }
 
 
 /* width */
 ::-webkit-scrollbar {
-    width: 5px;
-  }
-  
-  /* Track */
-  ::-webkit-scrollbar-track {
-    background: #f1f1f1;
-  }
-  
-  /* Handle */
-  ::-webkit-scrollbar-thumb {
-    background: #06083b;
-  }
-  
-  /* Handle on hover */
-  ::-webkit-scrollbar-thumb:hover {
-    background: #555;
-  }
+  width: 5px;
+}
 
-  .login_form_page label{
-    color: #06083b;
-  }
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
 
-  .login_form_page div{
-    margin-bottom: 10px;
-  }
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #06083b;
+}
 
-  .login_form_page .errorMessage{
-    color: red;
-  }
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
 
-  .login_form_page .error{
-    border-color: red;
-    box-shadow: 0 0 0 .25rem rgb(253 13 13 / 25%);
-  }
-  
-  
+.login_form_page label {
+  color: #06083b;
+}
+
+.login_form_page div {
+  margin-bottom: 10px;
+}
+
+.login_form_page .errorMessage {
+  color: red;
+}
+
+.login_form_page .error {
+  border-color: red;
+  box-shadow: 0 0 0 .25rem rgb(253 13 13 / 25%);
+}
+
+
 
 .password_box {
   position: relative;
 }
+
 .password_box i {
   position: absolute;
   top: 38px;
@@ -126,12 +129,12 @@
   position: sticky;
 }
 
-.left_box ul li:hover{
+.left_box ul li:hover {
   background: #09d409;
   color: #fff;
 }
 
-.left_box > ul{
+.left_box>ul {
   list-style: none;
   padding: 0;
 }
@@ -149,16 +152,16 @@
   color: #fff;
 }
 
-.right_box .welcome_box{
+.right_box .welcome_box {
   height: fit-content;
 }
 
-.auction{
+.auction {
   min-height: calc(100vh - 41px);
   background: linear-gradient(268deg, #FDD819 0%, #FDD819 35%, #E80505 100%);
 }
 
-.auction_status{
+.auction_status {
   height: calc(100vh - 41px);
 }
 
@@ -166,28 +169,31 @@
   background: #000;
 }
 
-.auction_live_tab .nav-fill .nav-item .nav-link, .nav-justified .nav-item .nav-link{
+.auction_live_tab .nav-fill .nav-item .nav-link,
+.nav-justified .nav-item .nav-link {
   color: #fff;
 }
 
-.auction_live_tab .nav-fill .nav-item .nav-link, .nav-justified .nav-item .nav-link.active{
+.auction_live_tab .nav-fill .nav-item .nav-link,
+.nav-justified .nav-item .nav-link.active {
   color: #000;
 }
 
 
-.auction_live_tab ~ .tab-content{
-  background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%);
+.auction_live_tab~.tab-content {
+  background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 35%, rgba(0, 212, 255, 1) 100%);
 }
 
-.yet_to_auction_player{
+.yet_to_auction_player {
   cursor: pointer;
-  transition:all ease-in-out;
+  transition: all ease-in-out;
 }
 
-.yet_to_auction_player:hover{
+.yet_to_auction_player:hover {
   transform: scale(1.05);
 }
-.yet_to_auction_player:hover ~ .yet_to_auction_player_details_typeImg img{
+
+.yet_to_auction_player:hover~.yet_to_auction_player_details_typeImg img {
   transform: rotate(350deg);
 }
 
@@ -195,30 +201,30 @@
   position: relative;
 }
 
-.yet_to_auction_player_details_typeImg{
+.yet_to_auction_player_details_typeImg {
   position: absolute;
   right: 13px;
   bottom: 0px;
 }
 
-.auction_box{
-  gap:100px
+.auction_box {
+  gap: 100px
 }
 
-.auction_box_owner1_section img{
+.auction_box_owner1_section img {
   transform: scalex(-1);
 }
 
-.auction_box_player_section_details_typ > label{
+.auction_box_player_section_details_typ>label {
   display: block;
   margin-bottom: 5px;
 }
 
-.auction_box_player_section{
+.auction_box_player_section {
   position: relative;
 }
 
-.auction_box_player_section > img{
+.auction_box_player_section>img {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -227,24 +233,30 @@
 
 
 @keyframes sold {
-  from {transform: scale(0)}
-  to {transform: scale(4)}
+  from {
+    transform: scale(0)
+  }
+
+  to {
+    transform: scale(4)
+  }
 }
-.auction_box_player_section img.active{
+
+.auction_box_player_section img.active {
   animation-name: sold;
   animation-duration: 4s;
 }
 
-.form_row > div{
+.form_row>div {
   margin-bottom: 10px;
 }
 
-.profile_img_box{
+.profile_img_box {
   border: 2px dotted #929292;
 
 }
 
-.form_page .error{
+.form_page .error {
   color: red;
 }
 
@@ -267,8 +279,9 @@ ul.shadow.logoutDropDwn:after {
   border-color: transparent transparent #09d409 transparent;
 }
 
-.Team2_col_players_list > div, .Team1_col_players_list > div{
-  margin-bottom:10px ;
+.Team2_col_players_list>div,
+.Team1_col_players_list>div {
+  margin-bottom: 10px;
 }
 
 .timer {
@@ -323,15 +336,16 @@ ul.shadow.logoutDropDwn:after {
   margin: auto;
 }
 
-.form_page_tabs ~ .tab-content table a{
+.form_page_tabs~.tab-content table a {
   text-decoration: none;
   margin: 0 10px;
   padding: 0 2px;
 }
 
-.form_page_tabs ~ .tab-content table a:nth-child(2){
+.form_page_tabs~.tab-content table a:nth-child(2) {
   color: red;
 }
+
 .userLogoutTab {
   transition: 0.4s ease;
   background: #202020;
@@ -343,7 +357,145 @@ ul.shadow.logoutDropDwn:after {
   background: #09d409;
 }
 
-.team_img img{
+.team_img img {
   width: 50px;
   height: 55px;
 }
+
+.hr-line {
+  position: relative;
+}
+
+.hr-line span {
+  position: absolute;
+  top: -16px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: fit-content;
+  background: #fff;
+  color: #9c9c9c;
+  padding: 3px;
+}
+
+.userLogoutTab>img {
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+}
+
+.page-loader {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background: url(loader.gif) no-repeat center;
+  z-index: 9999;
+  filter: opacity(0.9);
+  background-color: #fff;
+}
+
+
+/* custom loader CSS */
+.loader {
+  position: fixed;
+  width: 184px;
+  z-index: 99999;
+  text-align: center;
+  top: 50%;
+  right: 0;
+  left: 0;
+  margin: 0 auto;
+  height: 58px;
+}
+
+.loader-background {
+  position: absolute;
+  height: 100vh;
+  width: 100%;
+  background: #ffffffad;
+  z-index: 99998;
+}
+
+/* Cricket Bat */
+.bat {
+  position: absolute;
+  width: 90px;
+  height: 20px;
+  background: linear-gradient(to right, #deb887, #d2691e);
+  border-radius: 5px;
+  bottom: 30px;
+  left: 50px;
+  transform-origin: right center;
+  animation: swing 1.5s ease-in-out infinite;
+}
+
+.bat::after {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 30px;
+  background: black;
+  border-radius: 3px;
+  top: -5px;
+  right: -18px;
+}
+
+/* Cricket Ball */
+.ball {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  background: radial-gradient(circle at 30% 30%, #c21807, #8b0000);
+  border-radius: 50%;
+  bottom: 10px;
+  left: 20px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+  animation: bounce 1.5s ease-in-out infinite, moveRight 1.5s ease-in-out infinite;
+}
+
+.seam {
+  position: absolute;
+  width: 22px;
+  height: 3px;
+  background: white;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(25deg);
+  box-shadow: 0 -1px white, 0 1px white;
+}
+
+/* Shadow */
+.shadowGIF {
+  position: absolute;
+  width: 40px;
+  height: 6px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
+  bottom: 5px;
+  left: 20px;
+  animation: shadowMove 1.5s ease-in-out infinite;
+}
+
+/* Animations */
+@keyframes swing {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-35deg); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-35px); }
+}
+
+@keyframes moveRight {
+  0%, 100% { left: 20px; }
+  50% { left: 110px; }
+}
+
+@keyframes shadowMove {
+  0%, 100% { transform: scaleX(1); opacity: 0.5; }
+  50% { transform: scaleX(0.7); opacity: 0.2; left: 110px; }
+}
+
+/* custom loader CSS ends */

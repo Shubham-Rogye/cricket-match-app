@@ -3,17 +3,20 @@ import NavbarComp from './Navbar'
 import { useForm } from "react-hook-form"
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
-import { Zoom, Slide, Bounce, ToastContainer, toast } from 'react-toastify';
+import { Zoom, ToastContainer, toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux'
 import { loginPageFalse, loginPageTrue } from '../features/ValidityChecks/loginPageCheckSlice'
-import { loggedOutFalse, loggedOutTrue } from '../features/ValidityChecks/loggedOutCheckSlice'
-import { loggedInFalse, loggedInTrue } from '../features/ValidityChecks/loggedInCheckSlice'
+import googleIcon from '../G_icon.png'
+import { doCreateUserWithEmailAndPassword, doSendEmailVerification, doSignInUserWithEmailAndPassword, doSignInWithGoogle, doUpdateProfile } from '../firebase/auth'
+import { setUserToken } from '../features/UserToken/userTokenSlice'
+import { setUserData } from '../features/UserData/userDataSlice'
+import { setLoader } from '../features/Loader/loaderSlice'
+import { db } from '../firebase/firebase'
+import { addDoc, collection, doc, setDoc, getDoc } from 'firebase/firestore'
 
 
 const Login = () => {
   const loginPageCheck = useSelector((state)=>state.loginPage.value);
-  const loggedOutCheck = useSelector((state)=>state.loggedOut.value);
-  const loggedInCheck = useSelector((state)=>state.loggedIn.value);
   const dispatch = useDispatch();
   let URL = "http://localhost:4000/users"
   const navigate = useNavigate();
@@ -85,7 +88,6 @@ const Login = () => {
   }, [watch("userDOB")]);
 
   useEffect(() => {
-    dispatch(loggedInFalse());
     axios.get(URL)
       .then((res) => {
         setGetData(res.data);
@@ -93,37 +95,61 @@ const Login = () => {
       .catch((err) => console.log(err))
   }, [accountRegistered])
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
+        dispatch(setLoader(true));
         if(accountRegistered){
-          // let userFilteredData = []
-          const userFilteredData = getData.filter((userData) => userData.userEmail == data.userEmail);
-
-          if(userFilteredData.length > 0){
-            if(userFilteredData[0].userPassword == data.userPassword){
-              navigate(`/welcome/${userFilteredData[0].userFullName}`)
+          doSignInUserWithEmailAndPassword(data.userEmail, data.userPassword)
+          .then((res)=> {
+            dispatch(setLoader(false));
+            if(res._tokenResponse.registered){
               dispatch(loginPageFalse());
-              dispatch(loggedInTrue());
-              
-              if(loggedOutCheck){
-                dispatch(loggedOutFalse())
-              }
-            } else{
-            toast.error('Invalid password');
-            reset();
+              dispatch(setUserData(res));
+              dispatch(setUserToken(res.user.uid))
+              navigate(`/welcome/${res.user.displayName != null ? res.user.displayName:res.user.email}`)
+            }else{
+              toast.error('Email is not registered, Please Sign up');
+              reset();
             }
-          } else{
-            toast.error('Email is not registered, Please Sign up')
-            // alert("Email is not registered")
-          }              
+            
+          })
+          .catch((err)=>{
+            dispatch(setLoader(false));
+            toast.error('Email is not registered / Invalid password');
+            reset();
+          })         
         } else{
-          axios.post(URL,registerUser)
-          .then((res)=>{toast.success('data has been successfully registered'); reset();setAccountRegistered(!accountRegistered);})
+          doCreateUserWithEmailAndPassword(data.userEmail, data.userPassword)
+          .then((res)=>{
+            const docRef = doc(db, "users", res.user.uid);
+            setDoc(docRef,{
+              email:res.user.email
+            }).then(()=>{
+              dispatch(setLoader(false));
+              doUpdateProfile(data.userFullName)
+              toast.success('data has been successfully registered');
+              reset(); setAccountRegistered(!accountRegistered);
+            });          
+          }
+          )
+          .catch((signUpError)=>{
+            dispatch(setLoader(false));
+            if(signUpError.code == 'auth/email-already-in-use'){
+              toast.error('email-already-in-use');
+            }
+          })
         }
   };
+
+  const onGoogleSignIn = (e) =>{
+    setLoader(true);
+    e.preventDefault();
+    doSignInWithGoogle().then((res)=>(setLoader(false),dispatch(setUserData(res)),dispatch(setUserToken(res.user.uid)),navigate(`/welcome/${res.user.displayName}`))).catch((err)=>console.log(err))
+  }
 
   return (
     <>
       <NavbarComp valid={loginPageCheck} />
+      <div className='container'>
       <section className='d-flex justify-content-center'>
         <div className='login_form_page w-50 shadow p-5 mt-5'>
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -182,9 +208,21 @@ const Login = () => {
               <button type="submit" className='btn btn-primary' >Submit</button>
               <a href='#' onClick={accountCheck} className='ms-3'>{accountRegistered ? "Don't have an account ? Sign Up here" : "Already have an account ? login here"}</a>
             </div>
+            <div className='hr-line'>
+              <hr />
+              <span>OR</span>
+            </div> 
+            
           </form>
+          <div className='social_signup_box'>
+            <button className='btn btn-light d-flex w-100 justify-content-center' style={{gap:"10px"}} onClick={onGoogleSignIn}>
+              <img src={googleIcon}/>
+              <span>Signup with Google</span>
+              </button>
+            </div>
         </div>
       </section>
+      </div>
       <ToastContainer
         position="top-center"
         autoClose={5000}

@@ -2,8 +2,6 @@ import { configureStore } from '@reduxjs/toolkit'
 import turnReducer from "../features/UserTurn/userTurnSlice"
 import bidAmountSlice from "../features/BidAmount/bidAmountSlice"
 import loginPageCheckSlice from '../features/ValidityChecks/loginPageCheckSlice'
-import loggedOutCheckSlice from '../features/ValidityChecks/loggedOutCheckSlice'
-import loggedInCheckSlice from '../features/ValidityChecks/loggedInCheckSlice'
 import newPlayerButtonSlice from '../features/ValidityChecks/newPlayerButtonSlice'
 import formPageCheckSlice from '../features/ValidityChecks/formPageCheckSlice'
 import auctionPageCheckSlice from '../features/ValidityChecks/auctionPageCheckSlice'
@@ -15,13 +13,15 @@ import unSoldPlayerDBSlice from '../features/GetDataBase/unSoldPlayersDBSlice'
 import teamOwner1Slice from '../features/TeamOwners/teamOwner1Slice'
 import teamOwner2Slice from '../features/TeamOwners/teamOwner2Slice'
 import teamSlice from '../features/TeamOwners/teamSlice'
+import userTokenSlice from '../features/UserToken/userTokenSlice'
+import userDataSlice from '../features/UserData/userDataSlice'
+import loaderSlice from '../features/Loader/loaderSlice'
+
 export const store = configureStore({
   reducer: {
     turn: turnReducer,
     bid:bidAmountSlice,
     loginPage:loginPageCheckSlice,
-    loggedOut: loggedOutCheckSlice,
-    loggedIn: loggedInCheckSlice,
     newPlayer: newPlayerButtonSlice,
     formPage:formPageCheckSlice,
     auctionPage: auctionPageCheckSlice,
@@ -32,6 +32,9 @@ export const store = configureStore({
     unSoldPlayerDB: unSoldPlayerDBSlice,
     teamOwner1: teamOwner1Slice,
     teamOwner2: teamOwner2Slice,
-    team: teamSlice
+    team: teamSlice,
+    userToken: userTokenSlice,
+    userData: userDataSlice,
+    loader:loaderSlice
   },
 })

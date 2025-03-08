@@ -120,17 +120,18 @@ const AuctionLive = () => {
                         {
                             auctiveLive ?
                                 (
-                                    <div className='auction_status d-flex justify-content-center align-items-center'>
+                                    team.length>0 ? (
+                                        <div className='auction_status d-flex justify-content-center align-items-center'>
                                         <div className='auction_box d-flex justify-content-space align-items-center'>
                                             {!auctionEndedCheck ? <div className='auction_box_owner1_section text-center' style={{ opacity: playerTurn != 1 && "0.2" }}>
                                                 <img src={owner1} style={{height:"455px"}}/>
                                                 {playerTurn == 1 && 
-                                                    <>
-                                                    <h2 className='bg-dark text-light'>{team[0].name}</h2>
-                                                    <div className='points_left bg-light'>
-                                                        {team[0].points}
-                                                    </div>
-                                                    </>
+                                                        <>
+                                                            <h2 className='bg-dark text-light'>{team[0].name}</h2>
+                                                            <div className='points_left bg-light'>
+                                                                {team[0].points}
+                                                            </div>
+                                                        </>
                                                 }
                                                 
                                             </div> : null}
@@ -138,19 +139,22 @@ const AuctionLive = () => {
                                             {
                                                 !auctionEndedCheck ? <div className='auction_box_owner2_section text-center' style={{ opacity: playerTurn != 2 && "0.2" }}>
                                                 <img src={owner2} style={{height:"455px"}}/>
-                                                {playerTurn == 2 && 
-                                                        <>
-                                                            <h2 className='bg-dark text-light'>{team[1].name}</h2>
-                                                            <div className='points_left bg-light'>
-                                                                {team[1].points}
-                                                            </div>
-                                                        </>
-                                                }
+                                                        {playerTurn == 2 &&
+                                                            <>
+                                                                <h2 className='bg-dark text-light'>{team[1].name}</h2>
+                                                                <div className='points_left bg-light'>
+                                                                    {team[1].points}
+                                                                </div>
+                                                            </>
+                                                        }
                                                 
                                             </div>: null
                                             }
                                         </div>
                                     </div>
+                                    ):(
+                                        <h2>Please create the team first</h2>
+                                    )
                                 ) : (
                                     auctionEndedCheck ? (<div className='auction_status d-flex justify-content-center align-items-center'>
                                         <h2>Please Register players for the auction</h2>
@@ -158,7 +162,7 @@ const AuctionLive = () => {
                                             Back To Dashboard
                                         </Button>
                                     </div>) : (<div className='auction_status d-flex justify-content-center align-items-center'>
-                                        <Button variant="warning" onClick={auctionCheck}>Start Auction</Button>
+                                        <Button variant="dark" onClick={auctionCheck}>Start Auction</Button>
                                     </div>)
                                 )
                         }

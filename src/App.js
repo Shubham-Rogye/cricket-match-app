@@ -9,28 +9,36 @@ import AuctionLive from "./components/AuctionLive";
 import FormPagePlayer from "./components/FormPagePlayer";
 import UnauthorizedAccess from "./components/UnauthorizedAccess";
 import PageNotFound from "./components/PageNotFound";
-import { store } from '../src/redux/store.js'
-import { Provider } from 'react-redux'
+import { useSelector } from 'react-redux'
+
 
 function App() {
+  const loader = useSelector((state)=> state.loader.value)
   return (
     <>
-      <Provider store={store}>
-      <BrowserRouter>
-            <Routes>
-              <Route path="/" index element={<LandingPage />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/welcome/" element={<AccountLanding />}>
-                <Route path=":name" element={<AccountLanding />} >
-                  <Route path="liveAuction" element={<AuctionLive />} />
-                  <Route path="formPage" element={<FormPagePlayer />} />
-                </Route>
+      
+      {loader && <><div class="loader">
+        <div class="bat"></div>
+        <div class="ball">
+          <div class="seam"></div>
+        </div>
+        <div class="shadowGIF"></div>
+      </div><div className="loader-background"></div> </>}
+      
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" index element={<LandingPage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/welcome/" element={<AccountLanding />}>
+              <Route path=":name" element={<AccountLanding />} >
+                <Route path="liveAuction" element={<AuctionLive />} />
+                <Route path="formPage" element={<FormPagePlayer />} />
               </Route>
-              <Route path="/unauthorizedPage" element={<UnauthorizedAccess />} />
-              <Route path="*" element={<PageNotFound />} />
-            </Routes>
-          </BrowserRouter>
-      </Provider>
+            </Route>
+            <Route path="/unauthorizedPage" element={<UnauthorizedAccess />} />
+            <Route path="*" element={<PageNotFound />} />
+          </Routes>
+        </BrowserRouter>
     </>
   );
 }

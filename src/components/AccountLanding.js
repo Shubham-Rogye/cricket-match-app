@@ -1,31 +1,34 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, Outlet, useNavigate, useParams } from "react-router-dom";
 import { Button, InputGroup } from "react-bootstrap";
-import axios from "axios";
 import Form from 'react-bootstrap/Form';
-import { useDispatch, useSelector } from "react-redux";
-import { loggedOutTrue } from "../features/ValidityChecks/loggedOutCheckSlice";
+import { useDispatch } from "react-redux";
 import { formPageTrue } from "../features/ValidityChecks/formPageCheckSlice";
 import { auctionPageTrue } from "../features/ValidityChecks/auctionPageCheckSlice";
 import { urlParamSet } from "../features/UrlParam/urlParamSlice";
+import { doSignOut } from "../firebase/auth";
+import { setUserToken } from "../features/UserToken/userTokenSlice";
+import { useAuth } from "../contexts/authContext";
+import { addDoc, collection, deleteDoc, doc, getDocs, updateDoc } from "firebase/firestore";
+import { db } from "../firebase/firebase";
+import { setLoader } from "../features/Loader/loaderSlice";
+
 
 const AccountLanding = () => {
-  const loggedOutCheck = useSelector((state)=>state.loggedOut.value);
-  const loggedInCheck = useSelector((state)=>state.loggedIn.value);
+  const { userLoggedIn, currentUser } = useAuth();
   const dispatch = useDispatch();
-  const auctionDBurl = "http://localhost:7000/auctions"
   const param = useParams();
   const [dropDown, setDropDown] = useState(false);
   const [leftBox, setLeftBox] = useState(true);
   const [auctionField, setAuctionField] = useState(false);
-  const [auctions, setAuctions] = useState([]);
-  const navigationEntries = window.performance.getEntriesByType("navigation");
+  const [auctionsData, setAuctionsData] = useState([]);
   const [auctionVal, setAuctionVal] = useState("")
   const [auctionValEdit, setAuctionValEdit] = useState({
     isUpdate: false,
-    toUpdateId:""
+    toUpdateId: ""
   })
- 
+  const [userPhoto, setUserPhoto] = useState("");
+  const userPhotoRef = useRef("");
   let navigate = useNavigate();
 
   const left_box_hide = {
@@ -34,8 +37,8 @@ const AccountLanding = () => {
     boxShadow: "4px 14px 14px #cecece",
     height: "calc(100vh - 56px)",
     position: "sticky",
-    opacity:"0",
-    transition:"all ease 0.8s"
+    opacity: "0",
+    transition: "all ease 0.8s"
   };
 
   const left_box_show = {
@@ -44,49 +47,155 @@ const AccountLanding = () => {
     boxShadow: "4px 14px 14px #cecece",
     height: "calc(100vh - 56px)",
     position: "sticky",
-    opacity:"1",
-    transition:"all ease 0.8s"
+    opacity: "1",
+    transition: "all ease 0.8s"
   };
 
   const [active, setActive] = useState(1);
-  let paramFirstName =  param.name;
+  let paramFirstName = param.name;
   paramFirstName = paramFirstName.split(" ").shift();
   useEffect(() => {
-    if ( (navigationEntries.length > 0 && navigationEntries[0].type === "reload")) {
-        var alreadyLogin = true;
+
+    if (userLoggedIn) {
+      dispatch(setLoader(true))
+      currentUser.photoURL != null ? userPhotoRef.current = currentUser.photoURL : userPhotoRef.current = ""
+      dispatch(urlParamSet(param.name));
+      const getUserDoc = doc(db, "users", currentUser.uid);
+      const getAuctionsCollection = collection(getUserDoc, "auctions")
+      getDocs(getAuctionsCollection).then((res) => {
+        dispatch(setLoader(false))
+        let auctionD = [];
+        if(res._snapshot.docChanges.length > 0){
+          res.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            let data = doc.data()
+            data = {...data, id: doc.id}
+            auctionD.push(data);
+            // console.log(doc.id, " => ", doc.data());
+          });
+        }
+        setAuctionsData(auctionD)
+      })
     } else {
-      var alreadyLogin = false;
+      navigate('/unauthorizedPage');
     }
 
-    if (loggedOutCheck) {
-      alert("Session expire login again");
-      navigate("/login");
-    }
-    if (!loggedInCheck && !alreadyLogin) {
-      navigate("/unauthorizedPage");
-    }
-    
-    dispatch(urlParamSet(param.name));
-    axios.get(auctionDBurl)
-    .then((res)=>setAuctions(res.data))
-    .catch((err)=>console.log(err))
   }, []);
 
   const redirctTo = () => {
-    navigate("/login");
-    dispatch(loggedOutTrue());
+    dispatch(setLoader(true))
+    doSignOut()
+      .then(() => (
+        dispatch(setLoader(false)),
+        localStorage.removeItem('token'),
+        localStorage.removeItem('data'),
+        dispatch(setUserToken("")),
+        navigate("/login")
+      ))
   };
 
   const handleAddAuction = () => {
-    auctionValEdit.isUpdate ? axios.put(auctionDBurl+"/"+auctionValEdit.toUpdateId, {name:auctionVal})
-    .then((res) => axios.get(auctionDBurl).then((res)=>setAuctions(res.data),setAuctionField(!auctionField))) :
-    axios.post(auctionDBurl, {name:auctionVal})
-    .then((res) => axios.get(auctionDBurl).then((res)=>setAuctions(res.data),setAuctionField(!auctionField)));
+    dispatch(setLoader(true));
+    if (auctionValEdit.isUpdate) {
+      const getUserToUpdate = doc(db, "users", currentUser.uid)
+      const getAuctionCollectionToUpdate = collection(getUserToUpdate, "auctions")
+      const updateCollection = doc(getAuctionCollectionToUpdate, auctionValEdit.toUpdateId);
+
+      updateDoc(updateCollection,{
+        auctionName:auctionVal
+      }).then(()=>{
+        const getUserDoc = doc(db, "users", currentUser.uid);
+      const getAuctionsCollection = collection(getUserDoc, "auctions")
+      getDocs(getAuctionsCollection).then((res) => {
+        dispatch(setLoader(false))
+        let auctionD = [];
+        if(res._snapshot.docChanges.length > 0){
+          res.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            let data = doc.data()
+            data = {...data, id: doc.id}
+            auctionD.push(data);
+          });
+        }
+        setAuctionsData(auctionD);
+        setAuctionField(!auctionField);
+      })
+      })
+    } else {
+      const getUserDoc = doc(db, "users", currentUser.uid);
+      const auctionCollectionInsideUserDoc = collection(getUserDoc, "auctions")
+      addDoc(auctionCollectionInsideUserDoc, { auctionName: auctionVal }).then((res) => {
+        const getUserDoc = doc(db, "users", currentUser.uid);
+        const getAuctionsCollection = collection(getUserDoc, "auctions")
+        getDocs(getAuctionsCollection).then((res) => {
+          dispatch(setLoader(false))
+          let auctionD = [];
+          if (res._snapshot.docChanges.length > 0) {
+            res.forEach((doc) => {
+              // doc.data() is never undefined for query doc snapshots
+              let data = doc.data()
+              data = { ...data, id: doc.id }
+              auctionD.push(data);
+              // console.log(doc.id, " => ", doc.data());
+            });
+          }
+          setAuctionsData(auctionD)
+          setAuctionField(!auctionField);
+        })
+      });
+    }
   }
 
   const handleDelAuction = (id) => {
-    axios.delete(auctionDBurl+"/"+id)
-    .then((res)=> axios.get(auctionDBurl).then((res)=>setAuctions(res.data)))
+    dispatch(setLoader(true));
+    const getUserDoc = doc(db, "users", currentUser.uid);
+    const getAuctionsCollection = collection(getUserDoc, "auctions")
+
+    deleteDoc(doc(getAuctionsCollection, id)).then(()=>{
+      console.log(id + ' deleted');
+      const getUserDoc = doc(db, "users", currentUser.uid);
+      const getAuctionsCollection = collection(getUserDoc, "auctions")
+      getDocs(getAuctionsCollection).then((res) => {
+        dispatch(setLoader(false))
+        let auctionD = [];
+        if(res._snapshot.docChanges.length > 0){
+          res.forEach((doc) => {
+            let data = doc.data()
+            data = {...data, id: doc.id}
+            auctionD.push(data);
+          });
+        }
+        setAuctionsData(auctionD)
+      })
+      
+    })
+  }
+
+  const test = async () => {
+    console.log('button clicjk')
+    const getUserDoc = doc(db, "users", currentUser.uid);
+    const getAuctionsCollection = collection(getUserDoc, "auctions")
+
+    deleteDoc(doc(getAuctionsCollection, '6ywDTLcBj0QDUjrNqZQr')).then(()=>{
+      console.log('6ywDTLcBj0QDUjrNqZQr id deleted')
+    })
+
+    // const querySnapshot = await getDocs(getAuctionsCollection);
+    // let auctionsData = [];
+
+    // if(querySnapshot._snapshot.docChanges.length > 0){
+    //   querySnapshot.forEach((doc) => {
+    //     // doc.data() is never undefined for query doc snapshots 
+    //     let data = doc.data()
+    //     data = {...data, id: doc.id}
+    //     auctionsData.push(data);
+    //     // console.log(doc.id, " => ", doc.data());
+    //   });
+    //   console.log(auctionsData)
+    // }else{
+    //   alert("No auctions found")
+    // }
+    
   }
 
   return (
@@ -103,11 +212,12 @@ const AccountLanding = () => {
                 onClick={() => setLeftBox(!leftBox)}
               ></i>
               <div
-                className="d-flex p-3 userLogoutTab"
+                className="d-flex p-3 userLogoutTab align-items-center"
                 onClick={() => setDropDown(!dropDown)}
               >
                 <span>Hi, {paramFirstName}</span>
-                <i className="bi bi-person-circle"></i>
+                {userPhotoRef.current == "" || userPhotoRef.current == null ? <i className="bi bi-person-circle"></i> : <img src={userPhotoRef.current} />}
+
               </div>
             </div>
             {dropDown ? (
@@ -119,9 +229,9 @@ const AccountLanding = () => {
                   listStyle: "none",
                   cursor: "pointer",
                   right: "12px",
-                  background:"#fff",
-                  transition:"all ease .5s",
-                  cursor:"pointer"
+                  background: "#fff",
+                  transition: "all ease .5s",
+                  cursor: "pointer"
                 }}
                 className="shadow ps-0 logoutDropDwn"
               >
@@ -129,7 +239,7 @@ const AccountLanding = () => {
               </ul>
             ) : null}
           </header>
-          <section style={{background:"#ececec"}}>
+          <section style={{ background: "#ececec" }}>
             <div className="account_dashboard d-flex">
               <div
                 className="left_box"
@@ -145,7 +255,7 @@ const AccountLanding = () => {
                   <li
                     className={active == 2 ? "active" : ""}
                     onClick={() => setActive(2)}
-                    style={{pointerEvents:"none"}}
+                    style={{ pointerEvents: "none" }}
                   >
                     Auction
                   </li>
@@ -153,75 +263,76 @@ const AccountLanding = () => {
               </div>
               <div className="right_box w-100">
                 <div className="container">
-                  <h2 className="m-3" style={{borderBottom:"2px solid #09d409"}}>
+                  <h2 className="m-3" style={{ borderBottom: "2px solid #09d409" }}>
                     {active == 1 ? "Dashboard" : "Auction"}
                   </h2>
                   {active == 1 ? (
                     <div className="container-fluid">
-                      <div className="d-flex" style={{gap:"5px"}}>
-                        <div className="col-6 d-flex align-items-center p-3 shadow welcome_box rounded" style={{background:"#fff"}}>
+                      <div className="d-flex" style={{ gap: "5px" }}>
+                        <div className="col-6 d-flex align-items-center p-3 shadow welcome_box rounded" style={{ background: "#fff" }}>
                           <i className="bi bi-person-circle"></i>
                           <p className="m-0 ms-2">Welcome {paramFirstName}</p>
                         </div>
-                        <div className="col-6 d-flex align-items-center p-3 shadow rounded" style={{background:"#fff"}}>
+                        <div className="col-6 d-flex align-items-center p-3 shadow rounded" style={{ background: "#fff" }}>
                           <div className="w-100">
                             <div className="d-flex justify-content-between">
-                                <strong>My Auctions</strong>
-                                <Button variant="outline-dark" size="sm" onClick={()=>{setAuctionField(!auctionField); setAuctionVal("")}}>{auctionField ? "Cancel" : "Create New Auction"}</Button>
+                              <strong>My Auctions</strong>
+                              {/* <button className="btn btn-danger" onClick={test}>test</button> */}
+                              <Button variant="outline-dark" size="sm" onClick={() => { setAuctionField(!auctionField); setAuctionVal("") }}>{auctionField ? "Cancel" : "Create New Auction"}</Button>
                             </div>
-                              {
-                                auctionField && <InputGroup className="my-3">
+                            {
+                              auctionField && <InputGroup className="my-3">
                                 <Form.Control
                                   aria-label="Example text with button addon"
                                   aria-describedby="basic-addon1"
                                   placeholder="Add Auction Name"
                                   value={auctionVal}
-                                  onChange={(e) => {setAuctionVal(e.target.value)}}
+                                  onChange={(e) => { setAuctionVal(e.target.value) }}
                                 />
-                                <Button disabled={auctionVal.length == 0} variant="dark" id="button-addon1" onClick={()=>handleAddAuction()}>
+                                <Button disabled={auctionVal.length == 0} variant="dark" id="button-addon1" onClick={() => handleAddAuction()}>
                                   Add
                                 </Button>
                               </InputGroup>
-                              }
-                              {
-                                auctions.length > 0 ? auctions.map((elm)=>(
-                                  <>
-                                    <div className="shadow-sm mt-3 py-2 px-3 d-flex justify-content-between" key={elm.id}>
-                                      <p className="m-0">{elm.name}</p>
-                                      <div className="auctions_actionLinks">
-                                        <Link
-                                          to={`${param.name}/formPage`}
-                                          className="link-underline link-underline-opacity-0 text-primary"
-                                          onClick={() => dispatch(formPageTrue())}
-                                        >
-                                          View
-                                        </Link>
-                                        <Link
-                                          to="#"
-                                          className="link-underline link-underline-opacity-0 ms-2 text-warning"
-                                          onClick={() => {setAuctionField(true); setAuctionValEdit({...auctionValEdit, isUpdate:true, toUpdateId:elm.id}, ); setAuctionVal(elm.name)}}
-                                        >
-                                          Edit
-                                        </Link>
-                                        <Link
-                                          to={`${param.name}/liveAuction`}
-                                          className="link-underline link-underline-opacity-0 ms-2 text-info"
-                                          onClick={() => dispatch(auctionPageTrue())}
-                                        >
-                                          Live
-                                        </Link>
-                                        <Link
-                                          to="#"
-                                          className="link-underline link-underline-opacity-0 ms-2 text-danger"
-                                          onClick={() => {handleDelAuction(elm.id)}}
-                                        >
-                                          Delete
-                                        </Link>
-                                      </div>
+                            }
+                            {
+                              auctionsData.length > 0 ? auctionsData.map((elm) => (
+                                <>
+                                  <div className="shadow-sm mt-3 py-2 px-3 d-flex justify-content-between" key={elm.id}>
+                                    <p className="m-0">{elm.auctionName}</p>
+                                    <div className="auctions_actionLinks">
+                                      <Link
+                                        to={`${param.name}/formPage`}
+                                        className="link-underline link-underline-opacity-0 text-primary"
+                                        onClick={() => dispatch(formPageTrue())}
+                                      >
+                                        View
+                                      </Link>
+                                      <Link
+                                        to="#"
+                                        className="link-underline link-underline-opacity-0 ms-2 text-warning"
+                                        onClick={() => { setAuctionField(true); setAuctionValEdit({ ...auctionValEdit, isUpdate: true, toUpdateId: elm.id },); setAuctionVal(elm.auctionName) }}
+                                      >
+                                        Edit
+                                      </Link>
+                                      <Link
+                                        to={`${param.name}/liveAuction`}
+                                        className="link-underline link-underline-opacity-0 ms-2 text-info"
+                                        onClick={() => dispatch(auctionPageTrue())}
+                                      >
+                                        Live
+                                      </Link>
+                                      <Link
+                                        to="#"
+                                        className="link-underline link-underline-opacity-0 ms-2 text-danger"
+                                        onClick={() => { handleDelAuction(elm.id) }}
+                                      >
+                                        Delete
+                                      </Link>
                                     </div>
-                                  </>
-                                )):null
-                              }
+                                  </div>
+                                </>
+                              )) : null
+                            }
                           </div>
                         </div>
                       </div>

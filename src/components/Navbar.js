@@ -14,11 +14,11 @@ const NavbarComp = ({ valid }) => {
       <Navbar expand="lg" className="navbar_comp sticky-top shadow-sm">
         <Container>
           {!valid ? (<>
-            <Navbar.Brand href="#home"><img src={cricketLogo} /></Navbar.Brand>
+            <Navbar.Brand href="/"><img src={cricketLogo} /></Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
               <Nav className="me-auto">
-                <Nav.Link href="#home">HOME</Nav.Link>
+                <Nav.Link href="/">HOME</Nav.Link>
                 <Nav.Link href="#link">OUR TEAM</Nav.Link>
                 <Nav.Link href="#link">TROPHY ROOM</Nav.Link>
                 <NavDropdown title=" BLOG" id="basic-nav-dropdown">
@@ -39,11 +39,12 @@ const NavbarComp = ({ valid }) => {
                   <NavDropdown.Item href="#action/3.3">Blog List</NavDropdown.Item>
                 </NavDropdown>
               </Nav>
-              <Button href='/login' variant="outline-dark" size="sm">Log In / Register</Button>
+              <hr/>
+              <Button href='/login' variant="dark" size="sm">Log In / Register</Button>
             </Navbar.Collapse>
           </>) : (<>
             <div className='d-flex w-100'>
-              <Navbar.Brand href="#home"><img src={cricketLogo} /></Navbar.Brand>
+              <Navbar.Brand href="/"><img src={cricketLogo} /></Navbar.Brand>
               <Navbar.Collapse id="basic-navbar-nav" className='justify-content-end'>
                 <Button href='/' variant="outline-dark" size="sm">HOME</Button>
               </Navbar.Collapse>
