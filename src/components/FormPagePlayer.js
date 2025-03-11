@@ -12,15 +12,22 @@ import owner1 from '../team1.png'
 import owner2 from '../team3.png'
 import { useDispatch, useSelector } from 'react-redux';
 import { team } from '../features/TeamOwners/teamSlice';
+import { db } from '../firebase/firebase';
+import { addDoc, collection, doc, getDocs, setDoc } from 'firebase/firestore';
+import { useAuth } from '../contexts/authContext';
+import { setLoader } from '../features/Loader/loaderSlice';
 
 const FormPagePlayer = () => {
     const teamDB = useSelector((state)=>state.team.value);
+    const auctionData = useSelector((state)=>state.auctionData.value);
+    const { userLoggedIn, currentUser } = useAuth();
     const dispatch = useDispatch();
     const [file, setFile] = useState("");
     const [bidValue, setBidValue] = useState(500)
     const [formFilledData, setFormFilledData] = useState([])
     const [captains, setCaptains] = useState(false)
-    const [switchOn, setSwitchOn] = useState(false)
+    const [switchOn, setSwitchOn] = useState(false);
+    const [aucD, setAucD] = useState([]);
     let url = "http://localhost:5000/playersCategory"
     const navigate = useNavigate();
 
@@ -33,6 +40,7 @@ const FormPagePlayer = () => {
     } = useForm()
 
     const onSubmit = (data) => {
+        dispatch(setLoader(true));
         if(captains){
             var sentData = {
                 "fullName": data.fullName,
@@ -54,46 +62,30 @@ const FormPagePlayer = () => {
             setBidValue(500);
             setSwitchOn(false);
                 
-            axios.get(url)
-            .then((res)=>{
-                if(res.data.length > 0){
-                    const totalCaptainsCheck = []
-    
-                    if(switchOn){
-                        res.data.filter((cap) => {
-                            if(cap.captain == true){
-                                totalCaptainsCheck.push(cap.captain)
-                            }
+            const getAuthDoc = doc(db,"users", currentUser.uid,"auctions", aucD[0].id);
+            const teamCollectionInsideAuctionDoc = collection(getAuthDoc, "players");
+
+            addDoc(teamCollectionInsideAuctionDoc, sentData).then((res)=>{
+                dispatch(setLoader(true));
+                const getAuthDoc = doc(db, "users", currentUser.uid, "auctions", aucD[0].id);
+                const teamCollectionInsideAuctionDoc = collection(getAuthDoc, "players");
+
+                getDocs(teamCollectionInsideAuctionDoc).then((res)=>{
+                    dispatch(setLoader(false));
+                    let playerData = [];
+                    if(res._snapshot.docChanges.length > 0){
+                        res.forEach((doc) => {
+                            let data = doc.data()
+                            data = { ...data, id: doc.id };
+                            playerData.push(data)
                         })
                     }
-    
-                    if (totalCaptainsCheck.length > 1){
-                        alert("More than two captains are not allowed")
-                    } else{
-                        axios.post(url, sentData)
-                        .then((res) => {
-                            console.log('Record added');
-                            axios.get(url)
-                                .then((res) => {
-                                    setFormFilledData(res.data);
-                                })
-                        })
-                    }
-                } else{
-                    axios.post(url, sentData)
-                        .then((res) => {
-                            console.log('Record added');
-                            axios.get(url)
-                                .then((res) => {
-                                    setFormFilledData(res.data);
-                                })
-                        })
-                }
-            })
-            
-                // console.log(formFilledData);
-                setSwitchOn(false);
-                setFile("")
+                    setFormFilledData(playerData)
+                    console.log(data)
+                }).catch(()=>console.log("error"))
+            }).catch(()=>console.log("error"))
+            setSwitchOn(false);
+            setFile("");
     
             reset({
                 photo:"",
@@ -103,11 +95,16 @@ const FormPagePlayer = () => {
                 specification2: "",
                 mobileNo: ""
             });
+
+            
+
         } else{
             // console.log(data);
-              
-              dispatch(team(
-                [{
+            const getAuctionrDoc = doc(db, "users", currentUser.uid, "auctions",aucD[0].id);
+            const teamCollectionInsideAuctionDoc = collection(getAuctionrDoc, "teams");
+
+            addDoc(teamCollectionInsideAuctionDoc,{"teams":[
+                {
                     "logo": owner1,
                     "name":data.team1Name,
                     "owner":data.captain1fullName,
@@ -118,9 +115,26 @@ const FormPagePlayer = () => {
                     "name":data.team2Name,
                     "owner":data.captain2fullName,
                     "points":Number(data.captain2points)
-                  }]
-              ))
-              setCaptains(true);
+                  }
+            ]} ).then((res)=>{
+                dispatch(setLoader(true));
+                const getAuctionrDoc = doc(db, "users", currentUser.uid, "auctions",aucD[0].id);
+                const teamCollectionInsideAuctionDoc = collection(getAuctionrDoc, "teams");
+
+                  getDocs(teamCollectionInsideAuctionDoc).then((res)=>{
+                    dispatch(setLoader(false));
+                    let teamData;
+                    if(res._snapshot.docChanges.length > 0){
+                        res.forEach((doc) => {
+                          teamData = doc.data()
+                        });
+                      }
+                      dispatch(team(teamData.teams));
+                      setCaptains(true);
+                  }).catch(()=>dispatch(setLoader(false)), console.log("error:",))
+                  
+                  
+              }).catch(()=>dispatch(setLoader(false)), console.log("error:",))
         }
     }
 
@@ -142,12 +156,44 @@ const FormPagePlayer = () => {
     const onSwitchChange = () => {
         setSwitchOn(!switchOn)
     }
-
+    
     useEffect(()=>{
-        axios.get(url)
-            .then((res) => {
-                setFormFilledData(res.data);
-            });
+        dispatch(setLoader(true));
+        setAucD(JSON.parse(localStorage.getItem('auctionData')));
+        const getAuctionrDoc = doc(db, "users", currentUser.uid, "auctions", JSON.parse(localStorage.getItem('auctionData'))[0].id);
+        const teamCollectionInsideAuctionDoc = collection(getAuctionrDoc, "teams");
+
+        getDocs(teamCollectionInsideAuctionDoc).then((res) => {
+            dispatch(setLoader(false));
+            let teamData
+            if(res._snapshot.docChanges.length > 0){
+                res.forEach((doc) => {
+                  teamData = doc.data()
+                });
+                dispatch(team(teamData.teams));
+                 setCaptains(true)
+              } else{
+                dispatch(team([]));
+                 setCaptains(false)
+              }
+              
+        }).catch(() => dispatch(setLoader(false)), console.log("error"))
+
+        const getAuthDoc = doc(db, "users", currentUser.uid, "auctions", JSON.parse(localStorage.getItem('auctionData'))[0].id);
+        const teamCollectionInsidePlayersDoc = collection(getAuthDoc, "players");
+
+        getDocs(teamCollectionInsidePlayersDoc).then((res) => {
+            dispatch(setLoader(false));
+            let playerData = [];
+            if (res._snapshot.docChanges.length > 0) {
+                res.forEach((doc) => {
+                    let data = doc.data()
+                    data = { ...data, id: doc.id };
+                    playerData.push(data)
+                })
+            }
+            setFormFilledData(playerData)
+        }).catch(() => console.log("error"));
     },[])
 
     useEffect(()=>{

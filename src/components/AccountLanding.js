@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link, Outlet, useNavigate, useParams } from "react-router-dom";
 import { Button, InputGroup } from "react-bootstrap";
 import Form from 'react-bootstrap/Form';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { formPageTrue } from "../features/ValidityChecks/formPageCheckSlice";
 import { auctionPageTrue } from "../features/ValidityChecks/auctionPageCheckSlice";
 import { urlParamSet } from "../features/UrlParam/urlParamSlice";
@@ -12,16 +12,17 @@ import { useAuth } from "../contexts/authContext";
 import { addDoc, collection, deleteDoc, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase";
 import { setLoader } from "../features/Loader/loaderSlice";
+import { setAuctionData } from "../features/AuctionData/auctionDataSlice";
 
 
 const AccountLanding = () => {
+  const auctionData = useSelector((state)=>state.auctionData.value);
   const { userLoggedIn, currentUser } = useAuth();
   const dispatch = useDispatch();
   const param = useParams();
   const [dropDown, setDropDown] = useState(false);
   const [leftBox, setLeftBox] = useState(true);
   const [auctionField, setAuctionField] = useState(false);
-  const [auctionsData, setAuctionsData] = useState([]);
   const [auctionVal, setAuctionVal] = useState("")
   const [auctionValEdit, setAuctionValEdit] = useState({
     isUpdate: false,
@@ -74,7 +75,7 @@ const AccountLanding = () => {
             // console.log(doc.id, " => ", doc.data());
           });
         }
-        setAuctionsData(auctionD)
+        dispatch(setAuctionData(auctionD))
       })
     } else {
       navigate('/unauthorizedPage');
@@ -117,7 +118,7 @@ const AccountLanding = () => {
             auctionD.push(data);
           });
         }
-        setAuctionsData(auctionD);
+        dispatch(setAuctionData(auctionD))
         setAuctionField(!auctionField);
       })
       })
@@ -138,9 +139,12 @@ const AccountLanding = () => {
               auctionD.push(data);
               // console.log(doc.id, " => ", doc.data());
             });
+            localStorage.setItem("auctionData",JSON.stringify([{auctionName:res._snapshot.docChanges[0].doc.data.value.mapValue.fields.auctionName, id:res._snapshot.docChanges[0].doc.key.path.segments[res._snapshot.docChanges[0].doc.key.path.segments.length - 1]
+            }]))
+            dispatch(setAuctionData(auctionD));
+            setAuctionField(!auctionField);
+            navigate(`${param.name}/formPage`)
           }
-          setAuctionsData(auctionD)
-          setAuctionField(!auctionField);
         })
       });
     }
@@ -165,7 +169,7 @@ const AccountLanding = () => {
             auctionD.push(data);
           });
         }
-        setAuctionsData(auctionD)
+        dispatch(setAuctionData(auctionD))
       })
       
     })
@@ -179,23 +183,13 @@ const AccountLanding = () => {
     deleteDoc(doc(getAuctionsCollection, '6ywDTLcBj0QDUjrNqZQr')).then(()=>{
       console.log('6ywDTLcBj0QDUjrNqZQr id deleted')
     })
-
-    // const querySnapshot = await getDocs(getAuctionsCollection);
-    // let auctionsData = [];
-
-    // if(querySnapshot._snapshot.docChanges.length > 0){
-    //   querySnapshot.forEach((doc) => {
-    //     // doc.data() is never undefined for query doc snapshots 
-    //     let data = doc.data()
-    //     data = {...data, id: doc.id}
-    //     auctionsData.push(data);
-    //     // console.log(doc.id, " => ", doc.data());
-    //   });
-    //   console.log(auctionsData)
-    // }else{
-    //   alert("No auctions found")
-    // }
     
+  }
+
+  const createTeam = (id) => {
+    let aucD = auctionData.filter((res) => res.id == id);
+    localStorage.setItem('auctionData',JSON.stringify(aucD));
+    console.log(aucD)
   }
 
   return (
@@ -295,7 +289,7 @@ const AccountLanding = () => {
                               </InputGroup>
                             }
                             {
-                              auctionsData.length > 0 ? auctionsData.map((elm) => (
+                              auctionData.length > 0 ? auctionData.map((elm) => (
                                 <>
                                   <div className="shadow-sm mt-3 py-2 px-3 d-flex justify-content-between" key={elm.id}>
                                     <p className="m-0">{elm.auctionName}</p>
@@ -303,9 +297,9 @@ const AccountLanding = () => {
                                       <Link
                                         to={`${param.name}/formPage`}
                                         className="link-underline link-underline-opacity-0 text-primary"
-                                        onClick={() => dispatch(formPageTrue())}
+                                        onClick={() => (dispatch(formPageTrue()),createTeam(elm.id))}
                                       >
-                                        View
+                                        Create Team / View
                                       </Link>
                                       <Link
                                         to="#"

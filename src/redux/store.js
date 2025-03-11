@@ -16,6 +16,7 @@ import teamSlice from '../features/TeamOwners/teamSlice'
 import userTokenSlice from '../features/UserToken/userTokenSlice'
 import userDataSlice from '../features/UserData/userDataSlice'
 import loaderSlice from '../features/Loader/loaderSlice'
+import auctionDataSlice from '../features/AuctionData/auctionDataSlice'
 
 export const store = configureStore({
   reducer: {
@@ -35,6 +36,7 @@ export const store = configureStore({
     team: teamSlice,
     userToken: userTokenSlice,
     userData: userDataSlice,
-    loader:loaderSlice
+    loader:loaderSlice,
+    auctionData: auctionDataSlice
   },
 })

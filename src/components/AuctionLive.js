@@ -22,6 +22,11 @@ import { soldPlayerDB } from '../features/GetDataBase/soldPlayersDBSlice';
 import { unSoldPlayerDB } from '../features/GetDataBase/unSoldPlayersDBSlice';
 import { teamOwner1 } from '../features/TeamOwners/teamOwner1Slice';
 import { teamOwner2 } from '../features/TeamOwners/teamOwner2Slice';
+import { collection, doc, getDocs } from 'firebase/firestore';
+import { db } from '../firebase/firebase';
+import { setLoader } from '../features/Loader/loaderSlice';
+import { useAuth } from '../contexts/authContext';
+import { team } from '../features/TeamOwners/teamSlice';
 
 
 const AuctionLive = () => {
@@ -32,10 +37,10 @@ const AuctionLive = () => {
     const teamOwner1data = useSelector((state)=>state.teamOwner1.value);
     const teamOwner2data = useSelector((state)=>state.teamOwner2.value);
     const urlParamSet = useSelector((state)=>state.urlParam.value);
-    const team = useSelector((state)=>state.team.value)
+    const teamD = useSelector((state)=>state.team.value)
     const dispatch = useDispatch();
     const param = useParams();
-
+    const { userLoggedIn, currentUser } = useAuth();
     let URL = "http://localhost:5000/playersCategory"
     let soldPlayersURL = "http://localhost:6500/soldPlayers"
     let unsoldPlayersURL = "http://localhost:6500/unsoldPlayers"
@@ -48,6 +53,7 @@ const AuctionLive = () => {
     const [newTab, setNewTab] = useState(false);
     const randomPlayer = useRef([]);
     const contentRef = useRef(null);
+    const [aucD, setAucD] = useState(JSON.parse(localStorage.getItem('auctionData')));
     const reactToPrintFn = useReactToPrint({ contentRef });
     
 
@@ -78,10 +84,26 @@ const AuctionLive = () => {
     }
 
     useEffect(() => {
-        axios.get(URL)
-            .then((res) => {
-                setPlayers(res.data);
-            })
+        const getAuctionrDoc = doc(db, "users", currentUser.uid, "auctions", aucD[0].id);
+        const playerCollectionInsideAuctionDoc = collection(getAuctionrDoc, "players");
+
+        getDocs(playerCollectionInsideAuctionDoc).then((res) => {
+            dispatch(setLoader(false));
+            let playerData = [];
+            if (res._snapshot.docChanges.length > 0) {
+                res.forEach((doc) => {
+                    let data = doc.data()
+                    data = { ...data, id: doc.id };
+                    playerData.push(data)
+                });
+            }
+            if(playerData.length > 0){
+                setPlayers(playerData);
+            } else{
+                setPlayers([])
+            }
+        }).catch(() => dispatch(setLoader(false)), console.log("error:"));
+        
         let filPlayers = []
         if (radioValue != 1) {
             filPlayers = players.filter((filPlayer) => filPlayer.category == radios[radioValue - 1].name);
@@ -105,6 +127,40 @@ const AuctionLive = () => {
         return
     },[newTab])
 
+    useEffect(() => {
+        dispatch(setLoader(true));
+        const getAuctionrDoc = doc(db, "users", currentUser.uid, "auctions", aucD[0].id);
+        const teamCollectionInsideAuctionDoc = collection(getAuctionrDoc, "teams");
+        const playerCollectionInsideAuctionDoc = collection(getAuctionrDoc, "players");
+
+        getDocs(teamCollectionInsideAuctionDoc).then((res) => {
+            dispatch(setLoader(false));
+            let teamData;
+            if (res._snapshot.docChanges.length > 0) {
+                res.forEach((doc) => {
+                    teamData = doc.data()
+                });
+            }
+            dispatch(team(teamData.teams));
+        }).catch(() => dispatch(setLoader(false)), console.log("error:"))
+
+        getDocs(playerCollectionInsideAuctionDoc).then((res) => {
+            dispatch(setLoader(false));
+            let playerData = [];
+            if (res._snapshot.docChanges.length > 0) {
+                res.forEach((doc) => {
+                    let data = doc.data()
+                    data = { ...data, id: doc.id };
+                    playerData.push(data)
+                });
+            }
+            if(playerData.length > 0){
+                setPlayers(playerData);
+            } else{
+                setPlayers([])
+            }
+        }).catch(() => dispatch(setLoader(false)), console.log("error:"))
+    }, [])
 
     return (
         <>
@@ -120,16 +176,16 @@ const AuctionLive = () => {
                         {
                             auctiveLive ?
                                 (
-                                    team.length>0 ? (
+                                    teamD.length>0 ? (
                                         <div className='auction_status d-flex justify-content-center align-items-center'>
                                         <div className='auction_box d-flex justify-content-space align-items-center'>
                                             {!auctionEndedCheck ? <div className='auction_box_owner1_section text-center' style={{ opacity: playerTurn != 1 && "0.2" }}>
                                                 <img src={owner1} style={{height:"455px"}}/>
                                                 {playerTurn == 1 && 
                                                         <>
-                                                            <h2 className='bg-dark text-light'>{team[0].name}</h2>
+                                                            <h2 className='bg-dark text-light'>{teamD[0].name}</h2>
                                                             <div className='points_left bg-light'>
-                                                                {team[0].points}
+                                                                {teamD[0].points}
                                                             </div>
                                                         </>
                                                 }
@@ -141,9 +197,9 @@ const AuctionLive = () => {
                                                 <img src={owner2} style={{height:"455px"}}/>
                                                         {playerTurn == 2 &&
                                                             <>
-                                                                <h2 className='bg-dark text-light'>{team[1].name}</h2>
+                                                                <h2 className='bg-dark text-light'>{teamD[1].name}</h2>
                                                                 <div className='points_left bg-light'>
-                                                                    {team[1].points}
+                                                                    {teamD[1].points}
                                                                 </div>
                                                             </>
                                                         }
@@ -173,7 +229,7 @@ const AuctionLive = () => {
                         <div className='container'>
                             <div className='row  justify-content-between' style={{gap:"6px"}} ref={contentRef}>
                                 {
-                                    team.map((elm, index)=>(
+                                    teamD.map((elm, index)=>(
                                         <div className='col bg-light' style={{ height: "fit-content" }}>
                                             <div className='Team1_col text-center' key={elm.id}>
                                                 <div className={index == 0 ? 'Team1_col_heading mt-2 py-3 bg-info text-light':'Team1_col_heading mt-2 py-3 bg-primary text-light'}>

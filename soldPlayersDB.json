@@ -1,4 +1,14 @@
 {
-  "soldPlayers": [],
+  "soldPlayers": [
+    {
+      "id": "RjFc3nyevtC3vZPQuJl9",
+      "bidValue": 500,
+      "category": "Silver",
+      "fullName": "Aditya Samant",
+      "specification1": "Batsman",
+      "specification2": "Right-Hand-Batsman",
+      "owner": 2
+    }
+  ],
   "unsoldPlayers": []
 }

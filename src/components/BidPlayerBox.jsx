@@ -12,6 +12,10 @@ import { incrementBid, setBidValue } from '../features/BidAmount/bidAmountSlice'
 import { newPlayerFalse, newPlayerTrue } from '../features/ValidityChecks/newPlayerButtonSlice'
 import { auctionEndedTrue } from '../features/ValidityChecks/auctionEndedCheckSlice'
 import { team, updateTeamPoints } from '../features/TeamOwners/teamSlice'
+import { addDoc, collection, deleteDoc, doc, getDocs } from 'firebase/firestore';
+import { auth, db } from '../firebase/firebase';
+import { setLoader } from '../features/Loader/loaderSlice';
+import { useAuth } from '../contexts/authContext';
 
 
 const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerSpec1, playerId }) => {
@@ -59,7 +63,9 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
     const [unSoldPlayerList, setUnSoldPlayerList] = useState(false);
     const [unSoldImage, setUnSoldImg] = useState(false)
     const [eliminateImage, setEliminateImg] = useState(false)
+    const [aucD, setAucD] = useState(JSON.parse(localStorage.getItem('auctionData')));
     const teamS = useRef(teamDB)
+    const {currentUser} = useAuth();
 
     useEffect(()=>{
         const timer = timerCount > 0 && setInterval(()=> setTimerCount(timerCount - 1),1000);
@@ -82,8 +88,9 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
     },[timerCount])
 
     useEffect(()=>{
-        axios.get(url)
-        .then((res)=> (res.data.length-2) % 2 === 0 ? setMaxPlayers(res.data.length/2 - 1):setMaxPlayers(res.data.length/2 - 1.5))
+        
+        // axios.get(url)
+        // .then((res)=> (res.data.length-2) % 2 === 0 ? setMaxPlayers(res.data.length/2 - 1):setMaxPlayers(res.data.length/2 - 1.5))
     },[])
 
 
@@ -104,31 +111,64 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
         if(teamDB[(playerTurn == 1 ? 2 : 1) - 1].points < bidAmount){
             alert("You don't have sufficient points to buy");
         }else{
-            axios.get(soldPlayersURL)
-            .then((res) => {
-                var team1TotalPlayers = res.data.filter((elm)=>elm.owner == 1)
-                var team2TotalPlayers = res.data.filter((elm)=>elm.owner == 2)
+            const getAucDoc = doc(db, "users", currentUser.uid, "auctions", aucD[0].id)
+            const getPlayerCollection = collection(getAucDoc, "players");
+            var team1TotalPlayers;
+            var team2TotalPlayers;
+            getDocs(getPlayerCollection).then((res) => {
+                let playerData = [];
+                if (res._snapshot.docChanges.length > 0) {
+                    res.forEach((doc) => {
+                        let data = doc.data()
+                        data = { ...data, id: doc.id };
+                        playerData.push(data)
+                    })
+                }
+                let playerSoldId = playerData.filter((playerID)=>playerID.id == id)
 
-                if(playerTurn == 2 && team1TotalPlayers.length >= maxPlayers){
-                    alert(`Cannot add more than ${maxPlayers} players in one team, Please sell remaining players to team 2`)
-                } else if(playerTurn == 1 && team2TotalPlayers.length >= maxPlayers){
-                    alert(`Cannot add more than ${maxPlayers} players in one team, Please sell remaining players to team 1`)
-                } else{
-                    setSoldActive(true)
+                setSoldActive(true)
                     setEliminateImg(false);
                     dispatch(newPlayerTrue());
                     var newPoints = teamS.current[pointCheck].points - bidAmount;
                     dispatch(updateTeamPoints({pointCheck, newPoints}));
                     randomPlayerChange.current[0].owner = playerTurn == 1 ? 2 : 1
                     randomPlayerChange.current[0].bidValue = bidAmount;
-                    axios.delete(unSoldPlayerList ? unsoldPlayersURL + "/" + id : url + "/" + id)
-                        .then((res) => console.log('record deleted'))
-                        .catch((err) => console.log(err))
 
-                    axios.post(soldPlayersURL, randomPlayerChange.current[0])
-                        .then((res) => console.log('playerSold'))
-                }
-            });
+                    var getSoldPlayerCollection = collection(getAucDoc, "soldPlayers");                   
+                    
+                    deleteDoc(doc(getPlayerCollection, playerSoldId[0].id)).then((res)=>{
+                        console.log('record deleted');
+                        addDoc(getSoldPlayerCollection, randomPlayerChange.current[0]).then((res) => console.log('playerSold')).catch((err)=>console.log("err:", err))
+                    }).catch((err)=>console.log("err:", err))
+                    
+
+            })
+
+            // axios.get(soldPlayersURL)
+            // .then((res) => {
+            //     var team1TotalPlayers = res.data.filter((elm)=>elm.owner == 1)
+            //     var team2TotalPlayers = res.data.filter((elm)=>elm.owner == 2)
+
+            //     if(playerTurn == 2 && team1TotalPlayers.length >= maxPlayers){
+            //         alert(`Cannot add more than ${maxPlayers} players in one team, Please sell remaining players to team 2`)
+            //     } else if(playerTurn == 1 && team2TotalPlayers.length >= maxPlayers){
+            //         alert(`Cannot add more than ${maxPlayers} players in one team, Please sell remaining players to team 1`)
+            //     } else{
+            //         setSoldActive(true)
+            //         setEliminateImg(false);
+            //         dispatch(newPlayerTrue());
+            //         var newPoints = teamS.current[pointCheck].points - bidAmount;
+            //         dispatch(updateTeamPoints({pointCheck, newPoints}));
+            //         randomPlayerChange.current[0].owner = playerTurn == 1 ? 2 : 1
+            //         randomPlayerChange.current[0].bidValue = bidAmount;
+            //         axios.delete(unSoldPlayerList ? unsoldPlayersURL + "/" + id : url + "/" + id)
+            //             .then((res) => console.log('record deleted'))
+            //             .catch((err) => console.log(err))
+
+            //         axios.post(soldPlayersURL, randomPlayerChange.current[0])
+            //             .then((res) => console.log('playerSold'))
+            //     }
+            // });
 
             
         }
