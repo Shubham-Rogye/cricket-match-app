@@ -1,24 +1,22 @@
 import React, { useEffect, useState } from 'react'
 import NavbarComp from './Navbar'
 import { useForm } from "react-hook-form"
-import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { Zoom, ToastContainer, toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux'
 import { loginPageFalse, loginPageTrue } from '../features/ValidityChecks/loginPageCheckSlice'
 import googleIcon from '../G_icon.png'
-import { doCreateUserWithEmailAndPassword, doSendEmailVerification, doSignInUserWithEmailAndPassword, doSignInWithGoogle, doUpdateProfile } from '../firebase/auth'
+import { doCreateUserWithEmailAndPassword, doSignInUserWithEmailAndPassword, doSignInWithGoogle, doUpdateProfile } from '../firebase/auth'
 import { setUserToken } from '../features/UserToken/userTokenSlice'
 import { setUserData } from '../features/UserData/userDataSlice'
 import { setLoader } from '../features/Loader/loaderSlice'
 import { db } from '../firebase/firebase'
-import { addDoc, collection, doc, setDoc, getDoc } from 'firebase/firestore'
+import { doc, setDoc } from 'firebase/firestore'
 
 
 const Login = () => {
   const loginPageCheck = useSelector((state)=>state.loginPage.value);
   const dispatch = useDispatch();
-  let URL = "http://localhost:4000/users"
   const navigate = useNavigate();
   const {
     register,
@@ -40,7 +38,6 @@ const Login = () => {
   const [accountRegistered, setAccountRegistered] = useState(true)
   const [passwordMatchCheck, setPasswordMatchCheck] = useState(null);
   const [showPass, setShowPass] = useState(false);
-  const [getData, setGetData] = useState([])
 
   dispatch(loginPageTrue())
 
@@ -48,7 +45,6 @@ const Login = () => {
     e.preventDefault();
     setAccountRegistered(!accountRegistered);
     setShowPass(false)
-    console.log(accountRegistered)
     reset();
 
   }
@@ -86,14 +82,6 @@ const Login = () => {
     }
 
   }, [watch("userDOB")]);
-
-  useEffect(() => {
-    axios.get(URL)
-      .then((res) => {
-        setGetData(res.data);
-      })
-      .catch((err) => console.log(err))
-  }, [accountRegistered])
 
   const onSubmit = async (data) => {
         dispatch(setLoader(true));

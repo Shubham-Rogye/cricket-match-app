@@ -9,7 +9,7 @@ const Banner = () => {
   return (
     <section style={{ 'height': `calc(100vh - ${navHeight}px)` }} className='banner_img_div'>
       <img src={bannerImg}/>
-      <div></div>
+      <div className=''></div>
     </section>
   )
 }

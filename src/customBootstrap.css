@@ -158,7 +158,7 @@
 
 .auction {
   min-height: calc(100vh - 41px);
-  background: linear-gradient(268deg, #FDD819 0%, #FDD819 35%, #E80505 100%);
+  background: linear-gradient(268deg, #000000 0%, #000000 35%, #4e4e4e 100%);
 }
 
 .auction_status {
@@ -499,3 +499,60 @@ ul.shadow.logoutDropDwn:after {
 }
 
 /* custom loader CSS ends */
+
+
+@media (max-width:991px){
+  .login_form_page{
+    width: 100% !important;
+  }
+
+  /*banner media query starts*/
+  section.banner_img_div{
+    height: 255px !important;
+  }
+  .banner_img_div>div{
+    background-size: 195px;
+  }
+  /*banner media query ends*/
+
+  /*LAST MATCH SECTION MEDIA QUERY STARTS*/
+  .last_name_result_title {
+    padding: 20px !important;
+}
+  /*LAST MATCH SECTION MEDIA QUERY ENDS*/
+
+  .time_table_section{
+    padding: 20px !important;
+  }
+
+  /*UPCOMING MATCH SECTION MEDIA QUERY STARTS*/
+  table.table.table-hover.table-dark.table-striped.table-bordered.mt-5 {
+    margin-top: 22px !important;
+}
+/*UPCOMING MATCH SECTION MEDIA QUERY STARTS*/
+
+/*Account landing media query starts*/
+
+.left_box{
+  width: 100%;
+}
+
+.welcome_section_box{
+  display: block !important;
+}
+.auction_status{
+  padding: 0 100px;
+}
+
+.auction_box{
+  gap: 10px;
+  flex-direction: column-reverse;
+}
+
+.auction_box_player_section {
+  position: relative;
+  order: 1;
+}
+
+/*Account landing media query ends*/
+}

@@ -7,7 +7,7 @@ const MatchTiming = () => {
   return (
     <section className='time_table_section p-5'>
         <div className='container'>
-            <h1 className='text-light'>Upcomming Match List</h1>
+            <h2 className='text-light text-center'>Upcomming Match List</h2>
               {timeSchedule.length < 1 ? (
                 <div className="no_record">
                     <h2 className="text-danger">No records found</h2>

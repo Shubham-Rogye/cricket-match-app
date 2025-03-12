@@ -11,7 +11,7 @@ const LastMatchResult = () => {
             <div className='container'>
                 <div>
                     <div className='p-5 text-center last_name_result_title'>
-                        <h1>Last match result</h1>
+                        <h2>Last match result</h2>
                     </div>
                     <div className='last_name_result_boxes'>
                         <div className='container-fluid'>

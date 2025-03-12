@@ -3,7 +3,6 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import Players from './Players';
-import axios from 'axios';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import owner1 from '../vk18-removebg-preview.png'
@@ -40,10 +39,7 @@ const AuctionLive = () => {
     const teamD = useSelector((state)=>state.team.value)
     const dispatch = useDispatch();
     const param = useParams();
-    const { userLoggedIn, currentUser } = useAuth();
-    let URL = "http://localhost:5000/playersCategory"
-    let soldPlayersURL = "http://localhost:6500/soldPlayers"
-    let unsoldPlayersURL = "http://localhost:6500/unsoldPlayers"
+    const { currentUser } = useAuth();
 
     const [auctiveLive, setAuctionLive] = useState(false);
     const [players, setPlayers] = useState([]);
@@ -55,6 +51,7 @@ const AuctionLive = () => {
     const contentRef = useRef(null);
     const [aucD, setAucD] = useState(JSON.parse(localStorage.getItem('auctionData')));
     const reactToPrintFn = useReactToPrint({ contentRef });
+    const getAuctionrDoc = doc(db, "users", currentUser.uid, "auctions", aucD[0].id);
     
 
     const radios = [
@@ -84,6 +81,7 @@ const AuctionLive = () => {
     }
 
     useEffect(() => {
+        dispatch(setLoader(true));
         const getAuctionrDoc = doc(db, "users", currentUser.uid, "auctions", aucD[0].id);
         const playerCollectionInsideAuctionDoc = collection(getAuctionrDoc, "players");
 
@@ -114,22 +112,52 @@ const AuctionLive = () => {
     }, [radioValue, soldPlayerDBdata])
 
     useEffect(() => {
-        axios.get(soldPlayersURL)
-        .then((res) => {
-            dispatch(soldPlayerDB(res.data))
-            dispatch(teamOwner1(res.data.filter((owner) => owner.owner == 1)));
-            dispatch(teamOwner2(res.data.filter((owner) => owner.owner == 2))); 
-        }).catch((err) => console.log(err));
+        dispatch(setLoader(true));
+        const getsoldPlayerCollectionInsideAuctionDoc = collection(getAuctionrDoc, "soldPlayers");
+        const getUnsoldPlayerCollectionInsideAuctionDoc = collection(getAuctionrDoc, "unsoldPlayers");
 
-        axios.get(unsoldPlayersURL)
-        .then((res) => dispatch(unSoldPlayerDB(res.data)))
-        .catch((err) => console.log(err))
+        getDocs(getsoldPlayerCollectionInsideAuctionDoc)
+        .then((res) => {
+            dispatch(setLoader(false));
+            let playerData = [];
+            if (res._snapshot.docChanges.length > 0) {
+                res.forEach((doc) => {
+                    let data = doc.data()
+                    data = { ...data, id: doc.id };
+                    playerData.push(data)
+                });
+                dispatch(soldPlayerDB(playerData))
+                dispatch(teamOwner1(playerData.filter((owner) => owner.owner == 1)));
+                dispatch(teamOwner2(playerData.filter((owner) => owner.owner == 2))); 
+            }else{
+                dispatch(soldPlayerDB([]))
+                dispatch(teamOwner1([]));
+                dispatch(teamOwner2([])); 
+            }
+        })
+        .catch(() => dispatch(setLoader(false)), console.log("error:"))
+
+        getDocs(getUnsoldPlayerCollectionInsideAuctionDoc)
+        .then((res) => {
+            dispatch(setLoader(false));
+            let playerData = [];
+            if (res._snapshot.docChanges.length > 0) {
+                res.forEach((doc) => {
+                    let data = doc.data()
+                    data = { ...data, id: doc.id };
+                    playerData.push(data)
+                });
+                dispatch(unSoldPlayerDB(playerData));
+            } else{
+                dispatch(unSoldPlayerDB([]))
+            }
+        })
+        .catch(() => dispatch(setLoader(false)), console.log("error:"))
         return
     },[newTab])
 
     useEffect(() => {
         dispatch(setLoader(true));
-        const getAuctionrDoc = doc(db, "users", currentUser.uid, "auctions", aucD[0].id);
         const teamCollectionInsideAuctionDoc = collection(getAuctionrDoc, "teams");
         const playerCollectionInsideAuctionDoc = collection(getAuctionrDoc, "players");
 
@@ -180,7 +208,7 @@ const AuctionLive = () => {
                                         <div className='auction_status d-flex justify-content-center align-items-center'>
                                         <div className='auction_box d-flex justify-content-space align-items-center'>
                                             {!auctionEndedCheck ? <div className='auction_box_owner1_section text-center' style={{ opacity: playerTurn != 1 && "0.2" }}>
-                                                <img src={owner1} style={{height:"455px"}}/>
+                                                <img className="d-none d-lg-block" src={owner1} style={{height:"455px"}}/>
                                                 {playerTurn == 1 && 
                                                         <>
                                                             <h2 className='bg-dark text-light'>{teamD[0].name}</h2>
@@ -194,7 +222,7 @@ const AuctionLive = () => {
                                             <BidPlayerBox playerName={randomPlayer.current[0].fullName} playerCat={randomPlayer.current[0].category} playerBidVal={randomPlayer.current[0].bidValue} playerSpec={randomPlayer.current[0].specification1} playerSpec1={randomPlayer.current[0].specification2} playerId={randomPlayer.current[0].id} />
                                             {
                                                 !auctionEndedCheck ? <div className='auction_box_owner2_section text-center' style={{ opacity: playerTurn != 2 && "0.2" }}>
-                                                <img src={owner2} style={{height:"455px"}}/>
+                                                <img className='d-none d-lg-block' src={owner2} style={{height:"455px"}}/>
                                                         {playerTurn == 2 &&
                                                             <>
                                                                 <h2 className='bg-dark text-light'>{teamD[1].name}</h2>
@@ -285,7 +313,7 @@ const AuctionLive = () => {
                             <div className='row'>
                                 {
                                     soldPlayerDBdata.length > 0 ? soldPlayerDBdata.map((data) => (
-                                        <div className='col-4 my-3' style={{ position: "relative" }} key={data.id}>
+                                        <div className='col-12 col-sm-12 col-md-6 col-lg-4 my-3' style={{ position: "relative" }} key={data.id}>
                                             <Players name={data.fullName} specification={data.specification1} category={data.category} soldPlayer={true} bidPrice={data.bidValue} owner={data.owner} />
                                         </div>
                                     )) : ""
@@ -300,7 +328,7 @@ const AuctionLive = () => {
                             <div className='row'>
                                 {
                                     unSoldPlayerDBdata.length > 0 ? unSoldPlayerDBdata.map((data) => (
-                                        <div className='col-4 my-3' style={{ position: "relative" }} key={data.id}>
+                                        <div className='col-12 col-sm-12 col-md-6 col-lg-4 my-3' style={{ position: "relative" }} key={data.id}>
                                             <Players name={data.fullName} specification={data.specification1} category={data.category} bidPrice={data.bidValue} />
                                         </div>
                                     )) : ""
@@ -348,11 +376,11 @@ const AuctionLive = () => {
                             <div className='row'>
                                 {
                                     !tabChange ? players.map((data) => (
-                                        <div className='col-4 mb-3' style={{ position: "relative" }} key={data.id}>
+                                        <div className='col-12 col-xs-12 col-sm-12 col-md-6 col-lg-4 mb-3' style={{ position: "relative" }} key={data.id}>
                                             <Players name={data.fullName} specification={data.specification1} category={data.category} bidPrice={data.bidValue} soldPlayers={false} captain={data.captain}/>
                                         </div>
                                     )) : playerToShow.map((data) => (
-                                        <div className='col-4 mb-3' style={{ position: "relative" }} key={data.id}>
+                                        <div className='col-12 col-xs-12 col-sm-12 col-md-6 col-lg-4 mb-3' style={{ position: "relative" }} key={data.id}>
                                             <Players name={data.fullName} specification={data.specification1} category={data.category} bidPrice={data.bidValue} soldPlayers={false} captain={data.captain}/>
                                         </div>
                                     ))

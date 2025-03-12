@@ -4,14 +4,13 @@ import Button from 'react-bootstrap/Button'
 import sold from '../sold-removebg-preview.png'
 import unsold from "../unSold.png"
 import eliminate from "../eliminatePNG.png"
-import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { player1turn, player2turn } from '../features/UserTurn/userTurnSlice'
 import { incrementBid, setBidValue } from '../features/BidAmount/bidAmountSlice'
 import { newPlayerFalse, newPlayerTrue } from '../features/ValidityChecks/newPlayerButtonSlice'
 import { auctionEndedTrue } from '../features/ValidityChecks/auctionEndedCheckSlice'
-import { team, updateTeamPoints } from '../features/TeamOwners/teamSlice'
+import { updateTeamPoints } from '../features/TeamOwners/teamSlice'
 import { addDoc, collection, deleteDoc, doc, getDocs } from 'firebase/firestore';
 import { auth, db } from '../firebase/firebase';
 import { setLoader } from '../features/Loader/loaderSlice';
@@ -27,10 +26,13 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
     const teamDB = useSelector((state)=>state.team.value);
     const urlParamSet = useSelector((state)=>state.urlParam.value);
     const dispatch = useDispatch();
-    // console.log(playerTurn)
-    let soldPlayersURL = "http://localhost:6500/soldPlayers"
-    let unsoldPlayersURL = "http://localhost:6500/unsoldPlayers"
-    let url = 'http://localhost:5000/playersCategory'
+    const {currentUser} = useAuth();
+    const [aucD, setAucD] = useState(JSON.parse(localStorage.getItem('auctionData')));
+
+    var getAucDoc = doc(db, "users", currentUser.uid, "auctions", aucD[0].id);
+    var getPlayerCollection = collection(getAucDoc, "players");
+    var getSoldPlayerCollection = collection(getAucDoc, "soldPlayers");
+    var getUnSoldPlayerCollection = collection(getAucDoc, "unsoldPlayers");
     const navigate = useNavigate();
     const [soldActive, setSoldActive] = useState(false);
     const [timerCount, setTimerCount] = useState(30);
@@ -58,40 +60,76 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
         ]
     )
 
-    const [maxPlayers, setMaxPlayers] = useState(0);
+    // const [maxPlayers, setMaxPlayers] = useState(0);
     const [unSoldBtnDisable, setUnSoldBtnDisable] = useState(false);
     const [unSoldPlayerList, setUnSoldPlayerList] = useState(false);
     const [unSoldImage, setUnSoldImg] = useState(false)
     const [eliminateImage, setEliminateImg] = useState(false)
-    const [aucD, setAucD] = useState(JSON.parse(localStorage.getItem('auctionData')));
+    
     const teamS = useRef(teamDB)
-    const {currentUser} = useAuth();
+    
 
-    useEffect(()=>{
-        const timer = timerCount > 0 && setInterval(()=> setTimerCount(timerCount - 1),1000);
+    // useEffect(()=>{
+    //     const timer = timerCount > 0 && setInterval(()=> setTimerCount(timerCount - 1),1000);
         
-        if (timerCount == 0) {
-            axios.delete(url + "/" + playerId)
-            .then((res) => console.log('record deleted'))
-            .catch((err) => console.log(err))
-            axios.post(unsoldPlayersURL, forUnsold)
-            .then((res) => console.log('player add to unSold'))
-            setUnSoldImg(true);
-            setSoldActive(true);
-            dispatch(newPlayerTrue());
-        }
+    //     if (timerCount == 0) {
+    //         getDocs(getPlayerCollection)
+    //         .then((res) => {
+    //             dispatch(setLoader(true));
+    //             let playerData = [];
+    //             if (res._snapshot.docChanges.length > 0) {
+    //                 res.forEach((doc) => {
+    //                     let data = doc.data()
+    //                     data = { ...data, id: doc.id };
+    //                     playerData.push(data)
+    //                 })
+    //             }
+    //             let playerSoldId = playerData.filter((playerID)=>playerID.id == playerID)    
+    //             deleteDoc(doc(getPlayerCollection, playerSoldId[0].id))
+    //             .then((res) => {
+    //                 dispatch(setLoader(true));
+    //                 console.log('record deleted');
+    //                 addDoc(getUnSoldPlayerCollection, forUnsold)
+    //                 .then((res) => {
+    //                     dispatch(setLoader(false));
+    //                     setUnSoldImg(true);
+    //                     setSoldActive(true);
+    //                     dispatch(newPlayerTrue());
+    //                     console.log('player add to unSold')
+    //                 })
+    //                 .catch((err) => {
+    //                     dispatch(setLoader(false));
+    //                     console.log("err:", err);
+    //                 })
+    //             })
+    //             .catch((err) => {
+    //                 console.log("err:", err);
+    //                 dispatch(setLoader(false));
+    //             })
+                    
+    
+    //         })
+    //         // axios.delete(url + "/" + playerId)
+    //         // .then((res) => console.log('record deleted'))
+    //         // .catch((err) => console.log(err))
+    //         // axios.post(unsoldPlayersURL, forUnsold)
+    //         // .then((res) => console.log('player add to unSold'))
+    //         // setUnSoldImg(true);
+    //         // setSoldActive(true);
+    //         // dispatch(newPlayerTrue());
+    //     }
 
-        if(newPlayerButton){
-            clearInterval(timer);
-        }
-        return () => clearInterval(timer);
-    },[timerCount])
+    //     if(newPlayerButton){
+    //         clearInterval(timer);
+    //     }
+    //     return () => clearInterval(timer);
+    // },[timerCount])
 
-    useEffect(()=>{
+    // useEffect(()=>{
         
-        // axios.get(url)
-        // .then((res)=> (res.data.length-2) % 2 === 0 ? setMaxPlayers(res.data.length/2 - 1):setMaxPlayers(res.data.length/2 - 1.5))
-    },[])
+    //     // axios.get(url)
+    //     // .then((res)=> (res.data.length-2) % 2 === 0 ? setMaxPlayers(res.data.length/2 - 1):setMaxPlayers(res.data.length/2 - 1.5))
+    // },[])
 
 
     const bidBtnClick = () => {
@@ -107,15 +145,12 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
     }
 
     const soldBtnClick = (id) => {
-
+        dispatch(setLoader(true));
         if(teamDB[(playerTurn == 1 ? 2 : 1) - 1].points < bidAmount){
             alert("You don't have sufficient points to buy");
-        }else{
-            const getAucDoc = doc(db, "users", currentUser.uid, "auctions", aucD[0].id)
-            const getPlayerCollection = collection(getAucDoc, "players");
-            var team1TotalPlayers;
-            var team2TotalPlayers;
-            getDocs(getPlayerCollection).then((res) => {
+        }else{            
+            getDocs(getPlayerCollection)
+            .then((res) => {
                 let playerData = [];
                 if (res._snapshot.docChanges.length > 0) {
                     res.forEach((doc) => {
@@ -125,23 +160,37 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
                     })
                 }
                 let playerSoldId = playerData.filter((playerID)=>playerID.id == id)
+                var newPoints = teamS.current[pointCheck].points - bidAmount;
+                dispatch(updateTeamPoints({ pointCheck, newPoints }));
+                randomPlayerChange.current[0].owner = playerTurn == 1 ? 2 : 1
+                randomPlayerChange.current[0].bidValue = bidAmount;
 
-                setSoldActive(true)
-                    setEliminateImg(false);
-                    dispatch(newPlayerTrue());
-                    var newPoints = teamS.current[pointCheck].points - bidAmount;
-                    dispatch(updateTeamPoints({pointCheck, newPoints}));
-                    randomPlayerChange.current[0].owner = playerTurn == 1 ? 2 : 1
-                    randomPlayerChange.current[0].bidValue = bidAmount;
-
-                    var getSoldPlayerCollection = collection(getAucDoc, "soldPlayers");                   
+                deleteDoc(doc(unSoldPlayerList ? getUnSoldPlayerCollection : getPlayerCollection, playerSoldId[0].id))
+                .then((res) => {
+                    console.log('record deleted');
+                    addDoc(getSoldPlayerCollection, randomPlayerChange.current[0])
+                    .then((res) => {
+                        console.log('playerSold');
+                        dispatch(setLoader(false));
+                        setSoldActive(true)
+                        setEliminateImg(false);
+                        dispatch(newPlayerTrue());
+                    })
+                    .catch((err) => {
+                        console.log("err:", err);
+                        dispatch(setLoader(false));
+                    })
+                })
+                .catch((err) => {
+                    console.log("err:", err);
+                    dispatch(setLoader(false));
+                })
                     
-                    deleteDoc(doc(getPlayerCollection, playerSoldId[0].id)).then((res)=>{
-                        console.log('record deleted');
-                        addDoc(getSoldPlayerCollection, randomPlayerChange.current[0]).then((res) => console.log('playerSold')).catch((err)=>console.log("err:", err))
-                    }).catch((err)=>console.log("err:", err))
-                    
 
+            })
+            .catch((err)=>{
+                console.log("error:",err);
+                dispatch(setLoader(false));
             })
 
             // axios.get(soldPlayersURL)
@@ -175,65 +224,112 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
 
     }
 
-    const unsoldBtnClick = (id) => {
-        dispatch(newPlayerTrue());
-        setSoldActive(true);
-        axios.get(unsoldPlayersURL)
+    const unsoldBtnClick = (id) => {       
+        dispatch(setLoader(true));
+        getDocs(getPlayerCollection)
         .then((res) => {
-            var playerPresent = res.data.filter((playerCheck)=> playerCheck.id === id);
-
-            if(playerPresent.length > 0){
-                setEliminateImg(true);
-                axios.delete(unsoldPlayersURL + "/" + id)
-                .then((res) => console.log('player eliminated'))
-            } else {
-                setUnSoldImg(true);
-                axios.delete(url + "/" + id)
-                .then((res) => console.log('record deleted'))
-                .catch((err) => console.log(err))
-                axios.post(unsoldPlayersURL, forUnsold)
-                .then((res) => {
-                    console.log('player add to unSold');
+            let playerData = [];
+            if (res._snapshot.docChanges.length > 0) {
+                res.forEach((doc) => {
+                    let data = doc.data()
+                    data = { ...data, id: doc.id };
+                    playerData.push(data)
                 })
             }
+            let playerSoldId = playerData.filter((playerID)=>playerID.id == id)
+
+            deleteDoc(doc(getPlayerCollection, playerSoldId[0].id))
+            .then((res) => {
+                console.log('record deleted');
+                addDoc(getUnSoldPlayerCollection, forUnsold)
+                .then((res) => {
+                    console.log('playerUnSold');
+                    dispatch(setLoader(false));
+                    dispatch(newPlayerTrue());
+                    setSoldActive(true);
+                })
+                .catch((err) => {
+                    console.log("err:", err);
+                    dispatch(setLoader(false));
+                })
+            })
+            .catch((err) => {
+                console.log("err:", err);
+                dispatch(setLoader(false));
+            })               
+
         })
+        
+        // axios.get(unsoldPlayersURL)
+        // .then((res) => {
+        //     var playerPresent = res.data.filter((playerCheck)=> playerCheck.id === id);
+
+        //     if(playerPresent.length > 0){
+        //         setEliminateImg(true);
+        //         axios.delete(unsoldPlayersURL + "/" + id)
+        //         .then((res) => console.log('player eliminated'))
+        //     } else {
+        //         setUnSoldImg(true);
+        //         axios.delete(url + "/" + id)
+        //         .then((res) => console.log('record deleted'))
+        //         .catch((err) => console.log(err))
+        //         axios.post(unsoldPlayersURL, forUnsold)
+        //         .then((res) => {
+        //             console.log('player add to unSold');
+        //         })
+        //     }
+        // })
     }
 
     const newPlayerBtnClicked = () => {
-        setUnSoldImg(false)
-        setUnSoldBtnDisable(false)
-        setTimerCount(30);
-        setSoldActive(false);
-        dispatch(newPlayerFalse());
-        teamS.current = teamDB;
-        axios.get(url)
-            .then((res) => {
+        dispatch(setLoader(true));
+
+        getDocs(getPlayerCollection)
+        .then((res)=>{
+            let playerData = [];
+            if (res._snapshot.docChanges.length > 0) {
+                res.forEach((doc) => {
+                    let data = doc.data()
+                    data = { ...data, id: doc.id };
+                    playerData.push(data)
+                })
                 const randomStringValues = [];
-                res.data.filter((el) => el.captain == false && randomStringValues.push(el.id))
+                playerData.filter((el) => el.captain == false && randomStringValues.push(el.id))
 
-
-                let randomNum = Math.floor(Math.random() * randomStringValues.length)
+                let randomNum = Math.floor(Math.random() * randomStringValues.length);
                 randomNum = randomStringValues[randomNum]
-                randomPlayerChange.current = res.data.filter((fl) => fl.id == randomNum)
-                
-                if (randomPlayerChange.current.length == 0) {
-                    
-                    axios.get(unsoldPlayersURL)
+                randomPlayerChange.current = playerData.filter((fl) => fl.id == randomNum)
+
+                if(randomPlayerChange.current.length == 0){
+                    getDocs(getUnSoldPlayerCollection)
                     .then((res)=>{
+                        dispatch(setLoader(false));
+                        let playerData = [];
+                        if(res._snapshot.docChanges.length > 0){
+                            res.forEach((doc) => {
+                                let data = doc.data()
+                                data = { ...data, id: doc.id };
+                                playerData.push(data)
+                            })
+                        }
                         const randomStringValues = [];
-                        res.data.filter((el) => randomStringValues.push(el.id))
+                        playerData.filter((el) => randomStringValues.push(el.id))
                         let randomNum = Math.floor(Math.random() * randomStringValues.length)
                         randomNum = randomStringValues[randomNum]
-                        randomPlayerChange.current = res.data.filter((fl) => fl.id == randomNum)
+                        randomPlayerChange.current = playerData.filter((fl) => fl.id == randomNum)
 
-                        if(randomPlayerChange.current.length == 0){
+                        if (randomPlayerChange.current.length == 0) {
                             dispatch(auctionEndedTrue());
-                        } else{
+                        } else {
                             setUnSoldPlayerList(true);
                             dispatch(setBidValue(parseInt(randomPlayerChange.current[0].bidValue)));
                         }
+                    }).catch((err)=>{
+                        console.log("Error:", err);
+                        dispatch(setLoader(false));
                     })
                 } else{
+                    dispatch(setLoader(false));
                     setForUnsold({
                         id: randomPlayerChange.current[0].id,
                         bidValue: randomPlayerChange.current[0].bidValue,
@@ -244,7 +340,17 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
                     })
                     dispatch(setBidValue(parseInt(randomPlayerChange.current[0].bidValue)));
                 }
-            })
+                setUnSoldImg(false)
+                setUnSoldBtnDisable(false)
+                setTimerCount(30);
+                setSoldActive(false);
+                dispatch(newPlayerFalse());
+                teamS.current = teamDB;
+            }
+        }).catch((err) => {
+            console.log("Error:",err);
+            dispatch(setLoader(false));
+        })
     }
 
     return (

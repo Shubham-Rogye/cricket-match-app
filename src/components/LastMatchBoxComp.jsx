@@ -2,7 +2,8 @@ import React from 'react'
 
 const LastMatchBoxComp = ({date, team1, team2, score1, score2, over1, over2, matchWontext}) => {
     return (
-        <div className='col-6'>
+        <>
+        <div className='col-sm-12 col-lg-6'>
             <div className='last_name_result_box px-5 py-3 shadow'>
                 <p className='text-center'>{date}</p>
                 <div className='last_name_result_box_versus d-flex justify-content-between align-items-center'>
@@ -21,7 +22,9 @@ const LastMatchBoxComp = ({date, team1, team2, score1, score2, over1, over2, mat
                 </div>
                 <p className='text-center'>{matchWontext}</p>
             </div>
-        </div>
+        <br/>
+        </div> 
+        </>
     )
 }
 

@@ -28,6 +28,7 @@ const AccountLanding = () => {
     isUpdate: false,
     toUpdateId: ""
   })
+  const [widthSize, setWidthSize] = useState(window.innerWidth);
   const [userPhoto, setUserPhoto] = useState("");
   const userPhotoRef = useRef("");
   let navigate = useNavigate();
@@ -43,7 +44,7 @@ const AccountLanding = () => {
   };
 
   const left_box_show = {
-    width: "15%",
+    width: widthSize < 991 ?  "fit-content" : "15%",
     background: "#ffffff",
     boxShadow: "4px 14px 14px #cecece",
     height: "calc(100vh - 56px)",
@@ -83,13 +84,20 @@ const AccountLanding = () => {
 
   }, []);
 
+  useEffect(()=>{
+    const handleResize = () => setWidthSize(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  },[widthSize])
+
+  console.log(widthSize)
+
   const redirctTo = () => {
     dispatch(setLoader(true))
     doSignOut()
       .then(() => (
         dispatch(setLoader(false)),
-        localStorage.removeItem('token'),
-        localStorage.removeItem('data'),
+        localStorage.removeItem('auctionData'),
         dispatch(setUserToken("")),
         navigate("/login")
       ))
@@ -175,21 +183,9 @@ const AccountLanding = () => {
     })
   }
 
-  const test = async () => {
-    console.log('button clicjk')
-    const getUserDoc = doc(db, "users", currentUser.uid);
-    const getAuctionsCollection = collection(getUserDoc, "auctions")
-
-    deleteDoc(doc(getAuctionsCollection, '6ywDTLcBj0QDUjrNqZQr')).then(()=>{
-      console.log('6ywDTLcBj0QDUjrNqZQr id deleted')
-    })
-    
-  }
-
-  const createTeam = (id) => {
+  const auctionIdIdentify = (id) => {
     let aucD = auctionData.filter((res) => res.id == id);
     localStorage.setItem('auctionData',JSON.stringify(aucD));
-    console.log(aucD)
   }
 
   return (
@@ -262,14 +258,14 @@ const AccountLanding = () => {
                   </h2>
                   {active == 1 ? (
                     <div className="container-fluid">
-                      <div className="d-flex" style={{ gap: "5px" }}>
-                        <div className="col-6 d-flex align-items-center p-3 shadow welcome_box rounded" style={{ background: "#fff" }}>
+                      <div className="welcome_section_box d-flex" style={{ gap: "5px" }}>
+                        <div className="col-12 col-xs-12 col-sm-12 col-md-12 col-lg-6 d-flex align-items-center p-3 shadow welcome_box rounded" style={{ background: "#fff" }}>
                           <i className="bi bi-person-circle"></i>
                           <p className="m-0 ms-2">Welcome {paramFirstName}</p>
-                        </div>
-                        <div className="col-6 d-flex align-items-center p-3 shadow rounded" style={{ background: "#fff" }}>
+                        </div> <br/>
+                        <div className="col-12 col-xs-12 col-sm-12 col-md-12 col-lg-6 d-flex align-items-center shadow rounded px-3 py-2" style={{ background: "#fff" }}>
                           <div className="w-100">
-                            <div className="d-flex justify-content-between">
+                            <div className="d-flex justify-content-between align-items-center">
                               <strong>My Auctions</strong>
                               {/* <button className="btn btn-danger" onClick={test}>test</button> */}
                               <Button variant="outline-dark" size="sm" onClick={() => { setAuctionField(!auctionField); setAuctionVal("") }}>{auctionField ? "Cancel" : "Create New Auction"}</Button>
@@ -297,7 +293,7 @@ const AccountLanding = () => {
                                       <Link
                                         to={`${param.name}/formPage`}
                                         className="link-underline link-underline-opacity-0 text-primary"
-                                        onClick={() => (dispatch(formPageTrue()),createTeam(elm.id))}
+                                        onClick={() => (dispatch(formPageTrue()),auctionIdIdentify(elm.id))}
                                       >
                                         Create Team / View
                                       </Link>
@@ -311,7 +307,7 @@ const AccountLanding = () => {
                                       <Link
                                         to={`${param.name}/liveAuction`}
                                         className="link-underline link-underline-opacity-0 ms-2 text-info"
-                                        onClick={() => dispatch(auctionPageTrue())}
+                                        onClick={() => dispatch(auctionPageTrue(),auctionIdIdentify(elm.id))}
                                       >
                                         Live
                                       </Link>

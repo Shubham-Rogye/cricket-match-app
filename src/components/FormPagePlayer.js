@@ -19,8 +19,7 @@ import { setLoader } from '../features/Loader/loaderSlice';
 
 const FormPagePlayer = () => {
     const teamDB = useSelector((state)=>state.team.value);
-    const auctionData = useSelector((state)=>state.auctionData.value);
-    const { userLoggedIn, currentUser } = useAuth();
+    const { currentUser } = useAuth();
     const dispatch = useDispatch();
     const [file, setFile] = useState("");
     const [bidValue, setBidValue] = useState(500)
@@ -143,7 +142,6 @@ const FormPagePlayer = () => {
     }
 
     const handleDel = (id) => {
-        debugger;
         axios.delete(url+"/"+id)
         .then((res)=>axios.get(url).then((res)=>setFormFilledData(res.data)))
         .catch((err)=>alert(err))
