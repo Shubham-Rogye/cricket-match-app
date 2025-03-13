@@ -502,6 +502,12 @@ ul.shadow.logoutDropDwn:after {
 
 
 @media (max-width:991px){
+  .profile_img_box{
+    display: block !important;
+  }
+  .profile_img_box > div{
+    width: 100% !important;
+  }
   .login_form_page{
     width: 100% !important;
   }
@@ -609,5 +615,11 @@ ul.shadow.logoutDropDwn:after {
   transition: all ease-in-out 0.3s;
   font-size: 10px;
 }
+.form_page_tabs ~ .tab-content table{
+  font-size: 10px !important;
+}
 
+.form_page_tabs ~ .tab-content img{
+  width:  25px !important;
+}
 }

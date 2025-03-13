@@ -24,7 +24,7 @@ const FormPagePlayer = () => {
     const [file, setFile] = useState("");
     const [bidValue, setBidValue] = useState(500)
     const [formFilledData, setFormFilledData] = useState([])
-    const [captains, setCaptains] = useState(false)
+    const [owners, setOwners] = useState(false)
     const [switchOn, setSwitchOn] = useState(false);
     const [aucD, setAucD] = useState([]);
     let url = "http://localhost:5000/playersCategory"
@@ -40,7 +40,7 @@ const FormPagePlayer = () => {
 
     const onSubmit = (data) => {
         dispatch(setLoader(true));
-        if(captains){
+        if(owners){
             var sentData = {
                 "fullName": data.fullName,
                 "category": data.category,
@@ -49,13 +49,13 @@ const FormPagePlayer = () => {
                 "bidValue": bidValue,
                 "mobileNo": data.mobileNo,
                 "captain":switchOn,
-                "photo": [
-                    {
-                        name: data.photo[0].name,
-                        size: data.photo[0].size,
-                        type: data.photo[0].type
-                    }
-                ]
+                ...(data.photo && data.photo.length > 0 ? { 
+                    photo: [{ 
+                        name: data.photo[0].name, 
+                        size: data.photo[0].size, 
+                        type: data.photo[0].type 
+                    }] 
+                } : {})
             }
     
             setBidValue(500);
@@ -127,7 +127,7 @@ const FormPagePlayer = () => {
                         });
                       }
                       dispatch(team(teamData.teams));
-                      setCaptains(true);
+                      setOwners(true);
                   }).catch(()=>dispatch(setLoader(false)))
                   
                   
@@ -149,9 +149,15 @@ const FormPagePlayer = () => {
         console.log(id)
     }
 
-    const onSwitchChange = () => {
-        setSwitchOn(!switchOn)
+    const numberInputCheck = (e) =>{
+        const inputValue = e.target.value
+
+        
     }
+
+    // const onSwitchChange = () => {
+    //     setSwitchOn(!switchOn)
+    // }
     
     useEffect(()=>{
         dispatch(setLoader(true));
@@ -167,10 +173,10 @@ const FormPagePlayer = () => {
                   teamData = doc.data()
                 });
                 dispatch(team(teamData.teams));
-                 setCaptains(true)
+                 setOwners(true)
               } else{
                 dispatch(team([]));
-                 setCaptains(false)
+                 setOwners(false)
               }
               
         }).catch(() => dispatch(setLoader(false)), console.log("error"))
@@ -193,30 +199,30 @@ const FormPagePlayer = () => {
     },[])
 
     useEffect(()=>{
-        teamDB.length == 2 && setCaptains(true);
-    },[captains])
+        teamDB.length == 2 && setOwners(true);
+    },[owners])
 
     return (
         <>
             <div className='form_page px-5'>
                 <form onSubmit={handleSubmit(onSubmit)} className='p-3 mt-3 shadow-lg'>
                     <div className='page_title text-center'>
-                        <h2 className='my-2'>{captains ? "Player Details" : "Add Owners"}</h2>
+                        <h2 className='my-2'>{owners ? "Player Details" : "Add Owners"}</h2>
                     </div>
                     <hr />
                     <div className='container'>
                         <div className='row form_row'>
                             <div className='col-12'>
-                                {captains && <div className='profile_img_box d-flex justify-content-center p-3'>
+                                {owners && <div className='profile_img_box d-flex justify-content-center p-3'>
                                     <Form.Group controlId="formFile" className="text-center w-25">
                                         <Form.Label><img src={file ? file : uploadPhoto} width={120} /></Form.Label>
-                                        <Form.Control type="file" accept='image/*'  {...register("photo", { required: true })} onChange={uploadImg} />
+                                        <Form.Control type="file" accept='image/*'  {...register("photo", { required: false })} onChange={uploadImg} />
                                     </Form.Group>
-                                    {errors.photo && <span className='error'>This field is required</span>}
+                                    {/* {errors.photo && <span className='error'>This field is required</span>} */}
                                 </div>}
                             </div>
                             {
-                                captains ? (<><div className='col-6'>
+                                owners ? (<><div className='col-12 col-md-6 col-lg-6'>
                                     <FloatingLabel
                                         controlId="floatingInput"
                                         label="Player Full Name"
@@ -225,7 +231,7 @@ const FormPagePlayer = () => {
                                     </FloatingLabel>
                                     {errors.fullName && <span className='error'>This field is required</span>}
                                 </div>
-                            <div className='col-6'>
+                            <div className='col-12 col-md-6 col-lg-6'>
                                 <FloatingLabel
                                     controlId="floatingInput"
                                     label="Category"
@@ -240,7 +246,7 @@ const FormPagePlayer = () => {
                                 {errors.category && <span className='error'>Please select anyone</span>}
 
                             </div>
-                            <div className='col-6'>
+                            <div className='col-12 col-md-6 col-lg-6'>
                                 <FloatingLabel
                                     controlId="floatingInput"
                                     label="Specification1"
@@ -254,7 +260,7 @@ const FormPagePlayer = () => {
                                 </FloatingLabel>
                                 {errors.specification1 && <span className='error'>Please select anyone</span>}
                             </div>
-                            <div className='col-6'>
+                            <div className='col-12 col-md-6 col-lg-6'>
                                 <FloatingLabel
                                     controlId="floatingInput"
                                     label="Specification2"
@@ -294,7 +300,7 @@ const FormPagePlayer = () => {
                                 </FloatingLabel>
                                 {errors.specification2 && <span className='error'>Please select anyone</span>}
                             </div>
-                            <div className='col-6'>
+                            <div className='col-12 col-md-6 col-lg-6'>
                                 <FloatingLabel
                                     controlId="floatingInput"
                                     label="Min Bid Value"
@@ -303,27 +309,31 @@ const FormPagePlayer = () => {
                                 </FloatingLabel>
                                 {errors.bidValue && <span className='error'>This field is required</span>}
                             </div>
-                            <div className='col-6'>
-                                <FloatingLabel
-                                    controlId="floatingInput"
-                                    label="Player Mobile number"
-                                >
-                                    <Form.Control type="number" placeholder="name@example.com" {...register("mobileNo", { required: true, minLength: { value: 10, message: "Please enter valid 10 digits mobile number" }, maxLength: { value: 10, message: "Please enter valid 10 digits mobile number" } })} />
-                                </FloatingLabel>
-                                {errors?.mobileNo?.type === "required" && <span className='error'>This field is required</span>}
-                                {(errors?.mobileNo?.type === "minLength" || errors?.mobileNo?.type === "maxLength") && <span className='error'>{errors?.mobileNo?.message}</span>}
-                            </div>
-                            <div className='col-6'>
-                                <Form.Check
-                                    onChange={onSwitchChange}
-                                    type="switch"
-                                    id="custom-switch"
-                                    label="Is Captain"
-                                    checked={switchOn}
-                                />
+                            <div className='col-12 col-md-6 col-lg-6'>
+                                        <Form.Group controlId="mobileNo">
+                                            <FloatingLabel label="Enter 10-digit number">
+                                                <Form.Control
+                                                    type="text"
+                                                    placeholder="Enter 10 digit mobile number"
+                                                    maxLength={10}
+                                                    {...register("mobileNo", {
+                                                        required: "Phone number is required",
+                                                        pattern: {
+                                                            value: /^\d{10}$/,
+                                                            message: "Number Must be exactly 10 digits",
+                                                        },
+                                                    })}
+                                                    onInput={(e)=>e.target.value = e.target.value.replace(/\D/g, "")}
+                                                    isInvalid={!!errors.mobileNo}
+                                                />
+                                                <Form.Control.Feedback type="invalid">
+                                                    <span className='error'>{errors.mobileNo?.message}</span>
+                                                </Form.Control.Feedback>
+                                            </FloatingLabel>
+                                        </Form.Group>
                             </div></>):(<div className='row'>
                                 <strong>Owner 1 field</strong><hr />
-                                <div className='col-6'>
+                                <div className='col-12 col-md-6 col-lg-6'>
                                     <FloatingLabel
                                         controlId="floatingInput"
                                         label="Owner 1 Name"
@@ -332,7 +342,7 @@ const FormPagePlayer = () => {
                                     </FloatingLabel>
                                     {errors.captain1fullName && <span className='error'>This field is required</span>}
                                 </div>
-                                <div className='col-6 my-2'>
+                                <div className='col-12 col-md-6 col-lg-6 my-2'>
                                     <FloatingLabel
                                         controlId="floatingInput"
                                         label="Team Name"
@@ -341,7 +351,7 @@ const FormPagePlayer = () => {
                                     </FloatingLabel>
                                     {errors.team1Name && <span className='error'>This field is required</span>}
                                 </div>
-                                <div className='col-6 mb-2'>
+                                <div className='col-12 col-md-6 col-lg-6 mb-2'>
                                     <FloatingLabel
                                         controlId="floatingInput"
                                         label="Points"
@@ -351,7 +361,7 @@ const FormPagePlayer = () => {
                                     {errors.captain1points && <span className='error'>This field is required</span>}
                                 </div>
                                 <strong>Owner 2 field</strong><hr />
-                                <div className='col-6'>
+                                <div className='col-12 col-md-6 col-lg-6'>
                                     <FloatingLabel
                                         controlId="floatingInput"
                                         label="Owner 2 Name"
@@ -360,7 +370,7 @@ const FormPagePlayer = () => {
                                     </FloatingLabel>
                                     {errors.captain2fullName && <span className='error'>This field is required</span>}
                                 </div>
-                                <div className='col-6 my-2'>
+                                <div className='col-12 col-md-6 col-lg-6 my-2'>
                                     <FloatingLabel
                                         controlId="floatingInput"
                                         label="Team Name"
@@ -369,7 +379,7 @@ const FormPagePlayer = () => {
                                     </FloatingLabel>
                                     {errors.team2Name && <span className='error'>This field is required</span>}
                                 </div>
-                                <div className='col-6'>
+                                <div className='col-12 col-md-6 col-lg-6'>
                                     <FloatingLabel
                                         controlId="floatingInput"
                                         label="Points"

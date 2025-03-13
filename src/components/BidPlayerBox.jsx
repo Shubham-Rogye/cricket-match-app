@@ -84,7 +84,7 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
                         playerData.push(data)
                     })
                 }
-                let playerSoldId = playerData.filter((playerID)=>playerID.id == playerID)    
+                let playerSoldId = playerData.filter((playerID)=>playerID.id == randomPlayerChange.current[0].id)    
                 deleteDoc(doc(getPlayerCollection, playerSoldId[0].id))
                 .then((res) => {
                     dispatch(setLoader(true));
@@ -199,7 +199,7 @@ const BidPlayerBox = ({ playerName, playerCat, playerBidVal, playerSpec, playerS
                 .then((res) => {
                     dispatch(setLoader(false));
                     dispatch(newPlayerTrue());
-                    setSoldActive(true);
+                    setUnSoldImg(true);
                 })
                 .catch((err) => {
                     dispatch(setLoader(false));
