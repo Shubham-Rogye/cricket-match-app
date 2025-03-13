@@ -80,7 +80,6 @@ const FormPagePlayer = () => {
                         })
                     }
                     setFormFilledData(playerData)
-                    console.log(data)
                 }).catch(()=>console.log("error"))
             }).catch(()=>console.log("error"))
             setSwitchOn(false);
@@ -98,7 +97,6 @@ const FormPagePlayer = () => {
             
 
         } else{
-            // console.log(data);
             const getAuctionrDoc = doc(db, "users", currentUser.uid, "auctions",aucD[0].id);
             const teamCollectionInsideAuctionDoc = collection(getAuctionrDoc, "teams");
 
@@ -130,10 +128,10 @@ const FormPagePlayer = () => {
                       }
                       dispatch(team(teamData.teams));
                       setCaptains(true);
-                  }).catch(()=>dispatch(setLoader(false)), console.log("error:",))
+                  }).catch(()=>dispatch(setLoader(false)))
                   
                   
-              }).catch(()=>dispatch(setLoader(false)), console.log("error:",))
+              }).catch(()=>dispatch(setLoader(false)))
         }
     }
 

@@ -100,7 +100,7 @@ const AuctionLive = () => {
             } else{
                 setPlayers([])
             }
-        }).catch(() => dispatch(setLoader(false)), console.log("error:"));
+        }).catch(() => dispatch(setLoader(false)));
         
         let filPlayers = []
         if (radioValue != 1) {
@@ -135,7 +135,7 @@ const AuctionLive = () => {
                 dispatch(teamOwner2([])); 
             }
         })
-        .catch(() => dispatch(setLoader(false)), console.log("error:"))
+        .catch(() => dispatch(setLoader(false)))
 
         getDocs(getUnsoldPlayerCollectionInsideAuctionDoc)
         .then((res) => {
@@ -152,7 +152,7 @@ const AuctionLive = () => {
                 dispatch(unSoldPlayerDB([]))
             }
         })
-        .catch(() => dispatch(setLoader(false)), console.log("error:"))
+        .catch(() => dispatch(setLoader(false)))
         return
     },[newTab])
 
@@ -170,7 +170,7 @@ const AuctionLive = () => {
                 });
             }
             dispatch(team(teamData.teams));
-        }).catch(() => dispatch(setLoader(false)), console.log("error:"))
+        }).catch(() => dispatch(setLoader(false)))
 
         getDocs(playerCollectionInsideAuctionDoc).then((res) => {
             dispatch(setLoader(false));
@@ -187,7 +187,7 @@ const AuctionLive = () => {
             } else{
                 setPlayers([])
             }
-        }).catch(() => dispatch(setLoader(false)), console.log("error:"))
+        }).catch(() => dispatch(setLoader(false)))
     }, [])
 
     return (
@@ -211,9 +211,10 @@ const AuctionLive = () => {
                                                 <img className="d-none d-lg-block" src={owner1} style={{height:"455px"}}/>
                                                 {playerTurn == 1 && 
                                                         <>
-                                                            <h2 className='bg-dark text-light'>{teamD[0].name}</h2>
-                                                            <div className='points_left bg-light'>
-                                                                {teamD[0].points}
+                                                            <h2 className='bg-dark text-light'>{teamD[0].name}'s turn</h2>
+                                                            <div className='points_left d-flex align-items-center justify-content-evenly'>
+                                                                <div className='text-light bg-danger p-2 w-50'>Points Left</div>
+                                                                <div className='text-dark bg-light p-2 w-50'>{teamD[0].points}</div>                                                               
                                                             </div>
                                                         </>
                                                 }
@@ -225,9 +226,10 @@ const AuctionLive = () => {
                                                 <img className='d-none d-lg-block' src={owner2} style={{height:"455px"}}/>
                                                         {playerTurn == 2 &&
                                                             <>
-                                                                <h2 className='bg-dark text-light'>{teamD[1].name}</h2>
-                                                                <div className='points_left bg-light'>
-                                                                    {teamD[1].points}
+                                                                <h2 className='bg-dark text-light'>{teamD[1].name}'s turn</h2>
+                                                                <div className='points_left d-flex align-items-center justify-content-evenly'>
+                                                                    <div className='text-light bg-danger p-2 w-50'>Points Left</div>
+                                                                    <div className='text-dark bg-light p-2 w-50'>{teamD[1].points}</div>
                                                                 </div>
                                                             </>
                                                         }

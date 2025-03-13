@@ -556,3 +556,58 @@ ul.shadow.logoutDropDwn:after {
 
 /*Account landing media query ends*/
 }
+
+@media (max-width:600px){
+
+.auction{
+  padding: 10px !important;
+}
+
+.auction > div > div:nth-child(1){
+  display: block;
+}
+
+.auction > div > div:nth-child(1) > div{
+  padding: 5px 10px;
+  margin: 0 0 15px 0;
+}
+.auctionsList{
+  display: block !important;
+  padding: 8px !important;
+}
+.auctionsList p {
+  text-transform:  capitalize;
+}
+
+.auctionsList a{
+  font-size: 10px;
+}
+  .banner_img_div>div {
+    background-size: 180px;
+}
+
+  .last_name_result_box {
+    background-color: #fff;
+    padding: 10px 25px !important;
+}
+
+  .last_name_result_boxes img {
+    width: 60px;
+}
+
+.time_table_section table{
+  font-size: 12px !important;
+}
+.account_dashboard{
+  overflow: hidden;
+}
+.left_box ul li {
+  padding: 5px 15px;
+  margin: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all ease-in-out 0.3s;
+  font-size: 10px;
+}
+
+}

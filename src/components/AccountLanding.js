@@ -69,11 +69,9 @@ const AccountLanding = () => {
         let auctionD = [];
         if(res._snapshot.docChanges.length > 0){
           res.forEach((doc) => {
-            // doc.data() is never undefined for query doc snapshots
             let data = doc.data()
             data = {...data, id: doc.id}
             auctionD.push(data);
-            // console.log(doc.id, " => ", doc.data());
           });
         }
         dispatch(setAuctionData(auctionD))
@@ -89,8 +87,6 @@ const AccountLanding = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   },[widthSize])
-
-  console.log(widthSize)
 
   const redirctTo = () => {
     dispatch(setLoader(true))
@@ -141,11 +137,9 @@ const AccountLanding = () => {
           let auctionD = [];
           if (res._snapshot.docChanges.length > 0) {
             res.forEach((doc) => {
-              // doc.data() is never undefined for query doc snapshots
               let data = doc.data()
               data = { ...data, id: doc.id }
               auctionD.push(data);
-              // console.log(doc.id, " => ", doc.data());
             });
             localStorage.setItem("auctionData",JSON.stringify([{auctionName:res._snapshot.docChanges[0].doc.data.value.mapValue.fields.auctionName, id:res._snapshot.docChanges[0].doc.key.path.segments[res._snapshot.docChanges[0].doc.key.path.segments.length - 1]
             }]))
@@ -164,7 +158,6 @@ const AccountLanding = () => {
     const getAuctionsCollection = collection(getUserDoc, "auctions")
 
     deleteDoc(doc(getAuctionsCollection, id)).then(()=>{
-      console.log(id + ' deleted');
       const getUserDoc = doc(db, "users", currentUser.uid);
       const getAuctionsCollection = collection(getUserDoc, "auctions")
       getDocs(getAuctionsCollection).then((res) => {
@@ -287,7 +280,7 @@ const AccountLanding = () => {
                             {
                               auctionData.length > 0 ? auctionData.map((elm) => (
                                 <>
-                                  <div className="shadow-sm mt-3 py-2 px-3 d-flex justify-content-between" key={elm.id}>
+                                  <div className="shadow-sm mt-3 py-2 px-3 d-flex justify-content-between auctionsList" key={elm.id}>
                                     <p className="m-0">{elm.auctionName}</p>
                                     <div className="auctions_actionLinks">
                                       <Link
