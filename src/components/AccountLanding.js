@@ -38,26 +38,32 @@ const AccountLanding = () => {
     background: "#ffffff",
     boxShadow: "4px 14px 14px #cecece",
     height: "calc(100vh - 56px)",
-    position: "sticky",
+    position: widthSize < 991 ?  "fixed" : "sticky",
     opacity: "0",
     transition: "all ease 0.8s"
   };
 
   const left_box_show = {
-    width: widthSize < 991 ?  "fit-content" : "15%",
+    width: widthSize < 991 ?  "100%" : "15%",
     background: "#ffffff",
     boxShadow: "4px 14px 14px #cecece",
     height: "calc(100vh - 56px)",
-    position: "sticky",
+    position: widthSize < 991 ?  "fixed" : "sticky",
     opacity: "1",
     transition: "all ease 0.8s"
   };
+
+  const right_box_style = {
+    height: widthSize < 991 ? "calc(100vh - 56px)" : "",
+  }
 
   const [active, setActive] = useState(1);
   let paramFirstName = param.name;
   paramFirstName = paramFirstName.split(" ").shift();
   useEffect(() => {
-
+    if(widthSize < 991){
+      setLeftBox(false);
+    }
     if (userLoggedIn) {
       dispatch(setLoader(true))
       currentUser.photoURL != null ? userPhotoRef.current = currentUser.photoURL : userPhotoRef.current = ""
@@ -214,7 +220,8 @@ const AccountLanding = () => {
                   right: "12px",
                   background: "#fff",
                   transition: "all ease .5s",
-                  cursor: "pointer"
+                  cursor: "pointer",
+                  zIndex:"1"
                 }}
                 className="shadow ps-0 logoutDropDwn"
               >
@@ -244,7 +251,7 @@ const AccountLanding = () => {
                   </li>
                 </ul>
               </div>
-              <div className="right_box w-100">
+              <div className="right_box w-100" style={right_box_style}>
                 <div className="container">
                   <h2 className="m-3" style={{ borderBottom: "2px solid #09d409" }}>
                     {active == 1 ? "Dashboard" : "Auction"}
