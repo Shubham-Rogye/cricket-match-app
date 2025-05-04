@@ -20,14 +20,14 @@
   height: 100%;
 }
 
-.banner_img_div>div {
+/* .banner_img_div>div {
   position: absolute;
   top: 0;
   left: 0;
   height: 100%;
   width: 100%;
   background: url(./vk18-removebg-preview.png) right bottom no-repeat, url(./rs-removebg-preview.png) left bottom no-repeat;
-}
+} */
 
 .last_name_result_boxes {
   display: flex;

@@ -14,7 +14,7 @@ const NavbarComp = ({ valid }) => {
       <Navbar expand="lg" className="navbar_comp sticky-top shadow-sm">
         <Container>
           {!valid ? (<>
-            <Navbar.Brand href="/"><img src={cricketLogo} /></Navbar.Brand>
+            <Navbar.Brand href="/"><img width={135} src={cricketLogo} /></Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
               <Nav className="me-auto">
@@ -44,7 +44,7 @@ const NavbarComp = ({ valid }) => {
             </Navbar.Collapse>
           </>) : (<>
             <div className='d-flex w-100'>
-              <Navbar.Brand href="/"><img src={cricketLogo} /></Navbar.Brand>
+              <Navbar.Brand href="/"><img width={135} src={cricketLogo} /></Navbar.Brand>
               <Navbar.Collapse id="basic-navbar-nav" className='justify-content-end'>
                 <Button href='/' variant="outline-dark" size="sm">HOME</Button>
               </Navbar.Collapse>

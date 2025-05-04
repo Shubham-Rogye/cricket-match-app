@@ -5,8 +5,8 @@ import Tabs from 'react-bootstrap/Tabs';
 import Players from './Players';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import ToggleButton from 'react-bootstrap/ToggleButton';
-import owner1 from '../vk18-removebg-preview.png'
-import owner2 from '../rs-removebg-preview.png'
+import owner1 from '../player.png'
+import owner2 from '../player.png'
 import BidPlayerBox from './BidPlayerBox';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useReactToPrint } from "react-to-print";

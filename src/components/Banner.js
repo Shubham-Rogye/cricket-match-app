@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import bannerImg from '../bannerimg.jpg'
+import bannerImg from '../cricket-match-with-player.jpg'
 
 const Banner = () => {
     const [navHeight, setNavHeight] = useState()
